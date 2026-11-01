@@ -25,7 +25,8 @@
       "main.js",
       "preload.js",
       "app/**/*",
-      "package.json"
+      "package.json",
+      "build/icon.ico"
     ],
     "directories": {
       "output": "dist"
@@ -38,7 +39,8 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -52,4 +54,3 @@
     }
   }
 }
-

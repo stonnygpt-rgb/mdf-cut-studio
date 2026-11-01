@@ -390,7 +390,7 @@ function confirmUpdatedStartup(){
  catch(error){console.error('Não foi possível confirmar o reinício da atualização:',error);}
 }
 function openApp(){
- const win=new BrowserWindow({title:'MDF Cut Studio',width:1440,height:900,minWidth:1024,minHeight:660,backgroundColor:'#101f2a',show:false,webPreferences:{preload:path.join(__dirname,'preload.js'),nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,devTools:false,spellcheck:false}});
+ const win=new BrowserWindow({icon:path.join(__dirname,'build','icon.ico'),title:'MDF Cut Studio',width:1440,height:900,minWidth:1024,minHeight:660,backgroundColor:'#101f2a',show:false,webPreferences:{preload:path.join(__dirname,'preload.js'),nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,devTools:false,spellcheck:false}});
  win.once('ready-to-show',()=>win.show());
  win.webContents.once('did-finish-load',()=>confirmUpdatedStartup());
  win.loadURL('mdfcut://app/index.html');
