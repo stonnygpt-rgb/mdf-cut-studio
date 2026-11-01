@@ -100,7 +100,18 @@ try {
   $actual = (Get-FileHash -LiteralPath $next -Algorithm SHA256).Hash.ToLowerInvariant()
   if ($actual -ne $ExpectedHash) { throw 'Verificacao SHA-256 apos copiar falhou.' }
   if (Test-Path -LiteralPath $previous) { Remove-Item -LiteralPath $previous -Force }
-  Move-Item -LiteralPath $Target -Destination $previous
+  # NSIS portable launchers can briefly keep the original .exe locked.
+  $moved = $false
+  for ($attempt = 0; $attempt -lt 120; $attempt++) {
+    try {
+      Move-Item -LiteralPath $Target -Destination $previous -ErrorAction Stop
+      $moved = $true
+      break
+    } catch {
+      Start-Sleep -Milliseconds 500
+    }
+  }
+  if (-not $moved) { throw 'Nao foi possivel substituir o EXE (arquivo bloqueado ou sem permissao).' }
   try {
     Move-Item -LiteralPath $next -Destination $Target
     Start-Process -FilePath $Target
