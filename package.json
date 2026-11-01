@@ -1,7 +1,7 @@
 {
   "name": "mdf-cut-studio-desktop",
   "productName": "MDF Cut Studio",
-  "version": "3.2.6",
+  "version": "3.2.7",
   "description": "MDF Cut Studio para Windows: planos de corte e ordens de serviço",
   "main": "main.js",
   "private": true,
