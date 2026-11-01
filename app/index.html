@@ -1403,16 +1403,36 @@ initialize();
 #desktopUpdateBtn.update-available:hover{background:#f59e0b!important}
 #desktopUpdateDialog{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:0;width:min(460px,calc(100vw - 24px));box-shadow:0 20px 70px #0005}
 #desktopUpdateDialog::backdrop{background:#0009}
+.desktop-update-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#desktopUpdateClose{display:grid;place-items:center;flex-shrink:0;width:30px;height:30px;padding:0;font-size:25px;line-height:1;text-align:center;background:transparent;border-color:transparent}
+#desktopUpdateClose:hover{background:var(--bg);border-color:var(--line)}
+.desktop-update-versions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:12px 0}
+.desktop-update-versions span{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.desktop-update-versions strong{display:block;font-size:24px;font-weight:800;line-height:1.2;color:var(--ink);overflow-wrap:anywhere}
 #desktopUpdateStatus{color:var(--muted);font-size:12px;overflow-wrap:anywhere;white-space:pre-wrap}
 </style>
-<dialog id="desktopUpdateDialog"><div class="desktop-backup-content"><h2>Atualizações do MDF Cut</h2><p>O programa consulta versões públicas no GitHub. O novo executável será baixado e verificado, sem apagar os seus projetos ou ordens.</p><label style="font-size:12px;font-weight:700">Repositório GitHub (usuário/repositório)</label><input type="text" id="desktopUpdateRepo" placeholder="usuario/mdf-cut-studio" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"><button id="desktopUpdateSaveRepo" type="button">Salvar endereço do repositório</button><div id="desktopUpdateStatus">Configure o repositório para verificar atualizações.</div><button id="desktopUpdateCheck" type="button">↻ Verificar atualizações</button><button id="desktopUpdateDownload" type="button" hidden>↓ Baixar e instalar atualização</button><button id="desktopUpdaterTest" type="button">Testar inicializador (sem instalar)</button><button id="desktopUpdateClose" type="button">Fechar</button></div></dialog>
+<dialog id="desktopUpdateDialog" aria-labelledby="desktopUpdateTitle"><div class="desktop-backup-content">
+<div class="desktop-update-heading"><h2 id="desktopUpdateTitle">Atualizações do MDF Cut</h2><button id="desktopUpdateClose" type="button" aria-label="Fechar atualizações" title="Fechar">×</button></div>
+<p>As atualizações são verificadas e instaladas mantendo seus projetos e ordens.</p>
+<div class="desktop-update-versions">
+<div><span>Versão atual</span><strong id="desktopInstalledVersion">—</strong></div>
+<div><span>Versão disponível</span><strong id="desktopAvailableVersion">—</strong></div>
+</div>
+<div id="desktopUpdateStatus" role="status" aria-live="polite">Verifique se há uma nova versão disponível.</div>
+<button id="desktopUpdateCheck" type="button">↻ Verificar atualizações</button>
+<button id="desktopUpdateDownload" type="button" hidden>↓ Baixar e instalar atualização</button>
+</div></dialog>
 <script>
 (()=>{
  const d=window.MDFDesktop;if(!d?.checkUpdate)return;
  const get=id=>document.getElementById(id),dlg=get('desktopUpdateDialog'),status=get('desktopUpdateStatus');
  const button=get('desktopUpdateBtn'),download=get('desktopUpdateDownload');
  const show=t=>status.textContent=t;
- let knownUpdate=null,pendingCheck=null,sourceGeneration=0;
+ let knownUpdate=null,pendingCheck=null;
+ function showVersions(result){
+   get('desktopInstalledVersion').textContent='v'+result.installed;
+   get('desktopAvailableVersion').textContent='v'+result.available;
+ }
  function markAvailable(result){
    const available=result?.isNew===true;
    button.classList.toggle('update-available',available);
@@ -1420,15 +1440,14 @@ initialize();
    button.setAttribute('aria-label',available?'Atualizar: nova versão '+result.available+' disponível':'Verificar atualizações');
  }
  function showRelease(result){
-   show(`Instalada: v${result.installed}\nPublicada: v${result.available}\n${result.isNew?'Uma atualização está disponível.':'O programa está atualizado.'}`);
+   showVersions(result);
+   show(result.isNew?'Uma atualização está disponível.':'O programa está atualizado.');
    download.hidden=!result.isNew;
  }
  async function checkLatest(){
    if(pendingCheck)return pendingCheck;
-   const generation=sourceGeneration;
    const request=d.checkUpdate().then(result=>{
-     if(generation!==sourceGeneration)throw Error('A origem das atualizações mudou. Verifique novamente.');
-     knownUpdate=result;markAvailable(result);return result;
+     knownUpdate=result;markAvailable(result);showVersions(result);return result;
    });
    pendingCheck=request;
    try{return await request}finally{if(pendingCheck===request)pendingCheck=null}
@@ -1437,27 +1456,18 @@ initialize();
  button.onclick=async()=>{
    dlg.showModal();download.hidden=true;
    try{
-     const c=await d.updateSource();get('desktopUpdateRepo').value=c.repo;
+     const c=await d.updateSource();
+     get('desktopInstalledVersion').textContent='v'+c.version;
      if(knownUpdate)showRelease(knownUpdate);
-     else show('Versão instalada: '+c.version+'\nClique em Verificar atualizações.');
+     else show('Clique em Verificar atualizações.');
    }catch(e){show(e.message)}
  };
  get('desktopUpdateClose').onclick=()=>dlg.close();
- get('desktopUpdateSaveRepo').onclick=async()=>{
-   try{
-     const a=await d.setUpdateSource(get('desktopUpdateRepo').value);
-     sourceGeneration++;pendingCheck=null;knownUpdate=null;markAvailable(null);download.hidden=true;
-     show('Repositório configurado: '+a.repo);
-     checkLatest().catch(()=>{});
-   }catch(e){show('Erro: '+e.message)}
- };
  get('desktopUpdateCheck').onclick=async()=>{
-   download.hidden=true;show('Consultando GitHub…');
-   try{showRelease(await checkLatest())}catch(e){show('Não foi possível verificar: '+e.message)}
+   download.hidden=true;show('Consultando atualizações…');
+   try{showRelease(await checkLatest())}catch(e){show('Não foi possível verificar. Confira sua conexão e tente novamente.')}
  };
- get('desktopUpdaterTest').onclick=async()=>{show('Testando inicializador sem alterar arquivos...');get('desktopUpdaterTest').disabled=true;try{const r=await d.testUpdater();show(r.message)}catch(e){show('Falha: '+e.message)}finally{get('desktopUpdaterTest').disabled=false}};
  download.onclick=async()=>{show('Baixando e verificando a atualização… O programa será reiniciado automaticamente.');download.disabled=true;try{const a=await d.downloadUpdate();show(a.message)}catch(e){show('Falha na atualização: '+e.message)}finally{download.disabled=false}};
- // Non-blocking startup check; offline/network errors never open a dialog.
  checkLatest().catch(()=>{});
 })();
 </script>

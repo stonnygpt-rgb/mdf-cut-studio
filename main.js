@@ -43,10 +43,8 @@ function storeData(kind, raw){
 }
 function requireTrusted(event){if(event.senderFrame?.url !== 'mdfcut://app/index.html')throw Error('Origem não autorizada')}
 
-// Public GitHub Releases updater. Repo is configured by the user; never runs arbitrary commands.
-const REPO_PATTERN=/^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9._-]{1,100}$/;
+// Public GitHub Releases updater. The official source is fixed in application code.
 const DEFAULT_RELEASES_REPO='stonnygpt-rgb/mdf-cut-studio';
-let releasesRepo=null;
 let latestCache=null;
 let updaterBusy=false;
 async function exclusiveUpdate(action){
@@ -55,17 +53,8 @@ async function exclusiveUpdate(action){
  try{const result=await action();if(!result?.installing)updaterBusy=false;return result}
  catch(error){updaterBusy=false;throw error}
 }
-function updaterConfigFile(){return path.join(app.getPath('userData'),'update-source.json')}
-function loadUpdateSource(){
- try{const config=JSON.parse(fs.readFileSync(updaterConfigFile(),'utf8'));return REPO_PATTERN.test(config.repo)?config.repo:null}catch{return null}
-}
-function setUpdateSource(repo){
- repo=String(repo||'').trim().replace(/^https:\/\/github\.com\//i,'').replace(/\/$/,'').replace(/\.git$/,'');
- if(!REPO_PATTERN.test(repo)||repo.includes('..'))throw Error('Informe usuario/repositorio ou https://github.com/usuario/repositorio');
- atomicWrite(updaterConfigFile(),JSON.stringify({repo},null,2));releasesRepo=repo;latestCache=null;return {repo};
-}
 async function fetchRelease(){
- const repo=releasesRepo||loadUpdateSource();if(!repo)throw Error('Configure primeiro o repositório GitHub.');
+ const repo=DEFAULT_RELEASES_REPO;
  const response=await net.fetch(`https://api.github.com/repos/${repo}/releases/latest`,{signal:AbortSignal.timeout(10000),headers:{'Accept':'application/vnd.github+json','User-Agent':'MDF-Cut-Studio-updater'}});
  if(!response.ok)throw Error(response.status===404?'Nenhuma versão pública publicada ainda (ou repositório não encontrado).':`GitHub respondeu HTTP ${response.status}`);
  const data=await response.json();const tag=String(data.tag_name||'');
@@ -75,7 +64,7 @@ async function fetchRelease(){
  if(!exe||!sums)throw Error('A versão não contém o EXE portátil e o arquivo de verificação SHA256SUMS.txt.');
  latestCache={repo,version,tag,exe:{name:exe.name,url:exe.browser_download_url,size:exe.size},checksum:{url:sums.browser_download_url}};
  const installed=app.getVersion();const isNew=compareVersions(version,installed)>0;
- return {repo,installed,available:version,isNew,url:data.html_url,asset:exe.name};
+ return {installed,available:version,isNew};
 }
 function compareVersions(a,b){const x=a.split('.').map(Number),y=b.split('.').map(Number);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]>y[i]?1:-1;return 0}
 function assertReleaseURL(url,repo=latestCache.repo){const u=new URL(url);if(u.protocol!=='https:'||u.hostname!=='github.com'||!u.pathname.startsWith(`/${repo}/releases/download/`))throw Error('Endereço de download não autorizado.');return url}
@@ -347,11 +336,9 @@ async function testPowerShellUpdater(){
 }
 
 function registerIPC(){
- ipcMain.handle('mdf:update-source',event=>{requireTrusted(event);return {repo:releasesRepo||loadUpdateSource()||'',version:app.getVersion()}});
- ipcMain.handle('mdf:set-update-source',(event,repo)=>{requireTrusted(event);return setUpdateSource(repo)});
+ ipcMain.handle('mdf:update-source',event=>{requireTrusted(event);return {version:app.getVersion()}});
  ipcMain.handle('mdf:check-update',async event=>{requireTrusted(event);return await fetchRelease()});
  ipcMain.handle('mdf:download-update',async event=>{requireTrusted(event);return await exclusiveUpdate(downloadNewVersion)});
- ipcMain.handle('mdf:test-updater',async event=>{requireTrusted(event);return await exclusiveUpdate(testPowerShellUpdater)});
  ipcMain.handle('mdf:save', (event,kind,raw)=>{requireTrusted(event);return storeData(kind,raw)});
  ipcMain.handle('mdf:status',event=>{requireTrusted(event);return {folder:backupDir,orders:fs.existsSync(path.join(backupDir,safeFile('orders'))),project:fs.existsSync(path.join(backupDir,safeFile('project')))}});
  ipcMain.handle('mdf:manual-backup',async event=>{
@@ -400,7 +387,7 @@ function openApp(){
  return win;
 }
 app.whenReady().then(()=>{
- backupDir=path.join(app.getPath('userData'),'MDFCut-Backups');releasesRepo=loadUpdateSource()||DEFAULT_RELEASES_REPO;registerIPC();
+ backupDir=path.join(app.getPath('userData'),'MDFCut-Backups');registerIPC();
  protocol.handle('mdfcut',async request=>{
   const url=new URL(request.url);if(url.hostname!=='app'||url.pathname!=='/index.html')return new Response('Not found',{status:404});
   return net.fetch(pathToFileURL(path.join(__dirname,'app','index.html')).href)
