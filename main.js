@@ -45,6 +45,7 @@ function requireTrusted(event){if(event.senderFrame?.url !== 'mdfcut://app/index
 
 // Public GitHub Releases updater. Repo is configured by the user; never runs arbitrary commands.
 const REPO_PATTERN=/^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9._-]{1,100}$/;
+const DEFAULT_RELEASES_REPO='stonnygpt-rgb/mdf-cut-studio';
 let releasesRepo=null;
 let latestCache=null;
 let updaterBusy=false;
@@ -65,7 +66,7 @@ function setUpdateSource(repo){
 }
 async function fetchRelease(){
  const repo=releasesRepo||loadUpdateSource();if(!repo)throw Error('Configure primeiro o repositório GitHub.');
- const response=await net.fetch(`https://api.github.com/repos/${repo}/releases/latest`,{headers:{'Accept':'application/vnd.github+json','User-Agent':'MDF-Cut-Studio-updater'}});
+ const response=await net.fetch(`https://api.github.com/repos/${repo}/releases/latest`,{signal:AbortSignal.timeout(10000),headers:{'Accept':'application/vnd.github+json','User-Agent':'MDF-Cut-Studio-updater'}});
  if(!response.ok)throw Error(response.status===404?'Nenhuma versão pública publicada ainda (ou repositório não encontrado).':`GitHub respondeu HTTP ${response.status}`);
  const data=await response.json();const tag=String(data.tag_name||'');
  const version=tag.replace(/^v/i,'');if(!/^\d+\.\d+\.\d+$/.test(version))throw Error('Versão publicada inválida.');
@@ -399,7 +400,7 @@ function openApp(){
  return win;
 }
 app.whenReady().then(()=>{
- backupDir=path.join(app.getPath('userData'),'MDFCut-Backups');releasesRepo=loadUpdateSource();registerIPC();
+ backupDir=path.join(app.getPath('userData'),'MDFCut-Backups');releasesRepo=loadUpdateSource()||DEFAULT_RELEASES_REPO;registerIPC();
  protocol.handle('mdfcut',async request=>{
   const url=new URL(request.url);if(url.hostname!=='app'||url.pathname!=='/index.html')return new Response('Not found',{status:404});
   return net.fetch(pathToFileURL(path.join(__dirname,'app','index.html')).href)
