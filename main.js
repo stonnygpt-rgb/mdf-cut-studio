@@ -4,6 +4,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const {Readable} = require('node:stream');
+const {spawn} = require('node:child_process');
 const {pipeline} = require('node:stream/promises');
 const {pathToFileURL} = require('node:url');
 
@@ -70,28 +71,102 @@ async function fetchRelease(){
 }
 function compareVersions(a,b){const x=a.split('.').map(Number),y=b.split('.').map(Number);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]>y[i]?1:-1;return 0}
 function assertReleaseURL(url){const u=new URL(url);if(u.protocol!=='https:'||u.hostname!=='github.com'||!u.pathname.startsWith(`/${latestCache.repo}/releases/download/`))throw Error('Endereço de download não autorizado.');return url}
+
+// The portable app is a self-extracting EXE. The running Electron process cannot
+// overwrite the original .exe, so a small local helper does so after it exits.
+// This helper is created from trusted application code, not fetched from GitHub.
+const REPLACE_PS = String.raw`param(
+  [Parameter(Mandatory=$true)][string]$Source,
+  [Parameter(Mandatory=$true)][string]$Target,
+  [Parameter(Mandatory=$true)][int]$ParentPid,
+  [Parameter(Mandatory=$true)][string]$ExpectedHash,
+  [Parameter(Mandatory=$true)][string]$LogFile
+)
+$ErrorActionPreference = 'Stop'
+$next = "$Target.mdfcut-next"
+$previous = "$Target.mdfcut-previous"
+try {
+  for ($i = 0; $i -lt 240; $i++) {
+    if (-not (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue)) { break }
+    Start-Sleep -Milliseconds 500
+  }
+  if (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue) {
+    throw 'O MDF Cut nao encerrou em ate dois minutos.'
+  }
+  if (-not (Test-Path -LiteralPath $Target -PathType Leaf)) {
+    throw 'Executavel original nao foi encontrado.'
+  }
+  Copy-Item -LiteralPath $Source -Destination $next -Force
+  $actual = (Get-FileHash -LiteralPath $next -Algorithm SHA256).Hash.ToLowerInvariant()
+  if ($actual -ne $ExpectedHash) { throw 'Verificacao SHA-256 apos copiar falhou.' }
+  if (Test-Path -LiteralPath $previous) { Remove-Item -LiteralPath $previous -Force }
+  Move-Item -LiteralPath $Target -Destination $previous
+  try {
+    Move-Item -LiteralPath $next -Destination $Target
+    Start-Process -FilePath $Target
+    "Atualizado em $(Get-Date -Format o)" | Set-Content -LiteralPath $LogFile
+    Remove-Item -LiteralPath $Source -Force -ErrorAction SilentlyContinue
+  } catch {
+    if (Test-Path -LiteralPath $Target) { Remove-Item -LiteralPath $Target -Force }
+    Move-Item -LiteralPath $previous -Destination $Target -ErrorAction SilentlyContinue
+    Start-Process -FilePath $Target -ErrorAction SilentlyContinue
+    throw
+  }
+} catch {
+  $errorMessage = "Atualizacao nao concluida: $($_.Exception.Message)"
+  $errorMessage | Set-Content -LiteralPath $LogFile -Encoding UTF8
+  Add-Type -AssemblyName System.Windows.Forms
+  [System.Windows.Forms.MessageBox]::Show(
+    "$errorMessage" + [Environment]::NewLine + "A versao anterior foi preservada quando possivel.",
+    "MDF Cut Studio - Atualizacao"
+  ) | Out-Null
+} finally {
+  Remove-Item -LiteralPath $next -Force -ErrorAction SilentlyContinue
+}
+`;
 async function downloadNewVersion(){
- // Recheck release before download to avoid trusting stale UI state.
- const status=await fetchRelease();if(!status.isNew)throw Error('Você já está na versão mais recente.');
- const checksumUrl=assertReleaseURL(latestCache.checksum.url),exeUrl=assertReleaseURL(latestCache.exe.url);
- const r=await net.fetch(checksumUrl);if(!r.ok)throw Error('Não foi possível obter o checksum do GitHub.');
- const hashes=await r.text();const file=latestCache.exe.name;
- const line=hashes.split(/\r?\n/).find(l=>l.trim().endsWith('  '+file));
- if(!line||!/^([0-9a-f]{64})\s{2}/i.test(line))throw Error('Checksum SHA256 não encontrado para este executável.');
- const expected=line.match(/^([0-9a-f]{64})/i)[1].toLowerCase();
- const dir=app.getPath('downloads');const dest=path.join(dir,file),tmp=dest+'.download';
- const result=await net.fetch(exeUrl);if(!result.ok||!result.body)throw Error('Falha ao baixar atualização.');
- if(latestCache.exe.size>400*1024*1024)throw Error('Arquivo maior que o limite permitido.');
- const hasher=crypto.createHash('sha256');let count=0;
- try{
-  const stream=Readable.fromWeb(result.body);
-  stream.on('data',chunk=>{count+=chunk.length;hasher.update(chunk);if(count>400*1024*1024)stream.destroy(Error('Download excede o limite.'))});
-  await pipeline(stream,fs.createWriteStream(tmp));
-  if(hasher.digest('hex')!==expected)throw Error('Verificação SHA256 falhou; arquivo descartado.');
-  fs.renameSync(tmp,dest);
- }catch(e){try{fs.rmSync(tmp,{force:true})}catch{}throw e}
- shell.showItemInFolder(dest);
- return {ok:true,file:dest,message:'Executável verificado e salvo na pasta Downloads. Feche o MDF Cut e abra o novo EXE.'};
+  // Always verify the newest public release and hash before installing anything.
+  const status=await fetchRelease();
+  if(!status.isNew)throw Error('Você já está na versão mais recente.');
+  const checksumUrl=assertReleaseURL(latestCache.checksum.url);
+  const exeUrl=assertReleaseURL(latestCache.exe.url);
+  if(latestCache.exe.size>400*1024*1024)throw Error('Arquivo maior que o limite permitido.');
+  const r=await net.fetch(checksumUrl);if(!r.ok)throw Error('Não foi possível obter o checksum do GitHub.');
+  const hashes=await r.text(),file=latestCache.exe.name;
+  const line=hashes.split(/\r?\n/).find(l=>l.trim().endsWith('  '+file));
+  if(!line||!/^([0-9a-f]{64})\s{2}/i.test(line))throw Error('Checksum SHA256 não encontrado para o executável.');
+  const expected=line.match(/^([0-9a-f]{64})/i)[1].toLowerCase();
+  const portablePath=process.env.PORTABLE_EXECUTABLE_FILE;
+  if(process.platform!=='win32'||!portablePath||!fs.existsSync(portablePath)) {
+    throw Error('Atualização automática disponível apenas no MDF Cut Studio portátil para Windows.');
+  }
+  const dir=path.join(app.getPath('userData'),'Atualizacoes');
+  fs.mkdirSync(dir,{recursive:true});
+  const dest=path.join(dir,file),tmp=dest+'.download';
+  const result=await net.fetch(exeUrl);
+  if(!result.ok||!result.body)throw Error('Falha ao baixar atualização.');
+  const hasher=crypto.createHash('sha256');let count=0;
+  try{
+    const stream=Readable.fromWeb(result.body);
+    stream.on('data',chunk=>{count+=chunk.length;hasher.update(chunk);if(count>400*1024*1024)stream.destroy(Error('Download excede o limite.'))});
+    await pipeline(stream,fs.createWriteStream(tmp));
+    if(hasher.digest('hex')!==expected)throw Error('Verificação SHA256 falhou; atualização descartada.');
+    if(fs.existsSync(dest))fs.rmSync(dest,{force:true});
+    fs.renameSync(tmp,dest);
+  }catch(e){try{fs.rmSync(tmp,{force:true})}catch{}throw e}
+  // Only replace the original portable executable. Do not touch userData.
+  const scriptPath=path.join(dir,'aplicar-atualizacao.ps1'),logFile=path.join(dir,'ultima-atualizacao.log');
+  fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
+  const child=spawn('powershell.exe',[
+    '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
+    '-File',scriptPath,'-Source',dest,'-Target',path.resolve(portablePath),
+    '-ParentPid',String(process.pid),'-ExpectedHash',expected,'-LogFile',logFile
+  ],{detached:true,windowsHide:true,stdio:'ignore'});
+  child.on('error',e=>{try{fs.writeFileSync(logFile,'Falha ao iniciar atualizador: '+e.message)}catch{}});
+  child.unref();
+  // Respond to the UI before closing so its current data can finish saving.
+  setTimeout(()=>app.quit(),700);
+  return {ok:true,installing:true,message:'Download verificado. O MDF Cut fechará, atualizará o EXE e reabrirá automaticamente.'};
 }
 
 function registerIPC(){
