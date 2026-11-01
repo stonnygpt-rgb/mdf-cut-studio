@@ -26,6 +26,8 @@ jobs:
           }
       - name: Instalar dependências
         run: npm install --no-audit --no-fund
+      - name: Testar atualização e recuperação no Windows
+        run: npm test
       - name: Compilar executável portátil
         run: npm run dist:portable
       - name: Gerar checksums SHA256
@@ -56,4 +58,5 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
               throw "Falha ao publicar o executável."
           }
+
 

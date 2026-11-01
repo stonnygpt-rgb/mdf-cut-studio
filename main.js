@@ -47,6 +47,13 @@ function requireTrusted(event){if(event.senderFrame?.url !== 'mdfcut://app/index
 const REPO_PATTERN=/^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9._-]{1,100}$/;
 let releasesRepo=null;
 let latestCache=null;
+let updaterBusy=false;
+async function exclusiveUpdate(action){
+ if(updaterBusy)throw Error('Uma atualização ou teste já está em andamento.');
+ updaterBusy=true;
+ try{const result=await action();if(!result?.installing)updaterBusy=false;return result}
+ catch(error){updaterBusy=false;throw error}
+}
 function updaterConfigFile(){return path.join(app.getPath('userData'),'update-source.json')}
 function loadUpdateSource(){
  try{const config=JSON.parse(fs.readFileSync(updaterConfigFile(),'utf8'));return REPO_PATTERN.test(config.repo)?config.repo:null}catch{return null}
@@ -70,89 +77,149 @@ async function fetchRelease(){
  return {repo,installed,available:version,isNew,url:data.html_url,asset:exe.name};
 }
 function compareVersions(a,b){const x=a.split('.').map(Number),y=b.split('.').map(Number);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]>y[i]?1:-1;return 0}
-function assertReleaseURL(url){const u=new URL(url);if(u.protocol!=='https:'||u.hostname!=='github.com'||!u.pathname.startsWith(`/${latestCache.repo}/releases/download/`))throw Error('Endereço de download não autorizado.');return url}
+function assertReleaseURL(url,repo=latestCache.repo){const u=new URL(url);if(u.protocol!=='https:'||u.hostname!=='github.com'||!u.pathname.startsWith(`/${repo}/releases/download/`))throw Error('Endereço de download não autorizado.');return url}
 
 // The portable app is a self-extracting EXE. The running Electron process cannot
 // overwrite the original .exe, so a small local helper does so after it exits.
 // This helper is created from trusted application code, not fetched from GitHub.
 const REPLACE_PS = String.raw`param(
-  [Parameter(Mandatory=$true)][string]$Source,
-  [Parameter(Mandatory=$true)][string]$Target,
-  [Parameter(Mandatory=$true)][int]$ParentPid,
-  [Parameter(Mandatory=$true)][string]$ExpectedHash,
-  [Parameter(Mandatory=$true)][string]$LogFile,
-  [Parameter(Mandatory=$true)][string]$ReadyFile,
-  [switch]$TestOnly
+  [string]$Source = $env:MDFCUT_SOURCE,
+  [string]$Target = $env:MDFCUT_TARGET,
+  [int]$ParentPid = [int]$env:MDFCUT_PARENT,
+  [string]$ExpectedHash = $env:MDFCUT_SHA256,
+  [string]$LogFile = $env:MDFCUT_LOG,
+  [string]$ReadyFile = $env:MDFCUT_READY,
+  [switch]$TestOnly = ($env:MDFCUT_TEST -eq '1')
 )
 $ErrorActionPreference = 'Stop'
-$next = "$Target.mdfcut-next"
-$previous = "$Target.mdfcut-previous"
+$token = $env:MDFCUT_TOKEN
+$next = "$Target.mdfcut-next-$token"
+$previous = "$Target.mdfcut-previous-$token"
+$replaced = $false
+$launched = $false
+$parentExited = $false
+function Write-Log([string]$message) {
+  "$(Get-Date -Format o) $message" | Add-Content -LiteralPath $LogFile -Encoding UTF8
+}
+function Open-Application {
+  # The old portable launcher's extraction directory and console may be gone.
+  Remove-Item Env:PORTABLE_EXECUTABLE_FILE -ErrorAction SilentlyContinue
+  Remove-Item Env:PORTABLE_EXECUTABLE_DIR -ErrorAction SilentlyContinue
+  Remove-Item Env:PORTABLE_EXECUTABLE_APP_FILENAME -ErrorAction SilentlyContinue
+  Remove-Item Env:ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
+  $start = New-Object System.Diagnostics.ProcessStartInfo
+  $start.FileName = $Target
+  $start.WorkingDirectory = [IO.Path]::GetDirectoryName($Target)
+  $start.UseShellExecute = $true
+  return [System.Diagnostics.Process]::Start($start)
+}
 try {
-  "Atualizador iniciado: $(Get-Date -Format o)" | Set-Content -LiteralPath $LogFile -Encoding UTF8
-  "READY" | Set-Content -LiteralPath $ReadyFile -Encoding ASCII
-  if ($TestOnly) { "Teste de inicializacao concluido." | Add-Content -LiteralPath $LogFile; return }
+  Write-Log "Auxiliar independente iniciado (PID $PID); alvo: $Target"
+  if ($token -notmatch '^[a-f0-9]{32}$') { throw 'Identificador de atualizacao invalido.' }
+  if (-not $TestOnly) {
+    if ($ExpectedHash -notmatch '^[a-f0-9]{64}$') { throw 'SHA-256 invalido.' }
+    if (-not [IO.Path]::IsPathRooted($Target) -or -not (Test-Path -LiteralPath $Target -PathType Leaf)) { throw 'Executavel original nao encontrado.' }
+    if ([IO.Path]::GetFullPath($Source) -eq [IO.Path]::GetFullPath($Target)) { throw 'Origem e destino devem ser diferentes.' }
+    # Stage and verify in the target directory BEFORE asking Electron to quit.
+    # This also checks write permission and available space while the app is open.
+    [IO.File]::Copy($Source, $next, $false)
+    $sha = [Security.Cryptography.SHA256]::Create()
+    $inputFile = [IO.File]::OpenRead($next)
+    try { $actual = [BitConverter]::ToString($sha.ComputeHash($inputFile)).Replace('-', '').ToLowerInvariant() }
+    finally { $inputFile.Dispose(); $sha.Dispose() }
+    if ($actual -ne $ExpectedHash) { throw 'Verificacao SHA-256 da copia falhou.' }
+    Write-Log 'Copia verificada na pasta do executavel; aguardando encerramento.'
+  }
+  [IO.File]::WriteAllText($ReadyFile, "READY:$token")
+  if ($TestOnly) { Write-Log 'Teste de inicializacao concluido.'; exit 0 }
   for ($i = 0; $i -lt 240; $i++) {
+    if (Test-Path -LiteralPath "$ReadyFile.cancel") { throw 'Atualizacao cancelada pelo aplicativo.' }
     if (-not (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue)) { break }
     Start-Sleep -Milliseconds 500
   }
-  if (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue) {
-    throw 'O MDF Cut nao encerrou em ate dois minutos.'
-  }
-  'Programa encerrado; iniciando substituicao.' | Add-Content -LiteralPath $LogFile
-  if (-not (Test-Path -LiteralPath $Target -PathType Leaf)) {
-    throw 'Executavel original nao foi encontrado.'
-  }
-  Copy-Item -LiteralPath $Source -Destination $next -Force
-  $actual = (Get-FileHash -LiteralPath $next -Algorithm SHA256).Hash.ToLowerInvariant()
-  if ($actual -ne $ExpectedHash) { throw 'Verificacao SHA-256 apos copiar falhou.' }
-  if (Test-Path -LiteralPath $previous) { Remove-Item -LiteralPath $previous -Force }
-  # NSIS portable launchers can briefly keep the original .exe locked.
-  $moved = $false
+  if (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue) { throw 'O MDF Cut nao encerrou em ate dois minutos.' }
+  $parentExited = $true
+  if (Test-Path -LiteralPath "$ReadyFile.cancel") { exit 1 }
+  Write-Log 'Processo principal encerrado; aguardando liberacao do EXE portatil.'
   for ($attempt = 0; $attempt -lt 120; $attempt++) {
     try {
-      Move-Item -LiteralPath $Target -Destination $previous -ErrorAction Stop
-      $moved = $true
+      # Same-volume replacement preserves the original atomically as a backup.
+      # Never delete the target first; a locked EXE leaves the original intact.
+      [IO.File]::Replace($next, $Target, $previous)
+      $replaced = $true
       break
-    } catch {
-      Start-Sleep -Milliseconds 500
+    } catch { Start-Sleep -Milliseconds 500 }
+  }
+  if (-not $replaced) { throw 'EXE bloqueado ou substituicao nao permitida; original mantido.' }
+  Write-Log "EXE substituido; anterior preservado em: $previous"
+  $process = Open-Application
+  $launched = $true
+  Write-Log "Reabertura solicitada (PID $($process.Id)); aguardando confirmacao da interface."
+  for ($i = 0; $i -lt 120; $i++) {
+    if (Test-Path -LiteralPath $env:MDFCUT_ACK -PathType Leaf) {
+      try {
+        $ack = Get-Content -LiteralPath $env:MDFCUT_ACK -Raw | ConvertFrom-Json
+        if ($ack.token -eq $token -and $ack.version -eq $env:MDFCUT_VERSION) {
+          Write-Log "SUCESSO: interface da versao $($ack.version) carregada (PID $($ack.pid))."
+          exit 0
+        }
+      } catch { } # A partially written acknowledgement is retried.
     }
+    Start-Sleep -Milliseconds 500
   }
-  if (-not $moved) { throw 'Nao foi possivel substituir o EXE (arquivo bloqueado ou sem permissao).' }
-  'Executavel anterior preservado; aplicando nova versao.' | Add-Content -LiteralPath $LogFile
-  try {
-    Move-Item -LiteralPath $next -Destination $Target
-    Start-Process -FilePath $Target
-    "Atualizado em $(Get-Date -Format o)" | Set-Content -LiteralPath $LogFile
-    Remove-Item -LiteralPath $Source -Force -ErrorAction SilentlyContinue
-  } catch {
-    if (Test-Path -LiteralPath $Target) { Remove-Item -LiteralPath $Target -Force }
-    Move-Item -LiteralPath $previous -Destination $Target -ErrorAction SilentlyContinue
-    throw
-  }
+  # Do not roll back a running application: it may already be using saved data.
+  Write-Log 'REINICIO NAO CONFIRMADO em 60 segundos. EXE novo, download e anterior preservados para diagnostico.'
+  exit 2
 } catch {
-  $errorMessage = "Atualizacao nao concluida: $($_.Exception.Message)"
-  $errorMessage | Add-Content -LiteralPath $LogFile -Encoding UTF8
-  if (Test-Path -LiteralPath $Target -PathType Leaf) {
-    try { Start-Process -FilePath $Target } catch { "Falha ao reabrir versao anterior: $($_.Exception.Message)" | Add-Content -LiteralPath $LogFile }
+  Write-Log "FALHA: $($_.Exception.Message)"
+  [IO.File]::WriteAllText("$ReadyFile.failed", $_.Exception.Message)
+  if ($replaced -and -not $launched) {
+    try {
+      [IO.File]::Replace($previous, $Target, "$Target.mdfcut-failed-$token")
+      Write-Log 'Executavel anterior restaurado.'
+    } catch { Write-Log "FALHA AO RESTAURAR: $($_.Exception.Message). Copia anterior: $previous" }
   }
-  Add-Type -AssemblyName System.Windows.Forms
-  [System.Windows.Forms.MessageBox]::Show(
-    "$errorMessage" + [Environment]::NewLine + "A versao anterior foi preservada quando possivel.",
-    "MDF Cut Studio - Atualizacao"
-  ) | Out-Null
+  if ($parentExited -and -not $launched -and (Test-Path -LiteralPath $Target -PathType Leaf)) {
+    try { $null = Open-Application; Write-Log 'Reabertura de recuperacao solicitada.' }
+    catch { Write-Log "FALHA AO REABRIR: $($_.Exception.Message)" }
+  }
+  exit 1
 } finally {
-  Remove-Item -LiteralPath $next -Force -ErrorAction SilentlyContinue
+  if (Test-Path -LiteralPath $next -PathType Leaf) {
+    Remove-Item -LiteralPath $next -Force -ErrorAction SilentlyContinue
+  }
+}
+`;
+const BOOTSTRAP_PS = String.raw`$ErrorActionPreference = 'Stop'
+try {
+  # Do not use Node detached:true for Windows PowerShell: on affected Windows
+  # hosts it can exit with code 0 without executing the script at all.
+  # Shell-start a separate hidden worker with its own console; no parent pipes.
+  $arguments = '-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + $env:MDFCUT_SCRIPT + '"'
+  $start = New-Object System.Diagnostics.ProcessStartInfo
+  $start.FileName = Join-Path $PSHOME 'powershell.exe'
+  $start.Arguments = $arguments
+  $start.WorkingDirectory = $env:MDFCUT_DIR
+  $start.UseShellExecute = $true
+  $start.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+  $worker = [System.Diagnostics.Process]::Start($start)
+  "Auxiliar iniciado em processo separado: PID $($worker.Id)" | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8
+  exit 0
+} catch {
+  "Falha no inicializador: $($_.Exception.Message)" | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8
+  exit 1
 }
 `;
 async function downloadNewVersion(){
   // Always verify the newest public release and hash before installing anything.
   const status=await fetchRelease();
   if(!status.isNew)throw Error('Você já está na versão mais recente.');
-  const checksumUrl=assertReleaseURL(latestCache.checksum.url);
-  const exeUrl=assertReleaseURL(latestCache.exe.url);
-  if(latestCache.exe.size>400*1024*1024)throw Error('Arquivo maior que o limite permitido.');
+  const release=latestCache; // Keep this download pinned even if another check refreshes the cache.
+  const checksumUrl=assertReleaseURL(release.checksum.url,release.repo);
+  const exeUrl=assertReleaseURL(release.exe.url,release.repo);
+  if(release.exe.size>400*1024*1024)throw Error('Arquivo maior que o limite permitido.');
   const r=await net.fetch(checksumUrl);if(!r.ok)throw Error('Não foi possível obter o checksum do GitHub.');
-  const hashes=await r.text(),file=latestCache.exe.name;
+  const hashes=await r.text(),file=release.exe.name;
   const line=hashes.split(/\r?\n/).find(l=>l.trim().endsWith('  '+file));
   if(!line||!/^([0-9a-f]{64})\s{2}/i.test(line))throw Error('Checksum SHA256 não encontrado para o executável.');
   const expected=line.match(/^([0-9a-f]{64})/i)[1].toLowerCase();
@@ -160,8 +227,9 @@ async function downloadNewVersion(){
   if(process.platform!=='win32'||!portablePath||!fs.existsSync(portablePath)) {
     throw Error('Atualização automática disponível apenas no MDF Cut Studio portátil para Windows.');
   }
-  const dir=path.join(app.getPath('userData'),'Atualizacoes');
-  fs.mkdirSync(dir,{recursive:true});
+  const updateRoot=path.join(app.getPath('userData'),'Atualizacoes');
+  fs.mkdirSync(updateRoot,{recursive:true});
+  const dir=fs.mkdtempSync(path.join(updateRoot,'instalacao-'));
   const dest=path.join(dir,file),tmp=dest+'.download';
   const result=await net.fetch(exeUrl);
   if(!result.ok||!result.body)throw Error('Falha ao baixar atualização.');
@@ -176,22 +244,23 @@ async function downloadNewVersion(){
   }catch(e){try{fs.rmSync(tmp,{force:true})}catch{}throw e}
   // Only replace the original portable executable. Do not touch userData.
   const scriptPath=path.join(dir,'aplicar-atualizacao.ps1');
-  const logFile=path.join(dir,'ultima-atualizacao.log');
+  const logFile=path.join(updateRoot,'ultima-atualizacao.log');
   const readyFile=path.join(dir,'atualizador-pronto.flag');
   try{fs.rmSync(readyFile,{force:true})}catch{}
   fs.writeFileSync(logFile,'Atualização verificada. Tentando iniciar instalador externo.\n','utf8');
   fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
 
 
-  const {child}=startPowerShellUpdater({
+  const {child,outLog,token}=startPowerShellUpdater({
     dir,scriptPath,source:dest,target:path.resolve(portablePath),
-    parentPid:process.pid,expected,logFile,readyFile,testOnly:false
+    parentPid:process.pid,expected,logFile,readyFile,testOnly:false,version:release.version
   });
 
   // The MDF Cut stays open until the actual external installer signals READY.
   const helperReady=await waitPowerShellReady({
-    child,readyFile,logFile,outLog:path.join(dir,'powershell-saida.log')
+    child,readyFile,logFile,outLog,token
   }).catch(e=>{
+    try{fs.writeFileSync(readyFile+'.cancel','CANCEL')}catch{}
     try{child.kill()}catch{}
     try{fs.appendFileSync(logFile,'ERRO: '+e.message+'\n','utf8')}catch{}
     throw Error(e.message+' O programa permanecerá aberto.');
@@ -204,73 +273,74 @@ async function downloadNewVersion(){
 }
 
 
-function startPowerShellUpdater({dir,scriptPath,source,target,parentPid,expected,logFile,readyFile,testOnly}){
-  // PowerShell receives all paths in environment variables to avoid quoting
-  // issues. Using -Command rather than -EncodedCommand enables direct logging.
+function startPowerShellUpdater({dir,scriptPath,source,target,parentPid,expected,logFile,readyFile,testOnly,version=''}){
+  const token=crypto.randomBytes(16).toString('hex');
+  const bootstrapPath=path.join(dir,'iniciar-atualizador.ps1');
+  const outLog=path.join(dir,'inicializador-saida.log');
+  fs.writeFileSync(bootstrapPath,BOOTSTRAP_PS,'utf8');
   const env={...process.env,
     MDFCUT_SCRIPT:scriptPath,MDFCUT_SOURCE:source,MDFCUT_TARGET:target,
     MDFCUT_PARENT:String(parentPid),MDFCUT_SHA256:expected,
-    MDFCUT_LOG:logFile,MDFCUT_READY:readyFile,MDFCUT_TEST:testOnly?'1':'0'
+    MDFCUT_LOG:logFile,MDFCUT_READY:readyFile,MDFCUT_TEST:testOnly?'1':'0',
+    MDFCUT_DIR:dir,
+    MDFCUT_ACK:path.join(dir,'reinicio-confirmado.json'),MDFCUT_TOKEN:token,MDFCUT_VERSION:version
   };
-  const command=[
-    "$ErrorActionPreference = 'Stop'",
-    "try {",
-    "  'PowerShell iniciou a execucao do instalador.' | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8",
-    "  $dryrun = $env:MDFCUT_TEST -eq '1'",
-    "  & $env:MDFCUT_SCRIPT -Source $env:MDFCUT_SOURCE -Target $env:MDFCUT_TARGET -ParentPid ([int]$env:MDFCUT_PARENT) -ExpectedHash $env:MDFCUT_SHA256 -LogFile $env:MDFCUT_LOG -ReadyFile $env:MDFCUT_READY -TestOnly:$dryrun",
-    "} catch {",
-    "  ('Falha ao executar atualizador: '+$_.Exception.Message) | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8",
-    "  exit 1",
-    "}"
-  ].join('\n');
-  const outLog=path.join(dir,testOnly?'teste-powershell-saida.log':'powershell-saida.log');
-  fs.writeFileSync(outLog,'Inicializando auxiliar em '+new Date().toISOString()+'\n','utf8');
-  const child=spawn('powershell.exe',[
-    '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
-    '-Command',command
-  ],{detached:false,windowsHide:true,stdio:['ignore','pipe','pipe'],env});
-  const save=(channel,data)=>{
-    try{fs.appendFileSync(outLog,'['+channel+'] '+data.toString('utf8')+'\n','utf8')}catch{}
-  };
-  child.stdout?.on('data',b=>save('stdout',b));
-  child.stderr?.on('data',b=>save('stderr',b));
-  return {child,outLog};
+  // Do not inherit PowerShell 7 module paths into Windows PowerShell 5.1.
+  for(const key of Object.keys(env))if(key.toLowerCase()==='psmodulepath')delete env[key];
+  const fd=fs.openSync(outLog,'a');
+  let child;
+  try{
+    const powershell=path.join(process.env.SystemRoot||'C:\\Windows','System32','WindowsPowerShell','v1.0','powershell.exe');
+    child=spawn(powershell,[
+      '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',bootstrapPath
+    ],{detached:false,windowsHide:true,cwd:dir,stdio:['ignore',fd,fd],env});
+  }finally{fs.closeSync(fd)}
+  return {child,outLog,token};
 }
-async function waitPowerShellReady({child,readyFile,logFile,outLog}){
+async function waitPowerShellReady({child,readyFile,logFile,outLog,token}){
   return await new Promise((resolve,reject)=>{
-    let done=false;
-    let poll,timer;
-    const finish=(error)=>{
+    let done=false,poll,timer;
+    const finish=error=>{
       if(done)return;done=true;clearInterval(poll);clearTimeout(timer);
+      child.removeListener('error',onError);child.removeListener('close',onClose);
       if(error)reject(error);else resolve(true);
     };
-    child.once('error',e=>finish(Error('Não foi possível iniciar PowerShell: '+e.message)));
-    child.once('close',(code,signal)=>{
-      if(fs.existsSync(readyFile)){finish();return}
-      let detail='';
-      try{detail=fs.readFileSync(outLog,'utf8').slice(-2000)}catch{}
-      try{detail+='\n'+fs.readFileSync(logFile,'utf8').slice(-1000)}catch{}
-      finish(Error('Atualizador encerrou antes do sinal READY (código '+code+', sinal '+signal+'). '+detail));
-    });
-    poll=setInterval(()=>{if(fs.existsSync(readyFile))finish()},120);
-    timer=setTimeout(()=>finish(Error('O atualizador não confirmou a inicialização em 15 segundos.')),15000);
+    const detail=()=>{
+      let text='';
+      for(const file of [logFile,outLog]){
+        try{text+='\n'+fs.readFileSync(file,'utf8').slice(-1500)}catch{}
+      }
+      return text;
+    };
+    const onError=e=>finish(Error('Não foi possível iniciar PowerShell: '+e.message));
+    // The short bootstrap normally exits before the independent worker is ready.
+    // Only a nonzero exit is a failure; READY belongs to the worker, not bootstrap.
+    const onClose=code=>{if(code!==0)finish(Error('Falha no inicializador (código '+code+'). '+detail()))};
+    child.once('error',onError);child.once('close',onClose);
+    poll=setInterval(()=>{
+      try{const failure=fs.readFileSync(readyFile+'.failed','utf8');finish(Error('Falha na preparação: '+failure));return}catch{}
+      try{if(fs.readFileSync(readyFile,'utf8')==='READY:'+token)finish()}catch{}
+    },120);
+    timer=setTimeout(()=>finish(Error('O auxiliar não confirmou a preparação em 30 segundos. '+detail())),30000);
   });
 }
+
 async function testPowerShellUpdater(){
-  const dir=path.join(app.getPath('userData'),'Atualizacoes');
-  fs.mkdirSync(dir,{recursive:true});
+  const updateRoot=path.join(app.getPath('userData'),'Atualizacoes');
+  fs.mkdirSync(updateRoot,{recursive:true});
+  const dir=fs.mkdtempSync(path.join(updateRoot,'teste-'));
   const scriptPath=path.join(dir,'aplicar-atualizacao.ps1');
   const logFile=path.join(dir,'teste-inicializacao.log');
   const readyFile=path.join(dir,'teste-inicializacao.ready');
   fs.rmSync(readyFile,{force:true});
   fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
   fs.writeFileSync(logFile,'Teste seguro do inicializador do MDF Cut.\n','utf8');
-  const {child,outLog}=startPowerShellUpdater({
+  const {child,outLog,token}=startPowerShellUpdater({
     dir,scriptPath,source:scriptPath,target:scriptPath,
     parentPid:process.pid,expected:'0'.repeat(64),logFile,readyFile,testOnly:true
   });
   try{
-    await waitPowerShellReady({child,readyFile,logFile,outLog});
+    await waitPowerShellReady({child,readyFile,logFile,outLog,token});
     return {ok:true,message:'Teste aprovado. PowerShell executou o auxiliar e confirmou READY. Nenhum executável foi alterado.'};
   }catch(e){return {ok:false,message:e.message}}
 }
@@ -279,8 +349,8 @@ function registerIPC(){
  ipcMain.handle('mdf:update-source',event=>{requireTrusted(event);return {repo:releasesRepo||loadUpdateSource()||'',version:app.getVersion()}});
  ipcMain.handle('mdf:set-update-source',(event,repo)=>{requireTrusted(event);return setUpdateSource(repo)});
  ipcMain.handle('mdf:check-update',async event=>{requireTrusted(event);return await fetchRelease()});
- ipcMain.handle('mdf:download-update',async event=>{requireTrusted(event);return await downloadNewVersion()});
- ipcMain.handle('mdf:test-updater',async event=>{requireTrusted(event);return await testPowerShellUpdater()});
+ ipcMain.handle('mdf:download-update',async event=>{requireTrusted(event);return await exclusiveUpdate(downloadNewVersion)});
+ ipcMain.handle('mdf:test-updater',async event=>{requireTrusted(event);return await exclusiveUpdate(testPowerShellUpdater)});
  ipcMain.handle('mdf:save', (event,kind,raw)=>{requireTrusted(event);return storeData(kind,raw)});
  ipcMain.handle('mdf:status',event=>{requireTrusted(event);return {folder:backupDir,orders:fs.existsSync(path.join(backupDir,safeFile('orders'))),project:fs.existsSync(path.join(backupDir,safeFile('project')))}});
  ipcMain.handle('mdf:manual-backup',async event=>{
@@ -309,9 +379,21 @@ function registerIPC(){
  ipcMain.handle('mdf:read-local',event=>{requireTrusted(event);let data={};for(const kind of Object.keys(KEYS)){const p=path.join(backupDir,safeFile(kind));if(fs.existsSync(p)){const raw=fs.readFileSync(p,'utf8');checkPayload(kind,raw);data[KEYS[kind]]=raw}}return {data}});
  ipcMain.handle('mdf:folder',async event=>{requireTrusted(event);ensureDir();await shell.openPath(backupDir);return {ok:true}});
 }
+function confirmUpdatedStartup(){
+ const env=process.env,ack=env.MDFCUT_ACK,token=env.MDFCUT_TOKEN;
+ if(!ack||!token||env.MDFCUT_VERSION!==app.getVersion())return;
+ const root=path.join(app.getPath('userData'),'Atualizacoes');
+ const relative=path.relative(root,path.resolve(ack));
+ if(!relative||relative.startsWith('..')||path.isAbsolute(relative))return;
+ if(!env.PORTABLE_EXECUTABLE_FILE||path.resolve(env.PORTABLE_EXECUTABLE_FILE).toLowerCase()!==path.resolve(env.MDFCUT_TARGET||'').toLowerCase())return;
+ try{atomicWrite(ack,JSON.stringify({token,version:app.getVersion(),pid:process.pid}));}
+ catch(error){console.error('Não foi possível confirmar o reinício da atualização:',error);}
+}
 function openApp(){
  const win=new BrowserWindow({title:'MDF Cut Studio',width:1440,height:900,minWidth:1024,minHeight:660,backgroundColor:'#101f2a',show:false,webPreferences:{preload:path.join(__dirname,'preload.js'),nodeIntegration:false,contextIsolation:true,sandbox:true,webSecurity:true,devTools:false,spellcheck:false}});
- win.once('ready-to-show',()=>win.show());win.loadURL('mdfcut://app/index.html');
+ win.once('ready-to-show',()=>win.show());
+ win.webContents.once('did-finish-load',()=>confirmUpdatedStartup());
+ win.loadURL('mdfcut://app/index.html');
  win.webContents.setWindowOpenHandler(()=>({action:'deny'}));
  win.webContents.on('will-navigate',(event,url)=>{if(!url.startsWith('mdfcut://app/'))event.preventDefault()});
  return win;
@@ -325,3 +407,4 @@ app.whenReady().then(()=>{
  Menu.setApplicationMenu(null);openApp();app.on('activate',()=>{if(!BrowserWindow.getAllWindows().length)openApp()});
 });
 app.on('window-all-closed',()=>{if(process.platform!=='darwin')app.quit()});
+

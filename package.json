@@ -1,7 +1,7 @@
 {
   "name": "mdf-cut-studio-desktop",
   "productName": "MDF Cut Studio",
-  "version": "3.2.10",
+  "version": "3.2.11",
   "description": "MDF Cut Studio para Windows: planos de corte e ordens de serviço",
   "main": "main.js",
   "private": true,
@@ -9,6 +9,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start": "electron .",
+    "test": "node --test tests/updater.test.cjs",
     "dist:win": "electron-builder --win nsis --x64",
     "dist:portable": "electron-builder --win portable --x64"
   },
@@ -51,3 +52,4 @@
     }
   }
 }
+
