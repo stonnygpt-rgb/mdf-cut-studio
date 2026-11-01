@@ -80,12 +80,15 @@ const REPLACE_PS = String.raw`param(
   [Parameter(Mandatory=$true)][string]$Target,
   [Parameter(Mandatory=$true)][int]$ParentPid,
   [Parameter(Mandatory=$true)][string]$ExpectedHash,
-  [Parameter(Mandatory=$true)][string]$LogFile
+  [Parameter(Mandatory=$true)][string]$LogFile,
+  [Parameter(Mandatory=$true)][string]$ReadyFile
 )
 $ErrorActionPreference = 'Stop'
 $next = "$Target.mdfcut-next"
 $previous = "$Target.mdfcut-previous"
 try {
+  "Atualizador iniciado: $(Get-Date -Format o)" | Set-Content -LiteralPath $LogFile -Encoding UTF8
+  "READY" | Set-Content -LiteralPath $ReadyFile -Encoding ASCII
   for ($i = 0; $i -lt 240; $i++) {
     if (-not (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue)) { break }
     Start-Sleep -Milliseconds 500
@@ -93,6 +96,7 @@ try {
   if (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue) {
     throw 'O MDF Cut nao encerrou em ate dois minutos.'
   }
+  'Programa encerrado; iniciando substituicao.' | Add-Content -LiteralPath $LogFile
   if (-not (Test-Path -LiteralPath $Target -PathType Leaf)) {
     throw 'Executavel original nao foi encontrado.'
   }
@@ -112,6 +116,7 @@ try {
     }
   }
   if (-not $moved) { throw 'Nao foi possivel substituir o EXE (arquivo bloqueado ou sem permissao).' }
+  'Executavel anterior preservado; aplicando nova versao.' | Add-Content -LiteralPath $LogFile
   try {
     Move-Item -LiteralPath $next -Destination $Target
     Start-Process -FilePath $Target
@@ -120,12 +125,14 @@ try {
   } catch {
     if (Test-Path -LiteralPath $Target) { Remove-Item -LiteralPath $Target -Force }
     Move-Item -LiteralPath $previous -Destination $Target -ErrorAction SilentlyContinue
-    Start-Process -FilePath $Target -ErrorAction SilentlyContinue
     throw
   }
 } catch {
   $errorMessage = "Atualizacao nao concluida: $($_.Exception.Message)"
-  $errorMessage | Set-Content -LiteralPath $LogFile -Encoding UTF8
+  $errorMessage | Add-Content -LiteralPath $LogFile -Encoding UTF8
+  if (Test-Path -LiteralPath $Target -PathType Leaf) {
+    try { Start-Process -FilePath $Target } catch { "Falha ao reabrir versao anterior: $($_.Exception.Message)" | Add-Content -LiteralPath $LogFile }
+  }
   Add-Type -AssemblyName System.Windows.Forms
   [System.Windows.Forms.MessageBox]::Show(
     "$errorMessage" + [Environment]::NewLine + "A versao anterior foi preservada quando possivel.",
@@ -166,18 +173,47 @@ async function downloadNewVersion(){
     fs.renameSync(tmp,dest);
   }catch(e){try{fs.rmSync(tmp,{force:true})}catch{}throw e}
   // Only replace the original portable executable. Do not touch userData.
-  const scriptPath=path.join(dir,'aplicar-atualizacao.ps1'),logFile=path.join(dir,'ultima-atualizacao.log');
+  const scriptPath=path.join(dir,'aplicar-atualizacao.ps1');
+  const logFile=path.join(dir,'ultima-atualizacao.log');
+  const readyFile=path.join(dir,'atualizador-pronto.flag');
+  try{fs.rmSync(readyFile,{force:true})}catch{}
+  fs.writeFileSync(logFile,'Atualização verificada. Tentando iniciar instalador externo.\n','utf8');
   fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
-  const child=spawn('powershell.exe',[
-    '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
-    '-File',scriptPath,'-Source',dest,'-Target',path.resolve(portablePath),
-    '-ParentPid',String(process.pid),'-ExpectedHash',expected,'-LogFile',logFile
-  ],{detached:true,windowsHide:true,stdio:'ignore'});
-  child.on('error',e=>{try{fs.writeFileSync(logFile,'Falha ao iniciar atualizador: '+e.message)}catch{}});
-  child.unref();
-  // Respond to the UI before closing so its current data can finish saving.
-  setTimeout(()=>app.quit(),700);
-  return {ok:true,installing:true,message:'Download verificado. O MDF Cut fechará, atualizará o EXE e reabrirá automaticamente.'};
+  let child;
+  try {
+    child=spawn('powershell.exe',[
+      '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
+      '-File',scriptPath,'-Source',dest,'-Target',path.resolve(portablePath),
+      '-ParentPid',String(process.pid),'-ExpectedHash',expected,'-LogFile',logFile,'-ReadyFile',readyFile
+    ],{detached:true,windowsHide:true,stdio:'ignore'});
+  }catch(e) {
+    fs.appendFileSync(logFile,'Falha ao iniciar PowerShell: '+e.message+'\n');
+    throw Error('Não foi possível iniciar o atualizador. O MDF Cut continuará aberto.');
+  }
+  // Never close the app before the external helper confirms it has started.
+  const helperReady=await new Promise((resolve,reject)=>{
+    let finished=false;
+    const finish=(err)=>{
+      if(finished)return;finished=true;
+      clearInterval(interval);clearTimeout(timeout);
+      if(err)reject(err);else resolve(true);
+    };
+    child.once('error',e=>finish(Error('Falha ao iniciar instalador: '+e.message)));
+    child.once('exit',code=>finish(Error('Instalador encerrou antes de iniciar (código '+code+').')));
+    const interval=setInterval(()=>{
+      if(fs.existsSync(readyFile))finish();
+    },150);
+    const timeout=setTimeout(()=>finish(Error('O instalador não confirmou a inicialização.')),10000);
+  }).catch(e=>{
+    try{child.kill()}catch{}
+    fs.appendFileSync(logFile,'ERRO: '+e.message+'\n','utf8');
+    throw Error(e.message+' Consulte ultima-atualizacao.log. O programa permanecerá aberto.');
+  });
+  if(helperReady){
+    child.unref();
+    setTimeout(()=>app.quit(),1200);
+  }
+  return {ok:true,installing:true,message:'Atualizador iniciado e confirmado. O MDF Cut fechará, substituirá o EXE e reabrirá.'};
 }
 
 function registerIPC(){
