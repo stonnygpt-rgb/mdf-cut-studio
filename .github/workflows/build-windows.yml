@@ -1,0 +1,39 @@
+name: Publicar MDF Cut Studio Windows
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+permissions:
+  contents: write
+jobs:
+  windows-portable:
+    runs-on: windows-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Conferir versão
+        shell: pwsh
+        run: |
+          $package = Get-Content package.json | ConvertFrom-Json
+          if ('v' + $package.version -ne '${{ github.ref_name }}') { throw 'A tag deve ser igual a versão do package.json' }
+      - name: Instalar dependências
+        run: npm install --no-audit --no-fund
+      - name: Compilar executável portátil
+        run: npm run dist:portable
+      - name: Gerar checksums SHA256
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem dist -Filter '*-Portable.exe'
+          if ($files.Count -ne 1) { throw 'Era esperado exatamente um executável portátil.' }
+          $lines = foreach ($file in $files) { "{0}  {1}" -f ((Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLower()), $file.Name }
+          [System.IO.File]::WriteAllLines((Join-Path (Get-Location) 'dist/SHA256SUMS.txt'), $lines, (New-Object System.Text.UTF8Encoding($false)))
+      - name: Publicar GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" (Get-ChildItem dist -Filter '*-Portable.exe' | ForEach-Object { $_.FullName }) dist/SHA256SUMS.txt --title "MDF Cut Studio ${{ github.ref_name }}" --generate-notes --verify-tag
