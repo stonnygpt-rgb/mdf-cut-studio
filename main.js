@@ -205,7 +205,16 @@ async function downloadNewVersion(){
     child=spawn('powershell.exe',[
       '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
       '-EncodedCommand',commandB64
-    ],{detached:true,windowsHide:true,stdio:'ignore'});
+    ],{detached:true,windowsHide:true,stdio:['ignore','pipe','pipe']});
+    // Capture even early PowerShell parser/invocation errors. Previously stderr
+    // was discarded and exit code 0 gave no actionable diagnosis.
+    const outputLog=path.join(dir,'powershell-saida.log');
+    fs.writeFileSync(outputLog,'Processo iniciado em '+new Date().toISOString()+'\n','utf8');
+    const record=(name,buf)=>{
+      try{fs.appendFileSync(outputLog,'['+name+'] '+buf.toString('utf8')+'\n','utf8')}catch{}
+    };
+    child.stdout?.on('data',data=>record('stdout',data));
+    child.stderr?.on('data',data=>record('stderr',data));
   }catch(e) {
     fs.appendFileSync(logFile,'Falha ao iniciar PowerShell: '+e.message+'\n');
     throw Error('Não foi possível iniciar o atualizador. O MDF Cut continuará aberto.');
@@ -219,7 +228,7 @@ async function downloadNewVersion(){
       if(err)reject(err);else resolve(true);
     };
     child.once('error',e=>finish(Error('Falha ao iniciar instalador: '+e.message)));
-    child.once('exit',code=>{let detail='';try{detail=fs.readFileSync(logFile,'utf8').slice(-1500)}catch{}finish(Error('Instalador encerrou antes de iniciar (código '+code+'). '+detail));});
+    child.once('close',(code,signal)=>{let detail='';try{detail=fs.readFileSync(path.join(dir,'powershell-saida.log'),'utf8').slice(-2000)}catch{}finish(Error('Instalador encerrou antes de iniciar (código '+code+', sinal '+signal+'). '+detail));});
     const interval=setInterval(()=>{
       if(fs.existsSync(readyFile))finish();
     },150);
