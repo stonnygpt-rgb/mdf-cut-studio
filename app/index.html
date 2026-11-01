@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f2f5f7">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("mdf-cut-studio-theme")==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
+<title>MDF Cut Studio v2.9 — Ordens de serviço e planos de corte</title>
+<style>
+:root{color-scheme:light;--ink:#172b38;--muted:#718391;--teal:#087d72;--teal-dark:#05685f;--teal-light:#e7f6f2;--line:#e1e8ed;--surface:#fff;--bg:#f2f5f7;--navy:#102738;--danger:#c94744;--shadow:0 7px 25px rgba(30,53,68,.055);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-synthesis:none}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}body{font-size:14px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.46}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #91d7cd;outline-offset:2px}button{transition:background .16s,transform .12s}button:active:not(:disabled){transform:translateY(1px)}.app{display:grid;grid-template-columns:335px minmax(0,1fr);min-height:100vh}.sidebar{background:#fff;border-right:1px solid var(--line);height:100vh;position:sticky;top:0;display:flex;flex-direction:column;min-width:0}.brand{display:flex;align-items:center;gap:12px;padding:25px 22px 23px;border-bottom:1px solid #edf0f3}.brand-mark{display:grid;place-items:center;width:41px;height:41px;border-radius:12px;background:#0a776e;color:white;flex-shrink:0}.brand-name{font-size:19px;font-weight:820;letter-spacing:-.65px;line-height:1.1}.brand-name em{font-style:normal;color:var(--teal)}.brand-sub{font-size:10px;font-weight:700;letter-spacing:1.5px;color:#8395a2;margin-top:4px}.sidebar-scroll{padding:20px 17px 10px;overflow:auto;min-height:0;flex:1}.section-label{font-size:10px;font-weight:850;letter-spacing:1.65px;text-transform:uppercase;color:#93a1ab;margin:5px 7px 13px}.side-card{border:1px solid var(--line);background:#fff;border-radius:14px;padding:15px;margin-bottom:15px;box-shadow:0 2px 12px #1a344006}.section-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:15px}.section-head strong{font-size:14px;letter-spacing:-.15px}.mini-kicker{font-size:11px;color:var(--muted);font-weight:650}.form-label{display:block;font-size:11px;font-weight:780;color:#536878;margin-bottom:6px}.field{min-width:0}.field input,.field select,.name-input{display:block;width:100%;min-width:0;border:1px solid #d8e2e8;background:#fff;color:#173440;border-radius:9px;padding:9px 10px;min-height:38px;outline:0}.field input:focus,.field select:focus,.name-input:focus{border-color:#58b3a7;box-shadow:0 0 0 3px #d7f2ec}.field input[type=number]{font-variant-numeric:tabular-nums}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}.field-help{display:block;font-size:10px;color:#81909a;margin-top:6px}.sidebar-bottom{padding:15px 17px 18px;border-top:1px solid var(--line);background:#fff}.primary-btn,.outline-btn,.ghost-btn,.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;border:1px solid transparent;font-weight:750;white-space:nowrap}.primary-btn{background:var(--teal);color:#fff;padding:11px 15px;box-shadow:0 4px 12px #087d7220}.primary-btn:hover{background:var(--teal-dark)}.outline-btn{background:#fff;color:#37505e;border-color:#dde6e9;padding:10px 13px}.outline-btn:hover{background:#f5f8f9}.ghost-btn{background:transparent;color:var(--teal);padding:6px 8px}.ghost-btn:hover{background:var(--teal-light)}.icon-btn{width:35px;height:35px;padding:0;background:#fff;border-color:var(--line);color:#526878}.icon-btn:hover{background:#edf6f4}.icon-btn[aria-pressed=true],.tool-btn[aria-pressed=true]{background:var(--teal-light);color:var(--teal);border-color:#c3e8df}.icon-btn svg,.primary-btn svg,.outline-btn svg,.ghost-btn svg,.tool-btn svg{width:17px;height:17px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}.inline-flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px}.full-width{width:100%}.micro-copy{color:#788d99;font-size:11px;line-height:1.5}.parts-list{display:flex;flex-direction:column;gap:9px;max-height:none}.part-row{border:1px solid #e4e9ed;border-radius:11px;padding:11px;background:#fcfdfe}.part-row-top{display:flex;gap:8px;align-items:center;margin-bottom:9px}.part-dot{width:10px;height:10px;border-radius:3px;flex:0 0 10px}.part-row-top .name-input{padding:7px 8px;min-height:32px;font-size:12px;font-weight:700}.part-remove{height:30px;width:30px;border:0;border-radius:7px;color:#98a8ae;background:#f1f5f6;flex-shrink:0;font-size:18px}.part-remove:hover{color:var(--danger);background:#fff0ed}.part-cols{display:grid;grid-template-columns:1fr 1fr .72fr;gap:8px}.part-cols label{display:block;color:#80919a;font-size:10px;font-weight:700;margin-bottom:4px}.part-cols input{width:100%;min-width:0;min-height:32px;padding:6px 8px;border:1px solid #dce5ea;border-radius:7px;font-size:12px;background:#fff}.part-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}.check-label{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#607583;cursor:pointer}.check-label input{accent-color:var(--teal);margin:0;width:14px;height:14px}.pieces-foot{font-size:11px;color:#7f909b;margin:11px 2px 2px}.main{min-width:0}.topbar{background:#fff;border-bottom:1px solid var(--line);min-height:72px;padding:15px 28px;display:flex;justify-content:space-between;align-items:center;gap:12px}.breadcrumbs{font-size:11px;color:#7b8d98}.breadcrumbs strong{color:#455b68}.breadcrumbs span{color:#c1cbd1;padding:0 6px}.toolbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar-actions .outline-btn{font-size:12px;padding:9px 12px}.save-indicator{font-size:11px;color:#80949d;display:flex;align-items:center;gap:6px;margin-right:5px}.save-indicator:before{content:"";width:7px;height:7px;border-radius:50%;background:#38b69b;display:block}.workspace{max-width:1600px;margin:auto;padding:30px 28px 40px}.page-head{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:21px}.page-head h1{font-size:26px;margin:0;letter-spacing:-1.1px;line-height:1.25}.page-head p{font-size:13px;color:#7c909c;margin:5px 0 0}.page-head .primary-btn{min-height:43px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:19px;margin-bottom:19px}.metric{background:#fff;border:1px solid #e2e9ee;border-radius:15px;padding:17px 18px;min-height:108px;box-shadow:var(--shadow);position:relative;overflow:hidden}.metric-label{font-size:11px;color:#81909b;font-weight:750}.metric-value{display:block;font-size:26px;font-weight:850;letter-spacing:-1.1px;line-height:1.2;margin:9px 0 3px;font-variant-numeric:tabular-nums}.metric-footer{font-size:10px;color:#93a4ad}.metric-icon{position:absolute;right:14px;top:16px;opacity:.46;color:#698490}.metric-icon svg{width:21px;height:21px;stroke-width:1.7;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}.metric.highlight .metric-value{color:var(--teal)}.workspace-grid{display:grid;grid-template-columns:minmax(0,1fr) 283px;gap:18px;align-items:start}.panel{background:#fff;border:1px solid #e1e8ed;border-radius:16px;box-shadow:var(--shadow);min-width:0}.canvas-panel{overflow:hidden}.canvas-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 17px;border-bottom:1px solid #e8edf1;flex-wrap:wrap}.canvas-heading{display:flex;align-items:center;gap:9px}.canvas-heading strong{font-size:14px}.tag{display:inline-flex;align-items:center;border:1px solid #d9e8e5;background:#edf7f5;color:#208074;border-radius:7px;padding:4px 7px;font-size:10px;font-weight:800;letter-spacing:.1px}.tabs-scroll{display:flex;align-items:center;gap:7px;overflow:auto;padding:11px 16px;border-bottom:1px solid #ecf0f2}.sheet-tab{border:1px solid #e0e7eb;border-radius:8px;background:#f7f9fa;color:#6b7e8b;padding:8px 12px;font-size:11px;font-weight:800;white-space:nowrap}.sheet-tab.active{background:#e7f6f2;color:#087a70;border-color:#a7ded4}.sheet-tab small{font-size:10px;margin-left:5px;color:#8da0aa}.sheet-tab.active small{color:#338d83}.tab-add{min-width:31px;min-height:31px;border-radius:8px;border:1px dashed #cad8dd;background:white;color:#7b919b;font-size:18px}.canvas-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 16px;border-bottom:1px solid #edf0f2;flex-wrap:wrap}.tool-left,.tool-right{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.tool-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #e0e7eb;background:#fff;border-radius:8px;color:#556a78;font-size:11px;font-weight:720;padding:7px 9px;min-height:32px}.tool-btn:hover{background:#f4f8f8}.tool-btn svg{width:14px;height:14px}.zoom-label{font-size:11px;font-weight:850;color:#4a606f;width:39px;text-align:center;font-variant-numeric:tabular-nums}.board-scroll{background-color:#f6f8fa;background-image:radial-gradient(#dce3e8 1px,transparent 1px);background-size:18px 18px;overflow:auto;padding:30px;min-height:420px;max-height:670px;display:flex;align-items:flex-start;justify-content:flex-start;position:relative}.board-empty{margin:auto;text-align:center;max-width:310px;padding:30px 15px}.board-empty-icon{background:#e4f3f0;color:#0a8074;width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:27px;margin:0 auto 15px}.board-empty h3{font-size:17px;margin:0 0 6px}.board-empty p{font-size:12px;color:#8899a4;line-height:1.6}.board-holder{width:100%;min-width:0;display:flex;align-items:flex-start;justify-content:flex-start}.board-svg{display:block;flex-shrink:0;background:#e5ceab;border:2px solid #c7a979;box-shadow:0 15px 27px rgba(87,94,93,.18);border-radius:3px;touch-action:none;user-select:none}.board-svg .part-group{cursor:grab}.board-svg .part-group:active{cursor:grabbing}.canvas-bottom{border-top:1px solid #e6ecf0;padding:12px 16px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.legend{display:flex;align-items:center;gap:13px;flex-wrap:wrap}.legend span{font-size:11px;color:#8796a1;display:flex;align-items:center;gap:5px}.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}.board-meta{font-size:11px;color:#788d98}.inspector{display:flex;flex-direction:column;gap:16px}.inspector .panel{padding:17px}.panel-title{font-weight:830;letter-spacing:-.2px;font-size:14px;margin:0 0 4px}.panel-description{color:#84949d;font-size:11px;line-height:1.5;margin:0 0 14px}.selection-empty{background:#f6f9fa;border:1px dashed #dbe5e9;border-radius:10px;padding:17px 12px;text-align:center;color:#8396a2;line-height:1.55;font-size:11px}.selection-empty .glyph{font-size:24px;margin-bottom:7px}.selection-name{font-size:14px;font-weight:800;margin:8px 0 4px;overflow-wrap:anywhere}.selection-dims{font-size:11px;color:#788e99;margin:0 0 14px}.selection-fields{display:grid;grid-template-columns:1fr 1fr;gap:11px}.selection-fields .field:last-child{grid-column:1/-1}.selection-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.selection-actions button{font-size:11px;padding:9px 8px}.rule{height:1px;background:#e9edf0;margin:14px 0}.sheet-summary{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#7a8e99;gap:8px}.sheet-summary b{color:#2e4955}.progress{height:7px;background:#eaf0f2;border-radius:8px;overflow:hidden;margin:11px 0 7px}.progress>span{height:100%;display:block;background:#13a58f;border-radius:8px;transition:width .2s}.leftovers{display:flex;flex-direction:column;gap:7px;margin-top:10px}.leftover-row{display:flex;align-items:center;gap:9px;border:1px solid #e6ecef;border-radius:9px;background:#fbfdfd;padding:9px 10px}.leftover-icon{height:30px;width:30px;background:#e7f6ee;color:#249469;display:grid;place-items:center;border-radius:8px;flex-shrink:0;font-size:12px;font-weight:850}.leftover-size{font-weight:820;font-size:11px}.leftover-area{font-size:10px;color:#889ba6;margin-top:2px}.fine-print{color:#8b9aa4;font-size:10px;line-height:1.6;margin-top:12px}.action-stack{display:grid;gap:8px}.action-stack button{justify-content:flex-start}.notice{border-radius:12px;background:#fff9eb;border:1px solid #f2e7cd;padding:13px 15px;color:#8a6934;font-size:11px;line-height:1.65;margin-top:19px}.notice strong{color:#765a2c}.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,18px);background:#153b42;color:#fff;border-radius:11px;padding:12px 17px;font-size:12px;box-shadow:0 10px 25px #0f28343d;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:90vw}.toast.visible{opacity:1;transform:translate(-50%,0)}.hidden{display:none!important}.print-report{display:none}.footer-version{font-size:10px;color:#97a7af;text-align:center;margin-top:9px}.kbd{display:inline-block;padding:1px 4px;border:1px solid #d9e3e7;border-radius:4px;background:white;font-size:10px;color:#637a87}.missing-strip{padding:10px 15px;background:#fff3e9;border-bottom:1px solid #f0d9c2;color:#a05a2e;font-size:11px;font-weight:650}.project-pill{border-radius:100px;background:#edf7f4;border:1px solid #d5eae5;color:#287e74;font-size:10px;font-weight:750;padding:5px 9px}.hint-line{font-size:11px;color:#8496a2;margin-top:10px;line-height:1.5}.sheet-label{font-size:11px;color:#82949d}.modal-backdrop{position:fixed;inset:0;display:grid;place-items:center;background:#10273885;z-index:25;padding:16px}.modal{width:min(460px,100%);background:white;border-radius:17px;box-shadow:0 20px 70px #09212b55;padding:25px}.modal h2{margin:0 0 8px;font-size:19px}.modal p{color:#687f8c;font-size:13px;line-height:1.7}.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}.file-input{display:none}.tip{background:#eaf7f4;color:#2a716b;border-radius:8px;padding:8px 10px;font-size:10px;line-height:1.6}
+@media(max-width:1390px){.app{grid-template-columns:305px minmax(0,1fr)}.workspace-grid{grid-template-columns:minmax(0,1fr) 255px}.workspace{padding:25px 20px 32px}.topbar{padding:15px 20px}.metric{padding:14px 13px}.metric-value{font-size:24px}.board-scroll{padding:22px}}
+@media(max-width:1100px){.workspace-grid{grid-template-columns:1fr}.inspector{display:grid;grid-template-columns:1fr 1fr;gap:13px}.inspector .panel:last-child{grid-column:1/-1}.board-scroll{max-height:650px}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.app{display:block}.sidebar{position:static;height:auto}.sidebar-scroll{overflow:visible;padding:14px}.brand{padding:15px}.sidebar-bottom{padding:13px 15px}.parts-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.topbar{padding:13px 15px}.workspace{padding:20px 12px}.page-head{align-items:flex-start}.page-head h1{font-size:22px}.page-head .primary-btn{font-size:11px;padding:10px}.save-indicator{display:none}.metric{min-height:95px}.metrics{gap:8px}.metric-value{font-size:23px}.inspector{grid-template-columns:1fr}.inspector .panel:last-child{grid-column:auto}.board-scroll{padding:14px;min-height:300px}.canvas-tools{gap:8px}.toolbar-actions{gap:5px}.toolbar-actions button{font-size:11px}.notice{margin-top:13px}}
+@media(max-width:420px){.page-head{display:block}.page-head .primary-btn{margin-top:13px;width:100%}.breadcrumbs{display:none}.topbar{justify-content:flex-end}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.canvas-top{padding:12px}.metric-icon{display:none}.tool-btn{padding:7px}.sidebar-scroll{padding:12px}.board-scroll{min-height:260px}}
+@page{size:A4 landscape;margin:10mm}
+@media print{body{background:white!important;color:#111;print-color-adjust:exact;-webkit-print-color-adjust:exact}.app,.toast,.modal-backdrop{display:none!important}.print-report{display:block!important}.print-cover{margin-bottom:10mm;border-bottom:1px solid #ccc;padding-bottom:5mm}.print-cover h1{font-size:20pt;margin:0 0 2mm}.print-cover p{margin:0 0 2mm;color:#444;font-size:9pt}.print-page{page-break-inside:avoid;break-inside:avoid;page-break-after:always;margin-bottom:9mm}.print-page:last-child{page-break-after:auto}.print-page h2{font-size:14pt;margin:0 0 3mm}.print-meta{font-size:8pt;margin-bottom:3mm;color:#444}.print-page svg{display:block;width:235mm;max-height:157mm;height:auto;margin:0 auto 3mm;background:#e2c8a5;border:1px solid #8c7758}.print-legend{font-size:8pt;line-height:1.4}.print-warning{font-size:8pt;color:#555;margin-top:4mm}.print-table{width:100%;border-collapse:collapse;font-size:8pt}.print-table td,.print-table th{border:1px solid #ccc;padding:4px;text-align:left}}
+
+.quality-select{width:100%;min-height:39px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:8px 9px;color:var(--ink);font-size:12px}
+.quality-select:focus{border-color:#0a887b;outline:2px solid #c4e9df;outline-offset:1px}
+.optimization-card{background:linear-gradient(145deg,#ffffff,#f2faf8)}
+.optimization-insight{font-size:11px;color:#176b60;background:#e4f5ef;border:1px solid #c8e6d9;border-radius:9px;padding:10px 11px;margin-top:10px;line-height:1.6}
+
+/* MDF Cut Studio v0.5 — modal de exportação e aparência adaptável */
+.theme-switch{gap:7px!important}.theme-switch #themeIcon{font-size:18px;line-height:1}.export-main-btn{padding:9px 14px;font-size:12px}
+.export-backdrop{position:fixed;inset:0;background:rgba(6,19,29,.65);backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:center;padding:18px;z-index:40;overflow-y:auto}
+.export-dialog{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 90px rgba(0,10,20,.3);width:min(580px,100%);max-height:calc(100vh - 36px);overflow:auto}
+.export-header{padding:26px 28px 21px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--line);background:linear-gradient(115deg,var(--teal-light),var(--surface) 64%)}
+.export-head-icon{width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;border-radius:13px;background:var(--teal);color:white;font-size:23px;font-weight:800}
+.export-head-copy{flex:1;min-width:0}.export-kicker{font-size:10px;color:var(--teal);font-weight:900;letter-spacing:1.6px;margin-bottom:4px}
+.export-header h2{margin:0 0 5px;font-size:23px;letter-spacing:-.7px}.export-header p{margin:0;font-size:12px;color:var(--muted);line-height:1.5}
+.export-close{border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:23px;border-radius:10px;width:35px;height:35px;flex-shrink:0}
+.export-close:hover{color:var(--ink);background:var(--teal-light)}.export-inner{padding:21px 28px 16px}
+.export-project-line{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:19px}.export-project-line>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.export-subtitle{font-size:10px;color:var(--muted);font-weight:750;text-transform:uppercase;letter-spacing:.7px}.export-project-line strong{font-size:14px;overflow-wrap:anywhere}.export-ready{border:1px solid #c6e6da;background:#eaf7f0;color:#18745c;border-radius:30px;padding:6px 10px;font-size:10px;font-weight:850;white-space:nowrap}
+.export-ready.unready{background:#fff3e7;color:#9c6434;border-color:#f0dac0}
+.export-section-label{font-size:11px;color:var(--ink);font-weight:850;margin-bottom:9px}.export-scope{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;padding:11px 13px;background:var(--bg);border:1px solid var(--line);border-radius:11px}
+.export-scope label{font-size:12px;font-weight:750;color:var(--muted)}.export-scope select{min-width:0;max-width:66%;font-size:12px;font-weight:750;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 10px}
+.export-options{display:grid;gap:9px}.export-option{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px 13px;color:var(--ink);transition:border-color .15s,background .15s,transform .15s}
+.export-option:hover:not(:disabled){background:var(--teal-light);border-color:#73beb2;transform:translateY(-1px)}.export-option-icon{height:42px;width:42px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.export-option-icon svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.project-icon{background:#e8f5f1;color:#178b74}.pdf-icon{background:#fff0eb;color:#d36b49}.print-icon{background:#eaf1fc;color:#5986d0}
+.export-option-copy{min-width:0;display:flex;flex:1;flex-direction:column;gap:4px}.export-option-copy strong{font-size:13px}.export-option-copy small{font-size:11px;color:var(--muted);line-height:1.5}.export-option-arrow{color:var(--teal);font-weight:900;font-size:18px;flex-shrink:0}
+.export-more{padding:15px 3px 12px;display:flex;gap:10px;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}.export-more button{color:var(--teal);font-weight:800;background:transparent;border:none;padding:4px}
+.export-note{background:var(--bg);padding:11px 13px;border-radius:10px;border:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.6}
+.export-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 28px 19px;border-top:1px solid var(--line)}.export-footer>span{font-size:10px;color:var(--muted)}
+:root[data-theme="dark"]{color-scheme:dark;--ink:#e7f0f4;--muted:#a1b3bf;--teal:#27c4b0;--teal-dark:#158a7e;--teal-light:#183c3e;--line:#344a57;--surface:#182d3a;--bg:#0f202b;--navy:#081721;--danger:#f0766f;--shadow:0 7px 25px rgba(0,0,0,.16)}
+[data-theme="dark"] .sidebar,[data-theme="dark"] .brand,[data-theme="dark"] .sidebar-bottom,[data-theme="dark"] .topbar,[data-theme="dark"] .side-card,[data-theme="dark"] .panel,[data-theme="dark"] .metric{background:var(--surface);border-color:var(--line)}
+[data-theme="dark"] .part-row,[data-theme="dark"] .leftover-row,[data-theme="dark"] .selection-empty{background:#1d3543;border-color:var(--line)}
+[data-theme="dark"] .field input,[data-theme="dark"] .field select,[data-theme="dark"] .name-input,[data-theme="dark"] .part-cols input,[data-theme="dark"] .quality-select,[data-theme="dark"] .selection-fields input,[data-theme="dark"] .selection-fields select{background:#102531;color:var(--ink);border-color:#456171}
+[data-theme="dark"] input::placeholder{color:#7594a3}
+[data-theme="dark"] .outline-btn,[data-theme="dark"] .icon-btn,[data-theme="dark"] .tool-btn,[data-theme="dark"] .sheet-tab,[data-theme="dark"] .tab-add{background:#203846;border-color:#395462;color:#d4e6ed}
+[data-theme="dark"] .outline-btn:hover,[data-theme="dark"] .icon-btn:hover,[data-theme="dark"] .tool-btn:hover{background:#2d4b55}
+[data-theme="dark"] .form-label,[data-theme="dark"] .part-cols label,[data-theme="dark"] .check-label,[data-theme="dark"] .zoom-label,[data-theme="dark"] .breadcrumbs strong,[data-theme="dark"] .sheet-summary b{color:#d1e0e7}
+[data-theme="dark"] .brand-sub,[data-theme="dark"] .section-label,[data-theme="dark"] .mini-kicker,[data-theme="dark"] .field-help,[data-theme="dark"] .metric-label,[data-theme="dark"] .metric-footer,[data-theme="dark"] .panel-description,[data-theme="dark"] .board-meta,[data-theme="dark"] .selection-dims,[data-theme="dark"] .selection-empty,[data-theme="dark"] .sheet-summary,[data-theme="dark"] .legend span,[data-theme="dark"] .breadcrumbs,[data-theme="dark"] .page-head p,[data-theme="dark"] .fine-print,[data-theme="dark"] .micro-copy,[data-theme="dark"] .footer-version,[data-theme="dark"] .sheet-label,[data-theme="dark"] .hint-line,[data-theme="dark"] .save-indicator{color:#9aafbc}
+[data-theme="dark"] .part-remove{background:#2c4754;color:#b8d0da}
+[data-theme="dark"] .canvas-top,[data-theme="dark"] .canvas-tools,[data-theme="dark"] .canvas-bottom,[data-theme="dark"] .tabs-scroll{border-color:var(--line)}
+[data-theme="dark"] .board-scroll{background-color:#102632;background-image:radial-gradient(#34505e 1px,transparent 1px)}
+[data-theme="dark"] .tag,[data-theme="dark"] .project-pill,[data-theme="dark"] .sheet-tab.active{background:#1a4947;color:#6ce0cd;border-color:#306e65}
+[data-theme="dark"] .optimization-card{background:linear-gradient(145deg,#182d3a,#153638)}
+[data-theme="dark"] .optimization-insight,[data-theme="dark"] .tip{background:#184542;color:#a0e0d1;border-color:#2c736a}
+[data-theme="dark"] .progress{background:#324c5a}
+[data-theme="dark"] .rule{background:var(--line)}
+.page-head h1 span{color:var(--teal)!important}
+[data-theme="dark"] .leftover-icon{background:#245142;color:#90e3b8}
+[data-theme="dark"] .notice{background:#3b3126;border-color:#614d33;color:#e7c995}
+[data-theme="dark"] .notice strong{color:#f4d7a5}
+[data-theme="dark"] .modal{background:var(--surface);border:1px solid var(--line)}
+[data-theme="dark"] .modal p{color:var(--muted)}
+[data-theme="dark"] .export-ready{background:#193f35;color:#9de0ba;border-color:#306850}
+[data-theme="dark"] .export-ready.unready{background:#453320;color:#edc397;border-color:#705235}
+[data-theme="dark"] .project-icon{background:#1b4b40;color:#86dec5}
+[data-theme="dark"] .pdf-icon{background:#503429;color:#f6a47e}
+[data-theme="dark"] .print-icon{background:#263f64;color:#a9c6fc}
+[data-theme="dark"] .kbd{background:#203b48;color:#cee2eb;border-color:#43616c}
+[data-theme="dark"] .missing-strip{background:#4c3829;color:#ffd0a2;border-color:#79563a}
+@media(max-width:760px){.export-dialog{max-height:calc(100dvh - 22px)}.export-backdrop{padding:11px}.export-header{padding:20px 18px}.export-inner{padding:17px 18px}.export-footer{padding:12px 18px 16px}.theme-switch #themeLabel{display:none}.toolbar-actions .theme-switch{width:37px;height:37px;padding:0}.toolbar-actions .export-main-btn{font-size:11px}}
+@media(max-width:420px){.export-head-icon{width:38px;height:38px}.export-header h2{font-size:19px}.export-option{padding:12px 10px;gap:9px}.export-option-icon{height:37px;width:37px}.export-scope{flex-wrap:wrap}.export-scope select{width:100%;max-width:none}.export-more{align-items:flex-start}.export-footer>span{max-width:180px}.export-header{gap:10px}}
+@media print{.export-backdrop{display:none!important}}
+
+/* MDF Cut Studio 0.6 | Central de ordens de serviço */
+.is-hidden{display:none!important}
+.orders-view:not(.active-screen){display:none!important}
+#cutApp:not(.active-screen){display:none!important}
+.studio-nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:22px;background:var(--surface);border-bottom:1px solid var(--line);padding:0 26px;position:sticky;top:0;z-index:35;box-shadow:0 2px 16px rgba(10,29,42,.035)}
+.studio-logo{display:flex;align-items:center;gap:10px;min-width:202px;color:var(--ink);font-size:19px;letter-spacing:-.7px;font-weight:850;line-height:1}.studio-logo b{color:var(--teal)}.studio-logo small{display:block;font-size:9px;letter-spacing:1.4px;margin-top:6px;color:var(--muted);font-weight:750}.studio-logo-mark{height:37px;width:37px;border-radius:11px;display:grid;place-items:center;font-size:21px;background:#087d72;color:white}.studio-nav-links{display:flex;gap:6px;border-radius:12px;background:var(--bg);padding:4px}.studio-nav-button{border:0;border-radius:9px;color:var(--muted);padding:11px 15px;background:transparent;font-size:12px;font-weight:760;white-space:nowrap}.studio-nav-button span{margin-right:5px;font-size:15px;vertical-align:-1px}.studio-nav-button.is-active{color:var(--teal);background:var(--surface);box-shadow:0 2px 7px #142d3711}.studio-nav-button:hover{color:var(--teal)}.studio-nav-right{display:flex;align-items:center;gap:9px}.studio-theme,.studio-attach{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 12px;white-space:nowrap;font-size:12px;font-weight:740}.studio-theme{font-size:17px}.studio-theme span{font-size:11px;margin-left:5px}.studio-attach{background:var(--teal-light);color:var(--teal);border-color:var(--teal-light)}#cutApp .sidebar{height:calc(100vh - 70px);top:70px}
+.orders-view{min-height:calc(100vh - 70px);background:var(--bg)}.os-container{max-width:1500px;margin:0 auto;padding:34px 30px 60px}.os-page-head{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-bottom:26px}.os-eyebrow{font-size:10px;letter-spacing:1.8px;color:var(--teal);font-weight:870;display:flex;align-items:center;gap:8px;margin-bottom:10px}.os-pulse{width:7px;height:7px;border-radius:50%;background:#28bc9c;box-shadow:0 0 0 4px #2fbd9b1c}.os-page-head h1{font-size:31px;letter-spacing:-1.45px;line-height:1.1;margin:0;font-weight:850}.os-page-head h1 span{color:var(--teal)}.os-page-head p{font-size:13px;color:var(--muted);margin:9px 0 0}.os-head-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.os-head-actions .primary-btn,.os-head-actions .outline-btn{min-height:40px;font-size:12px}.os-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 20px}.os-stat{border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:21px 20px;box-shadow:var(--shadow);min-width:0}.os-stat-top{display:flex;align-items:center;justify-content:space-between;gap:6px;color:var(--muted);font-size:12px;font-weight:720}.os-stat-icon{display:grid;place-items:center;border-radius:10px;width:31px;height:31px;font-size:17px;font-weight:800}.os-stat-icon.gold{background:#fff1dc;color:#a86e1b}.os-stat-icon.blue{background:#e4f0ff;color:#497dd2}.os-stat-icon.green{background:#e1f7ed;color:#278769}.os-stat-icon.violet{background:#eee8ff;color:#7f65b7;font-size:11px}.os-stat>strong{font-size:30px;display:block;margin:7px 0 4px;line-height:1.1;letter-spacing:-1px;font-variant-numeric:tabular-nums}.os-stat:nth-child(4)>strong{font-size:25px}.os-stat small{font-size:11px;color:var(--muted)}.os-main-grid{display:grid;grid-template-columns:minmax(0,1fr) 315px;gap:18px;align-items:start}.os-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);min-width:0;overflow:hidden}.os-panel-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:22px 21px 16px}.os-panel-title h2,.os-form-card h2{font-size:16px;margin:0;letter-spacing:-.4px}.os-panel-title p,.os-form-card p{font-size:11.5px;color:var(--muted);margin:6px 0 0;line-height:1.5}.os-count-pill{border-radius:8px;border:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:800;padding:5px 8px;white-space:nowrap}.os-tabs{padding:0 21px;border-bottom:1px solid var(--line);display:flex;gap:14px;overflow:auto}.os-tab{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:11px 4px 13px;font-size:12px;font-weight:750;white-space:nowrap}.os-tab span{border-radius:6px;background:var(--bg);color:var(--muted);padding:2px 5px;margin-left:5px;font-size:10px}.os-tab.is-active{color:var(--teal);border-color:var(--teal)}.os-tab.is-active span{background:var(--teal-light);color:var(--teal)}.os-table-filters{padding:17px 21px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}.os-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:0 12px;min-height:39px;font-size:20px;color:var(--muted);max-width:100%;flex:1}.os-search:focus-within{border-color:#76c7bd}.os-search input{color:var(--ink);background:transparent;border:0;outline:none;width:100%;min-width:0;font-size:12px}.os-search input::placeholder{color:var(--muted);opacity:.9}.os-filter-badge{border-radius:7px;background:var(--teal-light);padding:6px 8px;font-size:11px;color:var(--teal);display:flex;gap:8px;align-items:center}.os-filter-badge button{border:0;background:transparent;color:inherit;cursor:pointer}.os-orders-table-wrap{width:100%;overflow-x:auto}.os-orders-table{border-collapse:collapse;width:100%;text-align:left;min-width:650px}.os-orders-table th{font-size:9.5px;letter-spacing:1.1px;color:var(--muted);padding:12px 20px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg);font-weight:840}.os-orders-table td{border-bottom:1px solid var(--line);padding:16px 20px;vertical-align:middle}.os-orders-table tbody tr{cursor:pointer}.os-orders-table tbody tr:hover{background:var(--teal-light)}.os-order-id{font-size:11px;display:block;color:var(--teal);font-weight:830;margin-bottom:5px}.os-order-name{font-size:12px;font-weight:770;color:var(--ink);max-width:230px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.os-client-name{font-size:12px;color:var(--ink);font-weight:730}.os-cell-secondary{font-size:10px;color:var(--muted);margin-top:5px}.os-money{font-size:12px;font-weight:800;white-space:nowrap}.os-status-chip{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:10px;font-weight:800;padding:6px 9px;border-radius:8px}.os-status-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}.os-status-chip.orcamento{color:#9a721f;background:#fff3da}.os-status-chip.producao{color:#3469a8;background:#e6f0ff}.os-status-chip.concluida{color:#228565;background:#e3f7ed}.os-row-action{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 9px;font-size:10px;font-weight:750;color:var(--teal)}.os-row-action:hover{background:var(--teal-light)}.os-row-buttons{display:flex;align-items:center;gap:6px;white-space:nowrap}.os-row-dotbtn{border:0;background:transparent;color:var(--teal);font-size:10px;font-weight:800}.os-empty{text-align:center;padding:50px 20px}.os-empty>div{font-size:37px;color:var(--teal);margin-bottom:7px}.os-empty h3{margin:0 0 7px;font-size:16px}.os-empty p{color:var(--muted);font-size:12px;margin:0 auto 15px;max-width:340px}.os-plus-btn{width:31px;height:31px;border:0;border-radius:9px;background:var(--teal-light);color:var(--teal);font-size:21px;line-height:1}.client-search{margin:0 20px 11px;width:calc(100% - 40px);flex:none}.os-client-list{padding:0 13px;max-height:590px;overflow:auto}.os-client-item{display:flex;align-items:center;gap:10px;padding:13px 8px;border-bottom:1px solid var(--line);border-radius:7px}.os-client-avatar{flex:0 0 37px;height:37px;border-radius:11px;background:var(--teal-light);color:var(--teal);display:grid;place-items:center;font-size:12px;font-weight:850}.os-client-content{min-width:0;flex:1}.os-client-content strong{font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.os-client-content small{font-size:10px;display:block;color:var(--muted);margin-top:4px}.os-client-buttons{display:flex;gap:3px}.os-client-buttons button{border:0;background:transparent;color:var(--muted);font-size:15px;border-radius:6px;padding:4px 6px}.os-client-buttons button:hover{color:var(--teal);background:var(--teal-light)}.os-client-item.selected{background:var(--teal-light)}.os-client-empty{padding:40px 18px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7}.os-client-foot{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:9px;color:var(--muted);font-size:10px;border-top:1px solid var(--line)}.os-text-button{border:0;background:transparent;color:var(--teal);font-weight:740;font-size:11px;padding:4px;white-space:nowrap}.os-local-note{margin:18px 0 0;color:var(--muted);font-size:11px;line-height:1.5}.os-local-note b{color:var(--ink)}
+.os-editor-container{max-width:1330px}.editor-heading{margin-bottom:22px}.os-back{border:0;background:transparent;color:var(--teal);font-size:12px;font-weight:750;margin:0 0 12px;padding:0}.os-document-head{border:1px solid var(--line);border-radius:15px;background:var(--surface);padding:20px 23px;display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:19px}.os-document-head strong{font-size:25px;letter-spacing:-.9px;display:block;margin:5px 0;font-variant-numeric:tabular-nums}.os-document-head small{font-size:11px;color:var(--muted)}.os-muted-label{font-weight:820;font-size:10px;letter-spacing:1.2px;color:var(--muted)}.os-document-fields{display:flex;gap:14px;align-items:center}.os-document-fields .os-field{min-width:175px}.os-editor-grid{display:grid;grid-template-columns:minmax(0,1.46fr) minmax(310px,1fr);gap:17px;align-items:start}.os-editor-left,.os-editor-right{display:flex;flex-direction:column;gap:17px;min-width:0}.os-form-card{padding:22px 23px;overflow:visible}.os-section-heading{display:flex;gap:11px;align-items:center;margin-bottom:21px}.os-section-icon{height:38px;width:38px;flex:0 0 38px;border-radius:11px;background:var(--teal-light);color:var(--teal);display:grid;place-items:center;font-size:20px;font-weight:760}.os-field{min-width:0;margin-bottom:15px}.os-field:last-child{margin-bottom:0}.os-field label{font-size:11px;font-weight:780;color:var(--ink);display:block;margin-bottom:7px}.os-field label em{font-style:normal;color:#ce6862}.os-field input,.os-field select,.os-field textarea{width:100%;min-width:0;min-height:40px;padding:10px 11px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;outline:0;font-size:12px}.os-field textarea{line-height:1.6;resize:vertical}.os-field input:focus,.os-field textarea:focus,.os-field select:focus{border-color:#68beb5;box-shadow:0 0 0 3px #51ac9c20}.os-field input::placeholder,.os-field textarea::placeholder{color:var(--muted);opacity:.85}.os-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 13px}.os-full{grid-column:1/-1}.os-textarea-field{margin-top:15px}.os-finance{background:var(--bg);border-radius:12px;padding:16px 17px;display:flex;flex-direction:column;gap:13px}.os-finance>div{display:flex;justify-content:space-between;align-items:center;gap:10px}.os-finance span{color:var(--muted);font-size:11px}.os-finance strong{font-size:12px;font-variant-numeric:tabular-nums}.os-finance .os-total-row{border-top:1px solid var(--line);padding-top:13px}.os-finance .os-total-row strong{font-size:21px;letter-spacing:-.5px;color:var(--teal)}.os-paid-label{border-radius:7px;background:var(--surface);padding:7px 9px;align-self:flex-start;color:var(--muted);font-size:10px;font-weight:770}.os-paid-label.has-entry{background:var(--teal-light);color:var(--teal)}.os-image-picker{border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:210px;background:var(--bg);overflow:hidden;cursor:pointer}.os-image-picker:focus-visible{outline:3px solid #91d7cd;outline-offset:2px}#osImagePlaceholder{text-align:center;padding:24px 8px;color:var(--muted)}#osImagePlaceholder>span{font-size:32px;display:block;color:var(--teal);margin-bottom:8px}#osImagePlaceholder strong{display:block;color:var(--ink);font-size:13px;margin-bottom:8px}#osImagePlaceholder small{display:block;font-size:11px;margin:5px 0}.os-image-picker img{display:block;max-width:100%;width:100%;max-height:340px;object-fit:contain}.os-image-actions{display:flex;justify-content:space-between;align-items:center;margin-top:11px}.os-image-actions .outline-btn{font-size:11px;padding:8px 10px}.os-helper{font-size:10px!important;color:var(--muted);line-height:1.55!important;margin:10px 0 0!important}.os-plan-empty{text-align:center;padding:37px 12px;background:var(--bg);border:1px dashed var(--line);border-radius:12px}.os-plan-empty>div{font-size:37px;color:var(--teal);margin-bottom:10px}.os-plan-empty strong{display:block;font-size:13px}.os-plan-empty p{font-size:11px;max-width:330px;margin:8px auto 0}.os-inline-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px;align-items:center}.os-inline-actions .outline-btn{font-size:11px;padding:9px 11px}.os-plan-tabs{display:flex;gap:7px;overflow:auto;margin-bottom:11px}.os-plan-tabs button{padding:7px 11px;font-size:11px;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:8px;white-space:nowrap}.os-plan-tabs button.active{color:var(--teal);border-color:var(--teal);background:var(--teal-light)}.os-plan-board{padding:14px;background:#f2ebe0;border:1px solid #cdbb9f;border-radius:11px;overflow:auto}.os-plan-board svg{display:block;width:100%;max-height:350px;aspect-ratio:2750/1850}.os-plan-summary{font-size:10px;margin-top:9px;color:var(--muted)}.os-workflow-card h2{font-size:15px}.os-workflow-actions{display:flex;flex-direction:column;gap:8px;margin-top:17px}.os-workflow-actions button{width:100%;justify-content:center;font-size:12px}.os-workflow-foot{border-top:1px solid var(--line);margin-top:18px;padding-top:10px;text-align:right}.danger-text{color:var(--danger)}.os-client-dialog{border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 70px #08172266;background:var(--surface);color:var(--ink);padding:25px 27px;width:min(95vw,530px);max-height:90vh;overflow:auto}.os-client-dialog::backdrop{background:rgba(4,18,27,.55)}.os-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:23px}.os-dialog-head h2{margin:0;font-size:22px;letter-spacing:-.6px}.os-dialog-head p{color:var(--muted);font-size:12px;margin:6px 0}.os-dialog-x{font-size:25px;border:0;background:transparent;color:var(--muted)}.os-dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:19px}
+@media(max-width:1170px){.studio-logo{min-width:160px}.studio-nav{padding:0 14px;gap:8px}.studio-nav-button{padding:10px}.os-main-grid{grid-template-columns:minmax(0,1fr) 265px}.os-container{padding-left:21px;padding-right:21px}.os-editor-grid{grid-template-columns:minmax(0,1.3fr) minmax(280px,1fr)}}
+@media(max-width:850px){.studio-nav{height:auto;min-height:66px;flex-wrap:wrap;padding:9px 13px;gap:9px}.studio-nav-links{order:3;width:100%;justify-content:space-around}.studio-nav-button{flex:1;padding:10px 5px}.studio-logo{font-size:16px}.studio-logo small{font-size:8px}.studio-logo-mark{width:32px;height:32px}.studio-theme span{display:none}.studio-attach{font-size:10px}.os-container{padding:24px 16px 35px}.os-page-head{align-items:flex-start;flex-direction:column;gap:14px}.os-page-head h1{font-size:26px}.os-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.os-stat{padding:14px 13px}.os-stat>strong{font-size:25px}.os-stat:nth-child(4)>strong{font-size:22px}.os-main-grid,.os-editor-grid{grid-template-columns:1fr}.os-clients-panel{grid-row:auto}#cutApp .sidebar{height:auto;top:0}.os-document-head{align-items:stretch;flex-direction:column}.os-document-fields{flex-wrap:wrap}.os-document-fields .os-field{flex:1} }
+@media(max-width:490px){.studio-logo{min-width:0}.studio-nav-button{font-size:10px}.studio-nav-button span{font-size:12px}.studio-nav-right{margin-left:auto}.os-head-actions{gap:6px}.os-head-actions button{font-size:11px!important;padding:9px 10px}.os-stat-top{font-size:10px}.os-stat:nth-child(4)>strong{font-size:18px}.os-panel-title,.os-table-filters{padding-left:14px;padding-right:14px}.os-tabs{padding-left:12px;padding-right:12px;gap:8px}.os-tab{font-size:10px}.os-form-card{padding:17px 15px}.os-form-grid{grid-template-columns:1fr}.os-document-head{padding:17px}.os-document-fields{display:block}.os-document-fields .os-field{margin-bottom:11px}.os-editor-container{padding:18px 12px 32px}.os-local-note{font-size:10px}}
+@media print{#studioNav,#ordersDashboard,#ordersEditor,.os-client-dialog{display:none!important}body{background:white!important}.print-report{display:block!important}.print-os-cover h1{font-size:22pt;margin:0 0 9px}.print-os-cover .os-print-kicker{font-size:10pt;font-weight:bold;color:#555}.print-os-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.print-os-box{border:1px solid #bbb;padding:11px;font-size:10pt;line-height:1.6;break-inside:avoid}.print-os-box h3{font-size:11pt;margin:0 0 6px}.print-os-img{display:block;max-height:95mm;max-width:100%;object-fit:contain;margin:0 auto}.print-os-header{display:flex;justify-content:space-between;gap:12px;border-bottom:2px solid #333;padding-bottom:9px}.print-os-header strong{font-size:19pt}.print-os-status{font-size:10pt;margin-top:6px}.print-os-sheet{page-break-inside:avoid;break-inside:avoid}.print-os-sheet svg{width:100%;max-height:148mm}.print-os-warning{font-size:8pt;margin:10px 0;color:#555}.print-os-reference{break-inside:avoid}}
+
+/* Mobile: ordens como cartões legíveis, sem rolagem horizontal */
+@media(max-width:650px){
+ .os-orders-table{min-width:0;display:block}.os-orders-table thead{display:none}.os-orders-table tbody{display:block}.os-orders-table tbody tr{display:grid;grid-template-columns:1fr 1fr;gap:11px 13px;padding:15px 16px;border-top:1px solid var(--line)}.os-orders-table td{display:block;padding:0;border:0!important;min-width:0}.os-orders-table td:first-child{grid-column:1/-1}.os-orders-table td:nth-child(4){text-align:right}.os-orders-table td:nth-child(5){grid-column:1/-1;text-align:right}.os-row-buttons{justify-content:flex-end}.os-order-name{max-width:none;white-space:normal}.os-order-id{margin-bottom:2px}.os-orders-table tbody tr:hover{background:var(--teal-light)}
+}
+.os-client-item{cursor:pointer}
+
+
+.part-head-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.units-switch{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--bg);gap:2px}
+.units-switch .unit-option{border:0;background:transparent;color:var(--muted);padding:5px 8px;font-size:11px;font-weight:800;border-radius:7px;min-width:31px}
+.units-switch .unit-option.active{background:var(--teal);color:#fff;box-shadow:0 1px 4px #0002}
+.unit-hint{margin:-6px 0 12px}
+
+/* v1.4 — ações reunidas ao lado do título do editor */
+.cut-heading-actions{align-items:center;gap:18px;flex-wrap:wrap}
+.cut-page-intro{flex:1 1 320px;min-width:0}
+.cut-heading-actions .toolbar-actions{flex:0 1 auto;justify-content:flex-end;gap:8px;max-width:100%}
+.cut-heading-actions .toolbar-actions .save-indicator{display:none}
+.cut-heading-actions .toolbar-actions button{min-height:37px}
+@media(max-width:1190px){.cut-heading-actions{align-items:flex-start}.cut-heading-actions .toolbar-actions{justify-content:flex-start;flex:1 1 100%}}
+@media(max-width:760px){.cut-heading-actions .toolbar-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cut-heading-actions .toolbar-actions button{white-space:normal;min-width:0;padding:10px 9px}.cut-heading-actions .toolbar-actions #generateOS{grid-column:1/-1}}
+@media(max-width:420px){.cut-heading-actions .toolbar-actions .primary-btn{margin-top:0;width:100%}}
+
+/* Material e chapa ao lado do editor, acima das propriedades da peça. */
+.inspector .material-panel{margin:0}
+.inspector .material-panel .field-grid{gap:11px 9px}
+.inspector .material-panel .field input{width:100%;min-width:0}
+
+/* v1.8 — Indicadores posicionados abaixo do editor, alinhados em 2 × 2. */
+.cut-main-column{min-width:0;display:flex;flex-direction:column;gap:16px}
+.cut-main-column>.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:0;min-width:0}
+.cut-main-column>.metrics>.metric{min-width:0}
+@media(max-width:560px){.cut-main-column>.metrics{gap:9px}.cut-main-column>.metrics>.metric{padding:13px 11px;min-height:100px}.cut-main-column>.metrics .metric-label{font-size:10px}.cut-main-column>.metrics .metric-value{font-size:22px}}
+
+/* v2.5 — Editor de OS mais limpo, informação essencial em primeiro plano */
+#ordersEditor .os-editor-container{max-width:1420px;padding:16px 20px 30px}
+#ordersEditor .os-page-head{margin-bottom:10px;gap:10px;align-items:center}
+#ordersEditor .os-page-head h1{font-size:22px;letter-spacing:-.65px}
+#ordersEditor .os-page-head .os-eyebrow,#ordersEditor .os-page-head p{display:none}
+#ordersEditor .os-back{margin:0 0 5px;font-size:11px}
+#ordersEditor .os-head-actions{gap:6px}
+#ordersEditor .os-head-actions button{min-height:33px;padding:7px 11px;font-size:11px}
+#ordersEditor .os-document-head{padding:12px 16px;margin-bottom:10px;border-radius:11px;gap:10px}
+#ordersEditor .os-document-head strong{font-size:19px;margin:2px 0}
+#ordersEditor .os-muted-label{font-size:9px;letter-spacing:.8px}
+#ordersEditor .os-document-fields{gap:9px}
+#ordersEditor .os-document-fields .os-field{margin:0;min-width:160px}
+#ordersEditor .os-editor-grid{grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:10px}
+#ordersEditor .os-editor-left,#ordersEditor .os-editor-right{gap:10px}
+#ordersEditor .os-form-card{padding:14px 16px;border-radius:12px}
+#ordersEditor .os-section-heading{gap:8px;margin-bottom:12px}
+#ordersEditor .os-section-icon{width:29px;height:29px;flex-basis:29px;border-radius:8px;font-size:14px}
+#ordersEditor .os-form-card h2{font-size:14px;letter-spacing:-.2px}
+#ordersEditor .os-section-heading p,#ordersEditor .os-form-card > p.os-helper{display:none}
+#ordersEditor .os-field{margin-bottom:9px}
+#ordersEditor .os-field label{font-size:10.5px;margin-bottom:4px}
+#ordersEditor .os-field input,#ordersEditor .os-field select,#ordersEditor .os-field textarea{min-height:35px;padding:7px 10px;font-size:12px;border-radius:8px}
+#ordersEditor .os-field textarea{min-height:67px;resize:vertical}
+#ordersEditor .os-textarea-field{margin-top:2px}
+#ordersEditor .os-form-grid{gap:0 10px}
+#ordersEditor .os-finance{padding:11px 13px;gap:7px;border-radius:9px}
+#ordersEditor .os-finance .os-total-row{padding-top:8px}
+#ordersEditor .os-finance .os-total-row strong{font-size:20px}
+#ordersEditor .os-paid-label{padding:5px 8px}
+#ordersEditor .os-image-picker{min-height:114px;border-width:1px}
+#ordersEditor #osImagePlaceholder{padding:12px 5px}
+#ordersEditor #osImagePlaceholder>span{font-size:23px;margin-bottom:2px}
+#ordersEditor #osImagePlaceholder strong{margin-bottom:3px}
+#ordersEditor #osImagePlaceholder small{margin:2px 0}
+#ordersEditor .os-image-picker img{max-height:180px}
+#ordersEditor .os-image-actions{margin-top:7px}
+#ordersEditor .os-plan-empty{padding:18px 12px}
+#ordersEditor .os-plan-empty>div{font-size:25px;margin-bottom:3px}
+#ordersEditor .os-plan-empty p{margin-top:3px}
+#ordersEditor .os-inline-actions{gap:6px;margin-top:9px}
+#ordersEditor .os-inline-actions .outline-btn{padding:7px 10px}
+#ordersEditor .os-workflow-card{padding:13px 16px}
+#ordersEditor .os-workflow-card>p{margin-top:4px;font-size:10.5px}
+#ordersEditor .os-workflow-actions{gap:6px}
+#ordersEditor .os-details{border-top:1px solid var(--line);padding-top:9px;margin-top:5px}
+#ordersEditor .os-details summary{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:750;color:var(--teal);cursor:pointer;list-style:none;user-select:none}
+#ordersEditor .os-details summary::-webkit-details-marker{display:none}
+#ordersEditor .os-details summary::after{content:'⌄';font-size:17px;line-height:1;transition:transform .15s}
+#ordersEditor .os-details[open] summary::after{transform:rotate(180deg)}
+#ordersEditor .os-details summary span{font-size:10px;color:var(--muted);font-weight:450;margin-left:auto}
+#ordersEditor .os-details .os-form-grid{padding-top:12px}
+@media(max-width:850px){#ordersEditor .os-editor-grid{grid-template-columns:1fr}#ordersEditor .os-page-head{align-items:flex-start}#ordersEditor .os-document-head{flex-direction:column}#ordersEditor .os-document-fields{flex-wrap:wrap}#ordersEditor .os-editor-container{padding:12px}}
+@media(max-width:490px){#ordersEditor .os-page-head h1{font-size:19px}#ordersEditor .os-details summary span{display:none}#ordersEditor .os-form-grid{grid-template-columns:1fr}#ordersEditor .os-head-actions{width:100%;flex-wrap:wrap}}
+
+
+/* v2.6 — Ordem de serviço: imagem no topo direito, resumo financeiro compacto no rodapé */
+#ordersEditor .os-editor-right .os-finance-card{padding:11px 13px;margin-top:0}
+#ordersEditor .os-finance-card .os-section-heading{margin-bottom:9px}
+#ordersEditor .os-finance-card .os-section-icon{width:25px;height:25px;flex-basis:25px;font-size:12px}
+#ordersEditor .os-finance-card .os-field{margin-bottom:7px}
+#ordersEditor .os-finance-card .os-field label{margin-bottom:3px}
+#ordersEditor .os-finance-card .os-field input{min-height:32px;padding:5px 9px}
+#ordersEditor .os-finance-card .os-finance{padding:9px 11px;gap:5px}
+#ordersEditor .os-finance-card .os-finance .os-total-row{padding-top:7px}
+#ordersEditor .os-finance-card .os-finance .os-total-row strong{font-size:18px}
+#ordersEditor .os-finance-card .os-paid-label{padding:4px 7px}
+
+/* v2.8 — layout de ordem de serviço inspirado na referência visual, duas colunas compactas */
+#ordersEditor{background:var(--bg)}
+#ordersEditor .os-editor-container{max-width:1660px;padding:20px 24px 30px}
+#ordersEditor .os-page-head{margin-bottom:18px;align-items:center;gap:14px}
+#ordersEditor .os-page-head h1{font-size:clamp(24px,2vw,31px);font-weight:850;letter-spacing:-.8px}
+#ordersEditor .os-back{font-size:10px;margin:0 0 4px;opacity:.8}
+#ordersEditor .os-head-actions{gap:10px}
+#ordersEditor .os-head-actions button{min-height:40px;padding:9px 18px;font-size:12px}
+#ordersEditor .os-editor-grid{grid-template-columns:minmax(0,1.72fr) minmax(340px,1fr);gap:15px;align-items:start}
+#ordersEditor .os-editor-left,#ordersEditor .os-editor-right{gap:15px}
+#ordersEditor .os-document-head{margin:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:end;padding:17px 20px 18px;gap:16px;border-radius:12px;box-shadow:var(--shadow)}
+#ordersEditor .os-document-head .os-muted-label{font-size:16px;letter-spacing:-.25px;color:var(--ink);font-weight:800;text-transform:none}
+#ordersEditor .os-document-head strong{font-size:28px;letter-spacing:-.4px;margin:13px 0 0;line-height:1.15}
+#ordersEditor .os-document-head small{display:none}
+#ordersEditor .os-document-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end}
+#ordersEditor .os-document-fields .os-field{min-width:0;margin:0}
+#ordersEditor .os-form-card{padding:17px 20px;border-radius:12px;box-shadow:var(--shadow)}
+#ordersEditor .os-section-heading{margin-bottom:13px;gap:0}
+#ordersEditor .os-section-icon{display:none}
+#ordersEditor .os-form-card h2,#ordersEditor .os-workflow-card h2{font-size:17px;letter-spacing:-.3px}
+#ordersEditor .os-field{margin-bottom:11px}
+#ordersEditor .os-field label{font-size:11.5px;font-weight:680;margin-bottom:5px}
+#ordersEditor .os-field input,#ordersEditor .os-field select,#ordersEditor .os-field textarea{min-height:37px;padding:8px 11px;font-size:12.5px}
+#ordersEditor .os-form-grid{gap:0 14px}
+#ordersEditor .os-textarea-field{margin-top:9px}
+#ordersEditor .os-field textarea{min-height:58px}
+#ordersEditor .os-details{margin-top:5px;padding-top:7px}
+#ordersEditor .os-details:not([open]){border-top-color:transparent;padding-top:0}
+#ordersEditor .os-details:not([open]) summary{font-size:10px;color:var(--muted)}
+#ordersEditor .os-image-picker{min-height:139px}
+#ordersEditor #osImagePlaceholder{padding:15px 8px}
+#ordersEditor #osImagePlaceholder>span{font-size:28px}
+#ordersEditor .os-image-actions{margin-top:9px}
+#ordersEditor .os-image-picker img{max-height:225px}
+#ordersEditor .os-workflow-card{padding:17px 20px}
+#ordersEditor .os-workflow-card>p{font-size:11.5px;margin:10px 0 13px}
+#ordersEditor .os-workflow-actions{display:flex;gap:10px}
+#ordersEditor .os-workflow-actions .outline-btn,#ordersEditor .os-workflow-actions .primary-btn{flex:1;min-height:38px;font-size:11px;padding:7px 8px}
+#ordersEditor .os-plan-empty{padding:22px 14px}
+#ordersEditor .os-plan-empty strong{font-size:14px}
+#ordersEditor .os-plan-empty p{font-size:11px}
+#ordersEditor .os-inline-actions{justify-content:center;margin-top:9px;flex-wrap:wrap}
+#ordersEditor .os-inline-actions button{font-size:11px}
+#ordersEditor .os-finance-card{padding:15px 20px}
+#ordersEditor .os-finance-card .os-section-heading{margin-bottom:10px}
+#ordersEditor .os-finance-card>.os-field{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(105px,.7fr);gap:12px;align-items:center;margin:0 0 9px}
+#ordersEditor .os-finance-card>.os-field label{margin:0;font-size:11px}
+#ordersEditor .os-finance-card>.os-field input{text-align:right;min-height:35px}
+#ordersEditor .os-finance-card .os-finance{border-radius:0;border-top:1px solid var(--line);background:transparent;padding:11px 0 0;gap:9px}
+#ordersEditor .os-finance-card .os-finance .os-total-row{padding-top:0;border:0}
+#ordersEditor .os-finance-card .os-finance .os-total-row strong{font-size:22px}
+#ordersEditor .os-finance-card .os-paid-label{font-size:10px;align-self:flex-start}
+@media(max-width:1050px){#ordersEditor .os-editor-grid{grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr)}#ordersEditor .os-document-head{grid-template-columns:1fr;gap:12px}#ordersEditor .os-document-head strong{margin-top:7px}#ordersEditor .os-editor-container{padding:14px}}
+@media(max-width:760px){#ordersEditor .os-editor-grid{grid-template-columns:1fr}#ordersEditor .os-document-head{grid-template-columns:1fr}#ordersEditor .os-page-head{align-items:flex-start}#ordersEditor .os-editor-container{padding:12px}}
+@media(max-width:490px){#ordersEditor .os-form-card{padding:14px}#ordersEditor .os-document-fields{grid-template-columns:1fr 1fr;gap:8px}#ordersEditor .os-document-head{padding:14px}#ordersEditor .os-page-head h1{font-size:22px}#ordersEditor .os-finance-card>.os-field{grid-template-columns:1fr 95px}}
+
+/* v2.8 — indicadores compactos do painel de ordens */
+#ordersDashboard .os-stats{gap:10px;margin-bottom:12px}
+#ordersDashboard .os-stat{padding:11px 14px 10px;border-radius:11px;min-height:0;box-shadow:none}
+#ordersDashboard .os-stat-top{font-size:11px;line-height:1.2}
+#ordersDashboard .os-stat-icon{width:24px;height:24px;border-radius:7px;font-size:13px}
+#ordersDashboard .os-stat-icon.violet{font-size:9px}
+#ordersDashboard .os-stat>strong{font-size:24px;line-height:1.05;margin:4px 0 2px}
+#ordersDashboard .os-stat:nth-child(4)>strong{font-size:21px}
+#ordersDashboard .os-stat small{font-size:10px;line-height:1.25;display:block}
+@media(max-width:760px){#ordersDashboard .os-stats{gap:7px}#ordersDashboard .os-stat{padding:10px}}
+</style>
+<style id="board-centered-layout">
+/* Editor proporcional à chapa: o SVG conserva escala uniforme e permanece centralizado. */
+.board-scroll{display:block;box-sizing:border-box;overflow:auto;padding:0;min-height:420px;max-height:none;scrollbar-gutter:stable;position:relative}
+.board-scroll:has(.board-holder.hidden){display:flex;align-items:center;justify-content:center}
+.board-empty{margin:0 auto;align-self:center;justify-self:center}
+.board-holder{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:100%;min-width:100%;height:100%;min-height:100%;padding:22px;margin:0 auto}
+.board-svg{width:auto;height:auto;max-width:none;max-height:none;aspect-ratio:auto}
+@media(max-width:700px){.board-holder{padding:14px}}
+</style>
+
+<style id="compact-workspace-v19">
+/* Padrão visual: painéis próximos, margens consistentes e uso de toda a largura. */
+#cutApp .workspace{max-width:none;width:100%;margin:0;padding:14px 14px 18px}
+#cutApp .page-head{margin-bottom:10px;gap:10px}
+#cutApp .workspace-grid{gap:10px;grid-template-columns:minmax(0,1fr) 275px;align-items:start}
+#cutApp .cut-main-column{gap:9px}
+#cutApp .cut-main-column>.metrics{gap:9px}
+#cutApp .metric{min-height:88px;padding:12px 14px;border-radius:12px}
+#cutApp .metric-value{margin:5px 0 2px;font-size:23px}
+#cutApp .inspector{gap:10px}
+#cutApp .inspector .panel{padding:13px;border-radius:12px}
+#cutApp .panel.canvas-panel{border-radius:12px}
+#cutApp .canvas-top{padding:10px 13px}
+#cutApp .tabs-scroll{padding:8px 12px}
+#cutApp .canvas-tools{padding:8px 12px}
+#cutApp .canvas-bottom{padding:8px 12px}
+#cutApp .board-holder{padding:10px}
+#cutApp .board-scroll{min-height:360px}
+#cutApp .notice{margin-top:10px}
+#cutApp .cut-heading-actions .toolbar-actions{gap:6px}
+#cutApp .cut-heading-actions .toolbar-actions button{min-height:34px}
+@media(max-width:1100px){
+ #cutApp .workspace-grid{grid-template-columns:1fr}
+ #cutApp .inspector{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #cutApp .inspector .panel:last-child{grid-column:1/-1}
+}
+@media(max-width:760px){
+ #cutApp .workspace{padding:10px 9px 14px}
+ #cutApp .page-head{gap:8px;margin-bottom:9px}
+ #cutApp .inspector{grid-template-columns:1fr}
+ #cutApp .inspector .panel:last-child{grid-column:auto}
+ #cutApp .board-holder{padding:6px}
+ #cutApp .cut-main-column>.metrics{gap:7px}
+ #cutApp .metric{padding:10px;min-height:86px}
+}
+</style>
+
+<style id="workspace-toolbar-v20">
+/* Barra de ações mínima: encostada no canto superior direito da área útil. */
+#cutApp .page-head.cut-heading-actions{display:flex;justify-content:flex-end;align-items:center;flex-wrap:nowrap;margin:0 0 7px;padding:0;gap:0;min-height:34px}
+#cutApp .cut-heading-actions .toolbar-actions{display:flex;justify-content:flex-end;align-items:center;flex:0 1 auto;width:auto;max-width:100%;gap:5px;flex-wrap:wrap;margin-left:auto}
+#cutApp .cut-heading-actions .toolbar-actions button{min-height:32px;padding:7px 10px;white-space:nowrap}
+@media(max-width:1190px){#cutApp .cut-heading-actions{align-items:center}#cutApp .cut-heading-actions .toolbar-actions{flex:0 1 auto;justify-content:flex-end;width:auto}}
+@media(max-width:760px){#cutApp .page-head.cut-heading-actions{min-height:0}#cutApp .cut-heading-actions .toolbar-actions{display:flex;width:100%;flex:1 1 auto;justify-content:flex-end;gap:5px}#cutApp .cut-heading-actions .toolbar-actions #generateOS{grid-column:auto}#cutApp .cut-heading-actions .toolbar-actions button{width:auto;min-width:0;margin:0;font-size:11px;padding:7px 8px}}
+</style>
+
+<style id="nav-project-v21">
+/* Ações de projeto ficam ao lado da marca, sem espaço ocioso. */
+.studio-nav{gap:10px;padding-left:17px;padding-right:17px}
+.studio-logo{min-width:0;flex:0 0 auto}
+.studio-version{flex:0 0 auto;color:var(--teal);border:1px solid var(--line);background:var(--bg);border-radius:7px;font-size:11px;font-weight:850;padding:5px 7px;white-space:nowrap}
+.nav-project-actions{display:flex;align-items:center;gap:5px;min-width:0;flex:0 1 auto}
+.nav-project-actions .outline-btn{font-size:11px;min-height:32px;padding:7px 9px;border-radius:8px;white-space:nowrap}
+.studio-nav-links{margin-left:auto}
+.studio-nav-right{flex-shrink:0}
+@media(max-width:1280px){.studio-nav{height:auto;min-height:70px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px}.studio-nav-links{order:3;width:auto;margin-left:auto}.nav-project-actions{margin-right:auto}}
+@media(max-width:850px){.studio-nav-links{order:4;width:100%;margin-left:0}.nav-project-actions{order:3;flex:1 1 100%;justify-content:flex-start;flex-wrap:wrap;margin:0}.studio-nav-right{margin-left:auto}.studio-version{margin-right:auto}}
+@media(max-width:490px){.studio-logo{font-size:15px}.studio-version{font-size:10px}.nav-project-actions .outline-btn{padding:7px 8px;font-size:10px}}
+</style>
+<style id="center-main-navigation-v22">
+/* Navegação primária centrada em relação à janela, independentemente dos botões da esquerda. */
+@media(min-width:1451px){
+ .studio-nav{position:sticky;justify-content:flex-start}
+ .studio-nav-links{position:absolute;left:50%;transform:translateX(-50%);margin:0;width:max-content;max-width:100%;justify-content:center}
+ .studio-nav-right{margin-left:auto}
+}
+/* Em telas intermediárias, a navegação fica centrada em sua própria linha,
+   sem se sobrepor a Novo / Abrir JSON / Recuperar último. */
+@media(min-width:851px) and (max-width:1450px){
+ .studio-nav{height:auto;min-height:70px;flex-wrap:wrap;justify-content:flex-start;padding-top:7px;padding-bottom:7px}
+ .studio-nav-links{order:5;flex:0 0 100%;width:100%;margin:0;justify-content:center}
+ .studio-nav-right{margin-left:auto}
+}
+@media(max-width:850px){
+ .studio-nav-links{width:100%;margin:0;justify-content:center}
+}
+</style>
+<style id="resolution-presets-v23">
+/* Configuração de densidade de interface; não altera a resolução física do monitor. */
+.studio-resolution{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:9px;padding:6px 8px;font-size:11px;font-weight:750;white-space:nowrap}
+.studio-resolution svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8}
+.studio-resolution select{max-width:126px;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer;outline-offset:3px}
+.studio-resolution select option{background:var(--surface);color:var(--ink)}
+/* 1366 x 768: mais altura útil, margens pequenas e editores lado a lado. */
+html[data-resolution="1366"] .studio-nav{min-height:54px;height:54px;padding:5px 12px;gap:7px}
+html[data-resolution="1366"] .studio-logo{font-size:16px;gap:7px}
+html[data-resolution="1366"] .studio-logo-mark{width:30px;height:30px;font-size:17px}
+html[data-resolution="1366"] .studio-logo small{font-size:7px;margin-top:4px}
+html[data-resolution="1366"] .studio-nav-button{padding:8px 9px;font-size:11px}
+html[data-resolution="1366"] .studio-version{font-size:10px;padding:4px 6px}
+html[data-resolution="1366"] .nav-project-actions .outline-btn{font-size:10px;min-height:29px;padding:5px 7px}
+html[data-resolution="1366"] .studio-theme{padding:7px 8px;font-size:13px}
+html[data-resolution="1366"] .studio-theme span{font-size:10px}
+html[data-resolution="1366"] .studio-nav-right{gap:5px}
+html[data-resolution="1366"] .studio-resolution{padding:4px 6px;font-size:10px}
+html[data-resolution="1366"] #cutApp.app{grid-template-columns:255px minmax(0,1fr)}
+html[data-resolution="1366"] #cutApp .sidebar{height:calc(100dvh - 54px);top:54px}
+html[data-resolution="1366"] #cutApp .sidebar-scroll{padding:10px 9px}
+html[data-resolution="1366"] #cutApp .side-card{padding:10px;margin-bottom:9px}
+html[data-resolution="1366"] #cutApp .section-label{margin:4px 5px 8px}
+html[data-resolution="1366"] #cutApp .workspace{padding:8px 9px 12px}
+html[data-resolution="1366"] #cutApp .workspace-grid{grid-template-columns:minmax(0,1fr) 245px;gap:8px}
+html[data-resolution="1366"] #cutApp .inspector{gap:8px}
+html[data-resolution="1366"] #cutApp .inspector .panel{padding:10px}
+html[data-resolution="1366"] #cutApp .cut-main-column{gap:8px}
+html[data-resolution="1366"] #cutApp .board-scroll{min-height:290px;max-height:calc(100dvh - 260px)}
+html[data-resolution="1366"] #cutApp .canvas-top{padding:7px 10px}
+html[data-resolution="1366"] #cutApp .canvas-tools{padding:6px 10px}
+html[data-resolution="1366"] #cutApp .tabs-scroll{padding:6px 10px}
+html[data-resolution="1366"] #cutApp .cut-main-column>.metrics{gap:7px}
+html[data-resolution="1366"] #cutApp .metric{min-height:75px;padding:9px 11px}
+html[data-resolution="1366"] #cutApp .metric-value{font-size:20px;margin:3px 0}
+html[data-resolution="1366"] .os-container{max-width:none;padding:13px 15px 24px}
+html[data-resolution="1366"] .os-page-head{margin-bottom:12px;gap:12px}
+html[data-resolution="1366"] .os-page-head h1{font-size:25px}
+html[data-resolution="1366"] .os-stats{gap:9px}
+html[data-resolution="1366"] .os-stat{padding:12px}
+html[data-resolution="1366"] .os-main-grid,html[data-resolution="1366"] .os-editor-grid{gap:10px}
+html[data-resolution="1366"] .os-form-card{padding:14px}
+html[data-resolution="1366"] .os-document-head{padding:13px;margin-bottom:10px}
+/* 1920 x 1080: aproveita melhor a largura, sem ampliar vazios. */
+html[data-resolution="1920"] #cutApp.app{grid-template-columns:295px minmax(0,1fr)}
+html[data-resolution="1920"] #cutApp .workspace{max-width:none;padding:12px 14px 20px}
+html[data-resolution="1920"] #cutApp .workspace-grid{grid-template-columns:minmax(0,1fr) 285px;gap:11px}
+html[data-resolution="1920"] #cutApp .board-scroll{min-height:470px;max-height:calc(100dvh - 255px)}
+html[data-resolution="1920"] .os-container{max-width:none;padding:23px 26px 40px}
+html[data-resolution="1920"] .os-editor-container{max-width:none}
+/* Quando a janela é fisicamente menor que o preset, priorizar responsividade. */
+@media(max-width:1179px){
+ html[data-resolution] .studio-nav{height:auto;min-height:58px;flex-wrap:wrap;padding:8px 10px}
+ html[data-resolution] .studio-nav-links{position:static;transform:none;order:5;flex:0 0 100%;width:100%;justify-content:center;margin:0}
+ html[data-resolution] #cutApp.app{grid-template-columns:1fr}
+ html[data-resolution] #cutApp .sidebar{position:static;height:auto}
+ html[data-resolution] #cutApp .workspace-grid{grid-template-columns:1fr}
+ html[data-resolution] #cutApp .inspector{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ html[data-resolution] #cutApp .board-scroll{min-height:300px;max-height:65dvh}
+}
+@media(min-width:1180px){
+ /* Menu realmente centralizado, sem exigir uma linha extra em 1366. */
+ html[data-resolution="1366"] .studio-nav{position:sticky;flex-wrap:nowrap;justify-content:flex-start}
+ html[data-resolution="1366"] .studio-nav-links{position:absolute;left:50%;transform:translateX(-50%);order:initial;flex:0 0 auto;width:max-content;margin:0;justify-content:center}
+ html[data-resolution="1366"] .studio-nav-right{margin-left:auto}
+}
+@media(max-width:700px){
+ html[data-resolution] #cutApp .inspector{grid-template-columns:1fr}
+ html[data-resolution] #cutApp .workspace{padding:8px}
+ html[data-resolution] #cutApp .board-scroll{max-height:none;min-height:300px}
+ .studio-resolution select{max-width:105px}
+}
+@media print{.studio-resolution{display:none!important}}
+</style>
+<style id="editor-top-compact-v24">
+/* Sem faixa em branco: ações compartilham o cabeçalho do editor. */
+#cutApp .workspace{padding-top:3px!important}
+#cutApp .canvas-top{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:7px 11px;min-height:43px}
+#cutApp .canvas-header-right{display:flex;align-items:center;justify-content:flex-end;gap:10px;min-width:0;flex-wrap:wrap;margin-left:auto}
+#cutApp .canvas-header-right .toolbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap}
+#cutApp .canvas-header-right .save-indicator{display:none}
+#cutApp .canvas-header-right .primary-btn{font-size:11px;min-height:30px;padding:6px 10px;box-shadow:none}
+#cutApp .canvas-header-right .primary-btn svg{width:14px;height:14px}
+#cutApp .canvas-header-right .sheet-label{font-size:10px;white-space:nowrap}
+@media(max-width:720px){#cutApp .canvas-top{align-items:flex-start}#cutApp .canvas-header-right{gap:5px}#cutApp .canvas-header-right .primary-btn{padding:6px 7px;font-size:10px}}
+</style>
+</head>
+<body>
+<nav class="studio-nav" id="studioNav" aria-label="Navegação principal">
+ <div class="studio-logo"><span class="studio-logo-mark">▦</span><span>MDF <b>Cut</b><small>STUDIO · GESTÃO + CORTE</small></span></div>
+ <span class="studio-version" title="Versão do aplicativo">v2.9</span>
+ <div class="nav-project-actions is-hidden" id="navProjectActions" role="group" aria-label="Ações do projeto de corte"><button type="button" class="outline-btn" id="newProject">Novo</button><button type="button" class="outline-btn" id="openProject">Abrir JSON</button><button type="button" class="outline-btn" id="recoverProject" title="Recuperar o último plano salvo automaticamente">Recuperar último</button></div>
+ <div class="studio-nav-links" role="group" aria-label="Áreas do aplicativo">
+  <button type="button" class="studio-nav-button is-active" data-view="dashboard" id="navDashboard"><span>▤</span> Painel de OS</button>
+  <button type="button" class="studio-nav-button" data-view="editor" id="navEditor"><span>▣</span> Ordem de serviço</button>
+  <button type="button" class="studio-nav-button" data-view="cut" id="navCut"><span>▦</span> Plano de corte</button>
+ </div>
+ <div class="studio-nav-right"><button type="button" class="studio-theme" id="desktopUpdateBtn" style="display:none" title="Verificar atualizações">↻ Atualizar</button><button type="button" class="studio-theme" id="desktopBackupBtn" style="display:none" title="Backups e dados locais">▣ Backup</button><button type="button" id="studioAttach" class="studio-attach is-hidden">↧ Vincular plano à OS</button><button type="button" id="studioTheme" class="studio-theme" aria-label="Alternar tema" title="Alternar modo claro e escuro">☾ <span>Tema</span></button><label class="studio-resolution" title="Ajustar o layout ao tamanho da tela"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg><select id="studioResolution" aria-label="Resolução do layout"><option value="1920">1920 × 1080</option><option value="1366">1366 × 768</option></select></label></div>
+</nav>
+<main id="ordersDashboard" class="orders-view active-screen">
+ <div class="os-container">
+  <div class="os-page-head"><div><div class="os-eyebrow"><span class="os-pulse"></span> CENTRAL DE PRODUÇÃO</div><h1>Ordens de serviço<span>.</span></h1><p>Clientes, orçamentos, serviços em produção e entregas em um único lugar.</p></div><div class="os-head-actions"><button class="outline-btn" id="backupOrders" type="button">↓ Backup</button><button class="outline-btn" id="restoreOrders" type="button">↑ Importar</button><button class="primary-btn" id="newOrderDashboard" type="button">＋ Nova ordem</button></div></div>
+  <div class="os-stats">
+    <div class="os-stat"><div class="os-stat-top"><span>Em orçamento</span><span class="os-stat-icon gold">◫</span></div><strong id="statQuotes">0</strong><small>Aguardando aprovação</small></div>
+    <div class="os-stat"><div class="os-stat-top"><span>Em produção</span><span class="os-stat-icon blue">⚒</span></div><strong id="statProduction">0</strong><small>Serviços em andamento</small></div>
+    <div class="os-stat"><div class="os-stat-top"><span>Concluídas</span><span class="os-stat-icon green">✓</span></div><strong id="statDone">0</strong><small>Ordens com baixa</small></div>
+    <div class="os-stat"><div class="os-stat-top"><span>A receber</span><span class="os-stat-icon violet">R$</span></div><strong id="statDue">R$ 0,00</strong><small id="statEntries">Entradas registradas: R$ 0,00</small></div>
+  </div>
+  <div class="os-main-grid">
+   <section class="os-panel os-jobs-panel">
+    <div class="os-panel-title"><div><h2>Controle de serviços</h2><p>Gerencie cada etapa e abra a ordem para ver os detalhes.</p></div><span class="os-count-pill" id="orderCountBadge">0 ordens</span></div>
+    <div class="os-tabs" role="tablist" aria-label="Situação da ordem"><button type="button" class="os-tab is-active" data-status="abertas" role="tab" aria-selected="true">Em aberto</button><button type="button" class="os-tab" data-status="producao" role="tab" aria-selected="false">Em produção <span id="tabProdCount">0</span></button><button type="button" class="os-tab" data-status="orcamento" role="tab" aria-selected="false">Orçamento <span id="tabQuoteCount">0</span></button><button type="button" class="os-tab" data-status="concluida" role="tab" aria-selected="false">Concluídas <span id="tabDoneCount">0</span></button><button type="button" class="os-tab" data-status="todas" role="tab" aria-selected="false">Todas</button></div>
+    <div class="os-table-filters"><label class="os-search">⌕ <input id="orderSearch" placeholder="Buscar ordem, cliente ou serviço..." type="search" aria-label="Buscar ordens"></label><div id="clientFilterBadge" class="os-filter-badge is-hidden"></div></div>
+    <div class="os-orders-table-wrap"><table class="os-orders-table"><thead><tr><th>ORDEM / SERVIÇO</th><th>CLIENTE</th><th>VALOR / ENTRADA</th><th>SITUAÇÃO</th><th></th></tr></thead><tbody id="ordersRows"></tbody></table></div><div class="os-empty is-hidden" id="ordersEmpty"><div>▤</div><h3>Nenhuma ordem nesta etapa</h3><p>Crie uma ordem de serviço ou selecione outra etapa para continuar.</p><button class="outline-btn" type="button" id="emptyAddOrder">＋ Criar ordem de serviço</button></div>
+   </section>
+   <aside class="os-clients-panel os-panel"><div class="os-panel-title"><div><h2>Clientes</h2><p>Cadastro e histórico de pedidos</p></div><button type="button" id="newClient" class="os-plus-btn" title="Cadastrar cliente" aria-label="Cadastrar cliente">+</button></div><label class="os-search client-search">⌕ <input id="clientSearch" type="search" placeholder="Buscar cliente..." aria-label="Buscar clientes"></label><div id="clientsList" class="os-client-list"></div><div id="clientsEmpty" class="os-client-empty is-hidden">Nenhum cliente cadastrado.<br>Use o botão + para começar.</div><div class="os-client-foot"><span id="clientCount">0 clientes cadastrados</span><button type="button" id="clearClientFilter" class="os-text-button is-hidden">Ver todos</button></div></aside>
+  </div>
+  <div class="os-local-note">▣ <b>Dados locais:</b> as ordens ficam salvas neste navegador. Faça backup regularmente; ainda não há sincronização entre computadores.</div>
+ </div>
+</main>
+<main id="ordersEditor" class="orders-view">
+ <div class="os-container os-editor-container">
+  <div class="os-page-head editor-heading"><div><button type="button" id="backToDashboard" class="os-back">← Voltar ao painel</button><div class="os-eyebrow">CADASTRO E ACOMPANHAMENTO</div><h1 id="osPageTitle">Nova ordem de serviço</h1><p id="osPageSubtitle">Registre o cliente, orçamento, materiais e referências de produção.</p></div><div class="os-head-actions"><button class="outline-btn" id="printOrder" type="button">▤ Imprimir OS</button><button class="outline-btn" id="duplicateOrder" type="button">⧉ Duplicar</button><button class="primary-btn" id="saveOrder" type="button">✓ Salvar ordem</button></div></div>
+  <div class="os-editor-grid">
+    <div class="os-editor-left">
+  <div class="os-document-head"><div><span class="os-muted-label">Identificação da ordem</span><strong id="osNumber">OS-0001</strong><small id="osCreated">Nova ordem · numeração automática</small></div><div class="os-document-fields"><div class="os-field"><label for="osStatus">Situação atual</label><select id="osStatus"><option value="orcamento">Em orçamento</option><option value="producao">Em produção</option><option value="concluida">Concluída</option></select></div><div class="os-field"><label for="osDue">Previsão de entrega</label><input id="osDue" type="date"></div></div></div>
+
+      <section class="os-panel os-form-card"><div class="os-section-heading"><span class="os-section-icon">♙</span><div><h2>Dados do cliente</h2><p>Identifique quem solicitou o serviço.</p></div></div><div class="os-field"><label for="osClientSelect">Cliente cadastrado</label><select id="osClientSelect"><option value="">＋ Cadastrar novo cliente nesta ordem</option></select></div><div class="os-form-grid"><div class="os-field"><label for="osClientName">Nome / Razão social <em>*</em></label><input id="osClientName" type="text" maxlength="100" placeholder="Nome do cliente" required></div><div class="os-field"><label for="osClientPhone">Telefone / WhatsApp</label><input id="osClientPhone" type="tel" maxlength="35" placeholder="(00) 00000-0000"></div></div><details class="os-details"><summary>Dados adicionais do cliente <span>CPF/CNPJ, e-mail e endereço</span></summary><div class="os-form-grid"><div class="os-field"><label for="osClientDoc">CPF / CNPJ</label><input id="osClientDoc" type="text" maxlength="25" placeholder="Documento (opcional)"></div><div class="os-field"><label for="osClientEmail">E-mail</label><input id="osClientEmail" type="email" maxlength="120" placeholder="cliente@email.com"></div><div class="os-field os-full"><label for="osClientAddress">Endereço</label><input id="osClientAddress" type="text" maxlength="220" placeholder="Rua, número, bairro e cidade"></div></div></details></section>
+      <section class="os-panel os-form-card"><div class="os-section-heading"><span class="os-section-icon">▧</span><div><h2>Detalhes do serviço</h2><p>Descreva o produto e as instruções para a equipe.</p></div></div><div class="os-field"><label for="osService">Nome do produto / serviço <em>*</em></label><input id="osService" type="text" maxlength="140" placeholder="Ex.: Armário de cozinha em MDF" required></div><div class="os-field os-textarea-field"><label for="osDescription">Descrição / observações</label><textarea id="osDescription" rows="4" maxlength="4000" placeholder="Materiais, cores, espessuras, acabamento, ferragens, observações..." ></textarea></div></section>
+      <section class="os-panel os-form-card"><div class="os-section-heading"><span class="os-section-icon">▦</span><div><h2>Plano de corte</h2><p>Inclua uma cópia do plano de chapas nesta ordem.</p></div></div><div id="osPlanNoData" class="os-plan-empty"><div>▦</div><strong>Nenhum plano vinculado</strong><p>Crie ou abra um plano no editor e vincule-o a esta ordem.</p></div><div id="osPlanWithData" class="is-hidden"><div id="osPlanTabs" class="os-plan-tabs"></div><div class="os-plan-board"><svg id="osPlanSvg" role="img" aria-label="Plano de corte associado à ordem"></svg></div><div class="os-plan-summary" id="osPlanSummary"></div></div><div class="os-inline-actions"><button class="outline-btn" id="editOrderPlan" type="button">↗ Abrir editor de corte</button><button class="outline-btn" id="attachOrderPlan" type="button">↧ Vincular plano atual</button><button class="os-text-button" id="removeOrderPlan" type="button">Remover vínculo</button></div><p class="os-helper">O vínculo guarda uma cópia do plano. Ao editar o corte, clique em “Vincular plano à OS” para atualizar esta ordem.</p></section>
+    </div>
+    <div class="os-editor-right">
+      <section class="os-panel os-form-card"><div class="os-section-heading"><span class="os-section-icon">▧</span><div><h2>Imagem de referência</h2><p>Foto ou desenho para orientar a fabricação.</p></div></div><div class="os-image-picker" id="osImageDrop" role="button" tabindex="0"><div id="osImagePlaceholder"><span>⇧</span><strong>Adicionar imagem</strong><small>Arraste ou clique para selecionar</small><small>JPG / PNG / WebP · até 8 MB</small></div><img id="osImagePreview" class="is-hidden" alt="Referência visual do serviço"></div><div class="os-image-actions"><button type="button" class="outline-btn" id="osImageChange">Escolher imagem</button><button type="button" class="os-text-button" id="osImageRemove">Remover</button></div><p class="os-helper">A imagem é reduzida para ajudar a economizar espaço de armazenamento local.</p><input id="osImageFile" class="file-input" type="file" accept="image/jpeg,image/png,image/webp"></section>
+      <section class="os-panel os-form-card os-workflow-card"><h2>Andamento da ordem</h2><p id="osWorkflowMessage">Após salvar, você pode mudar o status para produção ou concluir.</p><div id="osWorkflowActions" class="os-workflow-actions"><button type="button" id="moveToProduction" class="outline-btn">▶ Iniciar produção</button><button type="button" id="completeOrder" class="primary-btn">✓ Dar baixa / concluir</button><button type="button" id="reopenOrder" class="outline-btn">↻ Reabrir ordem</button></div><div class="os-workflow-foot"><button type="button" class="os-text-button danger-text" id="deleteOrder">Excluir ordem</button></div></section>
+      <section class="os-panel os-form-card os-finance-card"><div class="os-section-heading"><span class="os-section-icon">R$</span><div><h2>Valores do serviço</h2><p>Controle o orçamento e a entrada recebida.</p></div></div><div class="os-field"><label for="osValue">Valor total do produto / serviço (R$)</label><input id="osValue" type="number" min="0" step="0.01" placeholder="0,00" value="0"></div><div class="os-field"><label for="osDeposit">Entrada recebida (R$)</label><input id="osDeposit" type="number" min="0" step="0.01" placeholder="0,00" value="0"></div><div class="os-finance"><div><span>Entrada confirmada</span><strong id="osEntryLabel">R$ 0,00</strong></div><div class="os-total-row"><span>Saldo a receber</span><strong id="osBalance">R$ 0,00</strong></div><span id="osPaidStatus" class="os-paid-label">Sem entrada registrada</span></div></section>
+    </div>
+  </div>
+ </div>
+</main>
+<dialog id="clientDialog" class="os-client-dialog"><form id="clientForm" method="dialog"><div class="os-dialog-head"><div><h2 id="clientDialogTitle">Novo cliente</h2><p>Dados utilizados nas ordens de serviço.</p></div><button type="button" class="os-dialog-x" id="clientDialogClose">×</button></div><div class="os-field"><label for="clientModalName">Nome / Razão social *</label><input id="clientModalName" required maxlength="100" placeholder="Nome do cliente"></div><div class="os-form-grid"><div class="os-field"><label for="clientModalPhone">Telefone</label><input id="clientModalPhone" maxlength="35" placeholder="WhatsApp"></div><div class="os-field"><label for="clientModalDoc">CPF / CNPJ</label><input id="clientModalDoc" maxlength="25"></div></div><div class="os-field"><label for="clientModalEmail">E-mail</label><input id="clientModalEmail" type="email" maxlength="120"></div><div class="os-field"><label for="clientModalAddress">Endereço</label><input id="clientModalAddress" maxlength="220"></div><div class="os-dialog-actions"><button class="outline-btn" type="button" id="clientDialogCancel">Cancelar</button><button class="primary-btn" type="submit">Salvar cliente</button></div></form></dialog>
+<input id="osBackupInput" class="file-input" type="file" accept=".json,application/json">
+
+<div class="app" id="cutApp">
+ <aside class="sidebar">
+  <div class="sidebar-scroll">
+   <div class="section-label">Configuração do projeto</div>
+   <section class="side-card">
+    <div class="field"><label class="form-label" for="projectName">Nome do projeto</label><input id="projectName" type="text" maxlength="80" placeholder="Ex.: Cozinha planejada" value="Armário planejado"></div>
+   </section>
+   <section class="side-card">
+    <div class="section-head"><strong>Lista de peças</strong><div class="part-head-actions"><div class="units-switch" role="group" aria-label="Unidade das medidas das peças"><button id="unitMm" type="button" class="unit-option active" aria-pressed="true">mm</button><button id="unitCm" type="button" class="unit-option" aria-pressed="false">cm</button></div><button class="ghost-btn" id="addPart" type="button">+ Adicionar</button></div></div>
+    <div class="field-help unit-hint" id="unitHint">Medidas das peças em milímetros (mm).</div><div id="partsList" class="parts-list"></div>
+    <div class="pieces-foot" id="partsCount">0 peças cadastradas</div>
+    <div class="inline-flex" style="margin-top:12px"><button class="ghost-btn" id="loadDemo" type="button" style="font-size:11px">Carregar exemplo</button><button class="ghost-btn" id="clearParts" type="button" style="font-size:11px;color:#a45756">Limpar lista</button></div>
+   </section>
+  </div>
+  <div class="sidebar-bottom"><button class="primary-btn full-width" id="optimizeSide" type="button">✦ Gerar plano de corte</button><div class="footer-version">Funciona offline • Versão 2.4 • Salvamento local</div></div>
+ </aside>
+ <main class="main">
+  <div class="workspace">
+
+   <div class="workspace-grid">
+    <div class="cut-main-column">
+    <section class="panel canvas-panel" aria-label="Editor de corte">
+     <div class="canvas-top"><div class="canvas-heading"><strong>Editor visual</strong><span class="tag" id="planTag">Pré-visualização</span></div><div class="canvas-header-right"><span class="sheet-label" id="sheetInfo">2750 × 1850 mm</span><div class="toolbar-actions" role="group" aria-label="Ações do plano de corte"><span class="save-indicator" id="saveIndicator">Salvo automaticamente</span><button type="button" class="primary-btn export-main-btn" id="openExport" aria-haspopup="dialog" aria-controls="exportBackdrop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 16v4h14v-4"/></svg> Exportar</button><button type="button" class="primary-btn generate-os-btn" id="generateOS" title="Criar nova ordem de serviço com o plano de corte atual">＋ Gerar O.S.</button></div></div></div>
+     <div id="sheetTabs" class="tabs-scroll" aria-label="Selecionar chapa"></div><div id="missingWarning" class="missing-strip hidden"></div>
+     <div class="canvas-tools"><div class="tool-left"><button class="tool-btn" id="toggleSnap" aria-pressed="true" type="button" title="Alinhar a peças vizinhas e bordas">◈ Ímã</button><button class="tool-btn" id="toggleGrid" aria-pressed="false" type="button">▦ Grade</button><button class="tool-btn" id="toggleCuts" aria-pressed="true" type="button">⌗ Linhas-guia</button><button class="tool-btn" id="toggleLeftovers" aria-pressed="false" type="button">▧ Sobras</button></div><div class="tool-right"><button class="icon-btn" id="zoomOut" aria-label="Diminuir zoom" title="Diminuir zoom">−</button><span class="zoom-label" id="zoomLabel">100%</span><button class="icon-btn" id="zoomIn" aria-label="Aumentar zoom" title="Aumentar zoom">+</button><button class="tool-btn" id="zoomFit" type="button" title="Ajustar à tela">Ajustar</button></div></div>
+     <div class="board-scroll" id="boardScroll"><div class="board-holder" id="boardHolder"><svg id="boardSvg" class="board-svg" role="img" aria-label="Plano de corte da chapa" viewBox="0 0 2750 1850" preserveAspectRatio="xMidYMid meet"></svg></div><div id="boardEmpty" class="board-empty hidden"><div class="board-empty-icon">▧</div><h3>Seu plano começa aqui</h3><p>Cadastre as peças no painel lateral e clique em <b>Gerar plano de corte</b> para visualizar o encaixe.</p></div></div>
+     <div class="canvas-bottom"><div class="legend"><span><i style="background:#84bfb3"></i>Peças</span><span><i style="background:#e2c5a1"></i>Chapa</span><span><i style="background:#b6ead2;border:1px dashed #3b9c74"></i>Sobras potenciais</span></div><div class="board-meta" id="boardStatus">Clique em uma peça para editar.</div></div>
+    </section>
+   <div class="metrics">
+    <div class="metric"><div class="metric-label">Chapas utilizadas</div><strong class="metric-value" id="metricSheets">—</strong><div class="metric-footer">Unidades do projeto</div><div class="metric-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="15" height="15" rx="2"/><path d="M8 21h12a1 1 0 0 0 1-1V8"/></svg></div></div>
+    <div class="metric highlight"><div class="metric-label">Aproveitamento</div><strong class="metric-value" id="metricUsage">—</strong><div class="metric-footer">Área útil das peças / chapas</div><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg></div></div>
+    <div class="metric"><div class="metric-label">Peças distribuídas</div><strong class="metric-value" id="metricPieces">—</strong><div class="metric-footer" id="metricMissing">Prontas para revisão</div><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3zM3 11h18M12 3v18"/></svg></div></div>
+    <div class="metric"><div class="metric-label">Área livre estimada</div><strong class="metric-value" id="metricFree">—</strong><div class="metric-footer">Dentro das áreas de refilo</div><div class="metric-icon"><svg viewBox="0 0 24 24"><path d="M3 7V3h4M21 7V3h-4M3 17v4h4M21 17v4h-4M8 12h8"/></svg></div></div>
+   </div>
+    </div>
+    <div class="inspector">
+   <section class="panel material-panel">
+    <div class="section-head"><strong>Material e chapa</strong><span class="mini-kicker">mm</span></div>
+    <div class="field-grid">
+     <div class="field"><label class="form-label" for="sheetW">Largura</label><input id="sheetW" type="number" min="1" step="1" value="2750"></div>
+     <div class="field"><label class="form-label" for="sheetH">Altura</label><input id="sheetH" type="number" min="1" step="1" value="1850"></div>
+     <div class="field"><label class="form-label" for="kerf">Espessura da serra</label><input id="kerf" type="number" min="0" step="0.1" value="3"></div>
+     <div class="field"><label class="form-label" for="margin">Refile por lado</label><input id="margin" type="number" min="0" step="0.5" value="10"></div>
+    </div><span class="field-help">O programa reserva espaço para serra e refile.</span>
+   </section>
+     <section class="panel"><h2 class="panel-title">Propriedades da peça</h2><p class="panel-description">Selecione uma peça no desenho.</p><div id="selectedEmpty" class="selection-empty"><div class="glyph">▧</div>Clique em qualquer peça para mover, girar ou editar suas coordenadas.</div><div id="selectedEditor" class="hidden"><div class="selection-name" id="selName"></div><p class="selection-dims" id="selDims"></p><div class="selection-fields"><div class="field"><label class="form-label" for="positionX">Posição X (mm)</label><input type="number" id="positionX" step="1"></div><div class="field"><label class="form-label" for="positionY">Posição Y (mm)</label><input type="number" id="positionY" step="1"></div><div class="field"><label class="form-label" for="targetSheet">Chapa de destino</label><select id="targetSheet"></select></div></div><div class="selection-actions"><button class="outline-btn" id="applyPosition" type="button">Aplicar posição</button><button class="outline-btn" id="rotatePiece" type="button">⟳ Girar 90°</button></div><div class="hint-line">Arraste na chapa ou use X e Y. Segure <span class="kbd">Shift</span> para ignorar o ímã.</div></div><div class="rule"></div><div class="flex-between"><span class="mini-kicker">Histórico de edição</span><div class="inline-flex"><button type="button" class="icon-btn" id="undoButton" aria-label="Desfazer" title="Desfazer (Ctrl+Z)" disabled>↶</button><button type="button" class="icon-btn" id="redoButton" aria-label="Refazer" title="Refazer (Ctrl+Shift+Z)" disabled>↷</button></div></div></section>
+     <section class="panel"><div class="flex-between"><h2 class="panel-title">Sobras aproveitáveis</h2><span class="tag">Estimativa</span></div><p class="panel-description" style="margin-top:6px">Maiores áreas retangulares livres na chapa selecionada.</p><div class="sheet-summary"><span>Área ocupada nesta chapa</span><b id="sheetUsage">—</b></div><div class="progress"><span id="usageProgress" style="width:0%"></span></div><div class="sheet-summary"><span>Espaços disponíveis</span><b id="freeZoneCount">—</b></div><div class="leftovers" id="leftoverList"><div class="selection-empty">Gere um plano para ver sobras.</div></div><p class="fine-print">As zonas são estimadas e não representam retalhos físicos separados ou cortes executáveis. Verifique a retirada e a sequência de corte.</p></section>
+     
+    </div>
+   </div>
+   <div class="notice"><strong>Importante:</strong> a distribuição usa diferentes heurísticas MaxRects e não garante aproveitamento máximo e <strong>não é uma sequência de corte para seccionadora nem arquivo de máquina CNC</strong>. As linhas-guia são visuais. Confira veio, ferramenta, margens, estabilidade e possibilidade real de executar os cortes antes da produção.</div>
+  </div>
+ </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="export-backdrop hidden" id="exportBackdrop" role="dialog" aria-modal="true" aria-labelledby="exportHeading" aria-describedby="exportDescription">
+ <div class="export-dialog" id="exportDialog" tabindex="-1">
+  <header class="export-header"><div class="export-head-icon" aria-hidden="true">⇩</div><div class="export-head-copy"><div class="export-kicker">ARQUIVOS & IMPRESSÃO</div><h2 id="exportHeading">Exportar projeto</h2><p id="exportDescription">Escolha como deseja salvar ou compartilhar seu plano.</p></div><button type="button" id="closeExport" class="export-close" aria-label="Fechar exportação">×</button></header>
+  <div class="export-inner">
+   <div class="export-project-line"><div><span class="export-subtitle">Projeto atual</span><strong id="exportProjectName">—</strong></div><span class="export-ready" id="exportReady">Plano pronto</span></div>
+   <div class="export-section-label">Documentação de corte</div>
+   <div class="export-scope"><label for="exportScope">Chapas incluídas</label><select id="exportScope"><option value="all">Todas as chapas do projeto</option><option value="current">Somente a chapa selecionada</option></select></div>
+   <div class="export-options">
+    <button type="button" class="export-option" id="exportProjectFile"><span class="export-option-icon project-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v7h8V3M8 21v-8h8v8"/></svg></span><span class="export-option-copy"><strong>Salvar arquivo do projeto</strong><small>Baixar .JSON para continuar a edição depois</small></span><span class="export-option-arrow" aria-hidden="true">↓</span></button>
+    <button type="button" class="export-option" id="exportPdf"><span class="export-option-icon pdf-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 2h8l5 5v15H7zM15 2v6h5M4 7v12"/></svg></span><span class="export-option-copy"><strong>Exportar PDF da chapa</strong><small>Gerar PDF com desenho, medidas e aproveitamento</small></span><span class="export-option-arrow" aria-hidden="true">↓</span></button>
+    <button type="button" class="export-option" id="exportPrint"><span class="export-option-icon print-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7zM17 12h.01"/></svg></span><span class="export-option-copy"><strong>Imprimir diretamente</strong><small>Abrir a impressão do navegador com o plano</small></span><span class="export-option-arrow" aria-hidden="true">↗</span></button>
+   </div>
+   <div class="export-more"><span>Precisa da relação de peças?</span><button type="button" id="exportCsv">Baixar lista CSV <span aria-hidden="true">↓</span></button></div>
+   <div class="export-note">Os planos são representações geométricas. Antes de cortar, confira medidas, folga da serra, veio e a sequência executável da máquina.</div>
+  </div>
+  <footer class="export-footer"><span>PDF gerado neste navegador, sem internet.</span><button type="button" class="outline-btn" id="dismissExport">Fechar</button></footer>
+ </div>
+</div>
+<div id="modalBackdrop" class="modal-backdrop hidden" role="dialog" aria-modal="true"><div class="modal"><h2 id="modalTitle">Confirmar</h2><p id="modalMessage"></p><div class="modal-footer"><button class="outline-btn" id="modalCancel" type="button">Cancelar</button><button class="primary-btn" id="modalConfirm" type="button">Confirmar</button></div></div></div>
+<input class="file-input" id="fileInput" type="file" accept=".json,application/json">
+<div class="print-report" id="printReport"></div>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const EPS = 1e-6, STORE='mdf-cut-studio-v04', LEGACY_STORE='mdf-cut-studio-v03', MAX_PIECES=500, MAX_SHEETS=500;
+const PALETTE=[['#b6e3db','#0c8175'],['#bdd9f0','#4f89ad'],['#e9d2f2','#a174b5'],['#f8dfb3','#b88b4b'],['#b9dbcf','#4f9481'],['#f4cfca','#be817a'],['#cfdcf5','#8294bd'],['#e7e1bc','#ada46c']];
+let app={name:'Novo projeto',unit:'mm',settings:{w:2750,h:1850,kerf:3,margin:10},parts:[],plan:null,active:0,selected:null,zoom:100,snap:true,grid:false,cuts:true,leftovers:false,undo:[],redo:[],drag:null,dirty:false,optimizerQuality:'equilibrado',optimizerInfo:null};
+let saveTimer=null,toastTimer=null,modalResolve=null;
+const format = n => new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1}).format(n);
+const fmtArea = n => (n/1e6).toLocaleString('pt-BR',{maximumFractionDigits:2})+' m²';
+const esc = str => String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v,min,max) => Math.min(max,Math.max(min,v));
+const deep = o => JSON.parse(JSON.stringify(o));
+const newPart = (name='Nova peça',w=500,h=300,q=1,rotate=true) => ({name,w,h,q,rotate});
+const demoParts = () => [newPart('Lateral',720,500,4,false),newPart('Tampo / Base',900,480,3,true),newPart('Porta',1100,450,4,false),newPart('Prateleira',620,340,5,true),newPart('Fundo',1200,600,2,true)];
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),3400)}
+function confirmDialog(title,message,confirm='Confirmar'){return new Promise(resolve=>{modalResolve=resolve;$('modalTitle').textContent=title;$('modalMessage').textContent=message;$('modalConfirm').textContent=confirm;$('modalBackdrop').classList.remove('hidden');$('modalConfirm').focus()})}
+function closeModal(ok){$('modalBackdrop').classList.add('hidden');if(modalResolve){modalResolve(ok);modalResolve=null}}
+$('modalCancel').onclick=()=>closeModal(false);$('modalConfirm').onclick=()=>closeModal(true);
+$('modalBackdrop').addEventListener('click',e=>{if(e.target===$('modalBackdrop'))closeModal(false)});
+function settingsValid(s){return Object.values(s).every(Number.isFinite)&&s.w>0&&s.h>0&&s.w<=100000&&s.h<=100000&&s.margin>=0&&s.kerf>=0&&s.margin<=1000&&s.kerf<=100&&s.w>2*s.margin&&s.h>2*s.margin}
+function partsValid(parts){return Array.isArray(parts)&&parts.length>0&&parts.every(p=>Number.isFinite(p.w)&&Number.isFinite(p.h)&&p.w>0&&p.h>0&&p.w<=100000&&p.h<=100000&&Number.isInteger(p.q)&&p.q>=1&&p.q<=MAX_PIECES)&&parts.reduce((n,p)=>n+p.q,0)<=MAX_PIECES}
+function sheetRect(s){return{x:s.margin,y:s.margin,w:s.w-2*s.margin,h:s.h-2*s.margin}}
+function expandedParts(){return app.parts.flatMap((p,i)=>Array.from({length:p.q},(_,j)=>({id:i+'-'+j,sourceIndex:i,name:p.name||'Peça',w:p.w,h:p.h,canRotate:p.rotate,rot:false}))) }
+function contains(a,b){return a.x<=b.x+EPS&&a.y<=b.y+EPS&&a.x+a.w>=b.x+b.w-EPS&&a.y+a.h>=b.y+b.h-EPS}
+function intersects(a,b){return a.x<b.x+b.w-EPS&&a.x+a.w>b.x+EPS&&a.y<b.y+b.h-EPS&&a.y+a.h>b.y+EPS}
+function splitMaxRects(free,used){const next=[];for(const f of free){if(!intersects(f,used)){next.push(f);continue}if(used.x>f.x+EPS)next.push({x:f.x,y:f.y,w:used.x-f.x,h:f.h});if(used.x+used.w<f.x+f.w-EPS)next.push({x:used.x+used.w,y:f.y,w:f.x+f.w-used.x-used.w,h:f.h});if(used.y>f.y+EPS)next.push({x:f.x,y:f.y,w:f.w,h:used.y-f.y});if(used.y+used.h<f.y+f.h-EPS)next.push({x:f.x,y:used.y+used.h,w:f.w,h:f.y+f.h-used.y-used.h})}return next.filter(f=>f.w>EPS&&f.h>EPS).filter((f,i,a)=>!a.some((g,j)=>j!==i&&contains(g,f)&&(j<i||!contains(f,g))))}
+/* MDF Cut Studio v0.4 — algoritmo de encaixe retangular, sem dependências. */
+function numericCompare(a, b) {
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const d = (a[i] ?? 0) - (b[i] ?? 0);
+    if (Math.abs(d) > EPS) return d < 0 ? -1 : 1;
+  }
+  return 0;
+}
+function makePackingSheet(s) {
+  return { placed: [], free: [{ x: s.margin, y: s.margin, w: s.w - 2 * s.margin + s.kerf, h: s.h - 2 * s.margin + s.kerf }], area: 0 };
+}
+function touchingLength(a, b, c, d) { return Math.max(0, Math.min(b, d) - Math.max(a, c)); }
+function edgeContact(sheet, x, y, w, h, s) {
+  let length = 0;
+  if (Math.abs(x - s.margin) < EPS || Math.abs(x + w - (s.w - s.margin)) < EPS) length += h;
+  if (Math.abs(y - s.margin) < EPS || Math.abs(y + h - (s.h - s.margin)) < EPS) length += w;
+  for (const p of sheet.placed) {
+    if (Math.abs(x - p.x - p.w - s.kerf) < EPS || Math.abs(x + w + s.kerf - p.x) < EPS)
+      length += touchingLength(y, y + h, p.y, p.y + p.h);
+    if (Math.abs(y - p.y - p.h - s.kerf) < EPS || Math.abs(y + h + s.kerf - p.y) < EPS)
+      length += touchingLength(x, x + w, p.x, p.x + p.w);
+  }
+  return length;
+}
+function getPackingSpot(sheet, p, s, heuristic) {
+  let best = null;
+  const rotations = p.canRotate && Math.abs(p.w - p.h) > EPS ? [false, true] : [false];
+  for (const f of sheet.free) {
+    for (const rot of rotations) {
+      const w = rot ? p.h : p.w, h = rot ? p.w : p.h;
+      const ew = w + s.kerf, eh = h + s.kerf;
+      if (ew > f.w + EPS || eh > f.h + EPS) continue;
+      const remW = Math.max(0, f.w - ew), remH = Math.max(0, f.h - eh);
+      const short = Math.min(remW, remH), long = Math.max(remW, remH);
+      const waste = Math.max(0, f.w * f.h - ew * eh);
+      // Avalia os quatro cantos do retângulo livre, em vez de usar apenas o canto superior esquerdo.
+      const points = [[f.x, f.y], [f.x + remW, f.y], [f.x, f.y + remH], [f.x + remW, f.y + remH]];
+      for (const [rawX, rawY] of points) {
+        const x = Math.max(s.margin, Math.min(s.w - s.margin - w, rawX));
+        const y = Math.max(s.margin, Math.min(s.h - s.margin - h, rawY));
+        // Para respeitar o espaço de serra, a posição efetiva também deve caber no espaço livre virtual.
+        if (x < f.x - EPS || y < f.y - EPS || x + ew > f.x + f.w + EPS || y + eh > f.y + f.h + EPS) continue;
+        let score;
+        switch (heuristic) {
+          case 'area': score = [waste, short, long, y, x]; break;
+          case 'long': score = [long, short, waste, y, x]; break;
+          case 'bottom': score = [y + h, x, short, waste]; break;
+          case 'contact': score = [-edgeContact(sheet, x, y, w, h, s), waste, short, y, x]; break;
+          default: score = [short, long, waste, y, x];
+        }
+        if (!best || numericCompare(score, best.score) < 0) best = { x, y, w, h, rot, score };
+      }
+    }
+  }
+  return best;
+}
+function place(sheet, p, spot, s) {
+  sheet.placed.push({ ...p, x: spot.x, y: spot.y, w: spot.w, h: spot.h, rot: spot.rot });
+  sheet.area += spot.w * spot.h;
+  sheet.free = splitMaxRects(sheet.free, { x: spot.x, y: spot.y, w: spot.w + s.kerf, h: spot.h + s.kerf });
+}
+function seededNoise(str, seed) {
+  let h = 2166136261 ^ (seed * 2246822519);
+  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+  h ^= h >>> 16;
+  h = Math.imul(h, 2246822507);
+  h ^= h >>> 13;
+  return (h >>> 0) / 4294967296;
+}
+function orderPieces(expanded, order, seed = 0) {
+  function weight(p) {
+    switch (order) {
+      case 'side': return Math.max(p.w, p.h);
+      case 'perimeter': return p.w + p.h;
+      case 'height': return p.h;
+      case 'width': return p.w;
+      case 'fixed': return (p.canRotate ? 0 : 100000000000) + p.w * p.h;
+      case 'aspect': return p.w * p.h * (1 + Math.abs(p.w - p.h) / Math.max(p.w, p.h));
+      default: return p.w * p.h;
+    }
+  }
+  return expanded.map(p => ({ p, weight: weight(p) * (seed ? 0.86 + seededNoise(p.id, seed) * 0.28 : 1) }))
+    .sort((a, b) => b.weight - a.weight || b.p.w * b.p.h - a.p.w * a.p.h || a.p.id.localeCompare(b.p.id))
+    .map(it => it.p);
+}
+function candidatePack(expanded, s, order, heuristic, mode, seed = 0) {
+  const items = orderPieces(expanded, order, seed);
+  const sheets = [], missing = [];
+  for (const p of items) {
+    let target = null;
+    for (let i = 0; i < sheets.length; i++) {
+      const spot = getPackingSpot(sheets[i], p, s, heuristic);
+      if (!spot) continue;
+      if (mode === 'first') { target = { i, spot }; break; }
+      // Entre chapas abertas, favorece encaixe apertado e, no empate, a mais preenchida.
+      const score = [...spot.score, -sheets[i].area, i];
+      if (!target || numericCompare(score, target.score) < 0) target = { i, spot, score };
+    }
+    if (!target) {
+      const fresh = makePackingSheet(s);
+      const spot = getPackingSpot(fresh, p, s, heuristic);
+      if (!spot) { missing.push(p); continue; }
+      target = { i: sheets.length, spot };
+      sheets.push(fresh);
+    }
+    place(sheets[target.i], p, target.spot, s);
+  }
+  return finalizePacking(sheets, missing, expanded.length, s);
+}
+function candidateAdaptive(expanded, s, heuristic, priority) {
+  // Escolhe repetidamente a peça que melhor combina com o espaço restante da chapa atual.
+  // Útil para listas pequenas/médias; limitado na UI para evitar cálculos excessivos.
+  let remaining = orderPieces(expanded, 'area');
+  const sheets = [], missing = [];
+  const empty = makePackingSheet(s);
+  missing.push(...remaining.filter(p => !getPackingSpot(empty, p, s, 'short')));
+  remaining = remaining.filter(p => getPackingSpot(empty, p, s, 'short'));
+  while (remaining.length) {
+    const sheet = makePackingSheet(s);
+    let inserted = 0;
+    while (remaining.length) {
+      let best = null;
+      // Evita pegar peças pequenas antes da primeira peça grande da chapa.
+      const candidates = inserted === 0 ? remaining.slice(0, Math.min(12, remaining.length)) : remaining;
+      for (const p of candidates) {
+        const spot = getPackingSpot(sheet, p, s, heuristic);
+        if (!spot) continue;
+        const area = p.w * p.h;
+        const available = Math.max(1, s.w * s.h);
+        const score = priority === 'largest'
+          ? [-area, ...spot.score]
+          : [spot.score[0] / available - 0.18 * area / available, spot.score[1] / Math.max(s.w, s.h), -area];
+        if (!best || numericCompare(score, best.score) < 0) best = { p, spot, score };
+      }
+      if (!best) break;
+      place(sheet, best.p, best.spot, s);
+      remaining.splice(remaining.findIndex(p => p.id === best.p.id), 1);
+      inserted++;
+    }
+    if (!inserted) { missing.push(...remaining); break; }
+    sheets.push(sheet);
+  }
+  return finalizePacking(sheets, missing, expanded.length, s);
+}
+function finalizePacking(sheets, missing, total, s) {
+  // Todas as chapas têm a mesma capacidade. Concentrar peças nas primeiras facilita recuperar sobras maiores.
+  sheets.sort((a, b) => b.area - a.area);
+  const last = sheets[sheets.length - 1];
+  const largestHole = last ? last.free.reduce((max, r) => Math.max(max,
+    Math.max(0, r.w - s.kerf) * Math.max(0, r.h - s.kerf)), 0) : 0;
+  const spread = sheets.reduce((sum, sh) => {
+    const maxX = sh.placed.reduce((m, p) => Math.max(m, p.x + p.w), s.margin);
+    const maxY = sh.placed.reduce((m, p) => Math.max(m, p.y + p.h), s.margin);
+    return sum + (maxX - s.margin) * (maxY - s.margin);
+  }, 0);
+  return { sheets: sheets.map(sh => ({ placed: sh.placed })), missing, total,
+    _rank: [missing.length, sheets.length, last ? last.area : 0, -largestHole, spread] };
+}
+function comparePacking(a, b) { return numericCompare(a._rank, b._rank); }
+function optimizationAttempts(quality, n) {
+  // Os oito primeiros são equivalentes aos parâmetros da versão anterior; a busca amplia
+  // ordenações, heurísticas e posições (incluindo os quatro cantos de regiões livres).
+  const configs = [
+    ['area', 'short', 'first'], ['side', 'short', 'first'],
+    ['area', 'area', 'first'], ['side', 'area', 'best'],
+    ['area', 'bottom', 'first'], ['perimeter', 'short', 'best'],
+    ['height', 'short', 'first'], ['area', 'short', 'best'],
+    ['fixed', 'short', 'first'], ['aspect', 'area', 'best'],
+    ['width', 'short', 'first'], ['side', 'contact', 'first'],
+    ['height', 'area', 'best'], ['fixed', 'area', 'first'],
+    ['area', 'contact', 'best'], ['perimeter', 'bottom', 'first'],
+    ['width', 'area', 'best'], ['aspect', 'long', 'first'],
+    ['side', 'long', 'best'], ['fixed', 'contact', 'first'],
+    ['area', 'long', 'first'], ['perimeter', 'area', 'best'],
+    ['height', 'contact', 'first'], ['aspect', 'contact', 'best']
+  ].map(([order, heuristic, mode]) => ({ kind: 'greedy', order, heuristic, mode, seed: 0 }));
+  const count = quality === 'rapido' ? 10 : quality === 'intensivo' ? 24 : 18;
+  const attempts = configs.slice(0, count);
+  if (quality !== 'rapido') {
+    const seeds = quality === 'intensivo' ? [1, 7, 19, 31, 43, 59] : [7, 19];
+    for (const seed of seeds) {
+      for (const [order, heuristic, mode] of [
+        ['area', 'short', 'first'], ['side', 'area', 'best'], ['fixed', 'short', 'first'], ['aspect', 'area', 'best']
+      ]) attempts.push({ kind: 'greedy', order, heuristic, mode, seed });
+    }
+    if (n <= 85) for (const [heuristic, priority] of [
+      ['short', 'largest'], ['area', 'largest'],
+      ...(quality === 'intensivo' ? [['short', 'fit'], ['contact', 'largest']] : [])
+    ]) attempts.push({ kind: 'adaptive', heuristic, priority });
+  }
+  return attempts;
+}
+function validateGeneratedPacking(plan, expanded, s) {
+  const seen = new Set();
+  const expected = new Set(expanded.map(p => p.id));
+  for (const sh of plan.sheets) {
+    for (const p of sh.placed) {
+      if (!expected.has(p.id) || seen.has(p.id)) return false;
+      if (!canPlace({ sheets: [{ placed: sh.placed.filter(q => q.id !== p.id) }] }, 0, p.id, p.x, p.y, p.w, p.h, s)) return false;
+      seen.add(p.id);
+    }
+  }
+  for (const p of plan.missing) {
+    if (!expected.has(p.id) || seen.has(p.id)) return false;
+    seen.add(p.id);
+  }
+  return seen.size === expected.size;
+}
+let optimizerRun = 0, optimizerBusy = false;
+function optimizerControls(busy) {
+  optimizerBusy = busy;
+  $('optimizeSide').disabled = busy;
+  $('optimizeSide').textContent = busy ? '◌ Otimizando…' : '✦ Gerar plano de corte';
+}
+async function optimize() {
+  const s = { ...app.settings };
+  if (!settingsValid(s)) { toast('Revise as dimensões da chapa e a largura da serra.'); return; }
+  if (!partsValid(app.parts)) { toast('Cadastre peças válidas (máximo de 500 unidades).'); return; }
+  if (optimizerBusy) return;
+  const runId = ++optimizerRun;
+  const items = expandedParts();
+  const quality = 'equilibrado';
+  const attempts = optimizationAttempts(quality, items.length);
+  const usable = (s.w - 2 * s.margin) * (s.h - 2 * s.margin);
+  const lowerBound = Math.ceil(items.reduce((sum, p) => sum + p.w * p.h, 0) / usable);
+  const begin = performance.now();
+  const budget = quality === 'intensivo' ? 6500 : quality === 'rapido' ? 700 : 2300;
+  let best = null, attempted = 0;
+  optimizerControls(true);
+
+  try {
+    // Permite ao navegador exibir o estado de cálculo.
+    await new Promise(resolve => setTimeout(resolve, 0));
+    for (const params of attempts) {
+      if (runId !== optimizerRun) return;
+      if (attempted >= (quality === 'rapido' ? 6 : 10) && performance.now() - begin > budget) break;
+      const cand = params.kind === 'adaptive'
+        ? candidateAdaptive(items, s, params.heuristic, params.priority)
+        : candidatePack(items, s, params.order, params.heuristic, params.mode, params.seed);
+      attempted++;
+      if (!best || comparePacking(cand, best) < 0) best = cand;
+      if (attempted % 5 === 0) {
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+    if (runId !== optimizerRun) return;
+    if (!best || !validateGeneratedPacking(best, items, s)) throw new Error('Falha na verificação geométrica do plano.');
+    const elapsed = Math.round(performance.now() - begin);
+    app.plan = { sheets: best.sheets, missing: best.missing, total: best.total };
+    app.optimizerInfo = { attempts: attempted, elapsed, lowerBound, quality, sheets: best.sheets.length };
+    app.active = 0;
+    app.selected = null;
+    app.undo = [];
+    app.redo = [];
+    app.dirty = false;
+    renderAll();
+    scheduleSave();
+    toast(best.missing.length
+      ? `${best.missing.length} peça(s) não cabem nas dimensões informadas.`
+      : `Melhor resultado: ${best.sheets.length} chapa(s) em ${attempted} estratégias. Edite o desenho se desejar.`);
+  } catch (error) {
+    console.error('Erro ao otimizar', error);
+    toast('Não foi possível gerar um plano válido. Verifique as dimensões.');
+
+  } finally {
+    if (runId === optimizerRun) optimizerControls(false);
+  }
+}
+
+function canPlace(plan,si,id,x,y,w,h,s=app.settings){if(!plan||si<0||si>plan.sheets.length||si>=MAX_SHEETS||![x,y,w,h].every(Number.isFinite)||w<=0||h<=0)return false;if(x<s.margin-EPS||y<s.margin-EPS||x+w>s.w-s.margin+EPS||y+h>s.h-s.margin+EPS)return false;const arr=(plan.sheets[si]||{placed:[]}).placed;return arr.every(p=>p.id===id||x+w+s.kerf<=p.x+EPS||p.x+p.w+s.kerf<=x+EPS||y+h+s.kerf<=p.y+EPS||p.y+p.h+s.kerf<=y+EPS)}
+function findPlaced(id){if(!app.plan||!id)return null;for(let i=0;i<app.plan.sheets.length;i++){const p=app.plan.sheets[i].placed.find(p=>p.id===id);if(p)return{p,si:i}}return null}
+function recordSnapshot(){return{plan:deep(app.plan),active:app.active,selected:app.selected}}
+function historySave(){app.undo.push(recordSnapshot());if(app.undo.length>60)app.undo.shift();app.redo=[]}
+function undo(){if(!app.undo.length)return;app.redo.push(recordSnapshot());const prior=app.undo.pop();app.plan=prior.plan;app.active=prior.active;app.selected=prior.selected;renderAll();scheduleSave();toast('Última edição desfeita.')}
+function redo(){if(!app.redo.length)return;app.undo.push(recordSnapshot());const next=app.redo.pop();app.plan=next.plan;app.active=next.active;app.selected=next.selected;renderAll();scheduleSave();toast('Edição refeita.')}
+function commit(id,target,x,y,rot){const loc=findPlaced(id);if(!loc)return false;const w=rot?app.parts[loc.p.sourceIndex].h:app.parts[loc.p.sourceIndex].w,h=rot?app.parts[loc.p.sourceIndex].w:app.parts[loc.p.sourceIndex].h;if(rot&&!loc.p.canRotate)return false;if(!canPlace(app.plan,target,id,x,y,w,h))return false;if(loc.si===target&&loc.p.x===x&&loc.p.y===y&&loc.p.rot===rot)return true;historySave();app.plan.sheets[loc.si].placed=app.plan.sheets[loc.si].placed.filter(p=>p.id!==id);if(target===app.plan.sheets.length)app.plan.sheets.push({placed:[]});app.plan.sheets[target].placed.push({...loc.p,x,y,w,h,rot});app.active=target;app.selected=id;renderAll();scheduleSave();return true}
+function rotateSelected(){const loc=findPlaced(app.selected);if(!loc)return;if(!loc.p.canRotate){toast('O giro está bloqueado para esta peça (sentido do veio).');return}const ok=commit(loc.p.id,loc.si,loc.p.x,loc.p.y,!loc.p.rot);if(!ok)toast('Não há espaço para girar nesta posição. Mova a peça antes.')}
+function applyPosition(){const loc=findPlaced(app.selected);if(!loc)return;const x=Number($('positionX').value),y=Number($('positionY').value),si=Number($('targetSheet').value);if(!$('positionX').value.trim()||!$('positionY').value.trim()||!Number.isInteger(si)||!commit(loc.p.id,si,x,y,loc.p.rot)){toast('Posição inválida: confira margens, serra e sobreposições.');renderInspector()}else toast('Posição aplicada.')}
+function deriveFreeDisjoint(placed,s){let free=[sheetRect(s)];for(const p of placed){const used={x:p.x,y:p.y,w:p.w+s.kerf,h:p.h+s.kerf};const next=[];for(const r of free){if(!intersects(r,used)){next.push(r);continue}const x1=Math.max(r.x,used.x),x2=Math.min(r.x+r.w,used.x+used.w),y1=Math.max(r.y,used.y),y2=Math.min(r.y+r.h,used.y+used.h);if(y1>r.y+EPS)next.push({x:r.x,y:r.y,w:r.w,h:y1-r.y});if(y2<r.y+r.h-EPS)next.push({x:r.x,y:y2,w:r.w,h:r.y+r.h-y2});if(x1>r.x+EPS)next.push({x:r.x,y:y1,w:x1-r.x,h:y2-y1});if(x2<r.x+r.w-EPS)next.push({x:x2,y:y1,w:r.x+r.w-x2,h:y2-y1})}free=next.filter(r=>r.w>EPS&&r.h>EPS)}// Mesclar retângulos vizinhos de mesma altura/largura sem sobreposição.
+let changed=true,passes=0;while(changed&&passes++<200){changed=false;outer:for(let i=0;i<free.length;i++)for(let j=i+1;j<free.length;j++){let a=free[i],b=free[j],merged=null;if(Math.abs(a.y-b.y)<EPS&&Math.abs(a.h-b.h)<EPS&&(Math.abs(a.x+a.w-b.x)<EPS||Math.abs(b.x+b.w-a.x)<EPS))merged={x:Math.min(a.x,b.x),y:a.y,w:a.w+b.w,h:a.h};else if(Math.abs(a.x-b.x)<EPS&&Math.abs(a.w-b.w)<EPS&&(Math.abs(a.y+a.h-b.y)<EPS||Math.abs(b.y+b.h-a.y)<EPS))merged={x:a.x,y:Math.min(a.y,b.y),w:a.w,h:a.h+b.h};if(merged){free.splice(j,1);free.splice(i,1,merged);changed=true;break outer}}}return free}
+function computeFreeRegions(placed,s){return deriveFreeDisjoint(placed,s).filter(r=>r.w>=150&&r.h>=150&&r.w*r.h>=90000).sort((a,b)=>b.w*b.h-a.w*a.h)}
+function sheetStats(si){if(!app.plan||!app.plan.sheets[si])return{used:0,free:0,regions:[]};const placed=app.plan.sheets[si].placed,regions=computeFreeRegions(placed,app.settings);return{used:placed.reduce((a,p)=>a+p.w*p.h,0),free:deriveFreeDisjoint(placed,app.settings).reduce((a,r)=>a+r.w*r.h,0),regions}}
+function showPlanNeeded(){optimizerRun++;optimizerControls(false);app.plan=null;app.optimizerInfo=null;app.active=0;app.selected=null;app.undo=[];app.redo=[];app.dirty=true;renderAll();scheduleSave()}
+function displayMeasure(mm){return String(Number((mm/(app.unit==='cm'?10:1)).toFixed(app.unit==='cm'?3:3)))}
+function renderUnitSwitch(){
+ for(const unit of ['mm','cm']){const button=$('unit'+unit.toUpperCase().slice(0,1)+unit.slice(1));button.classList.toggle('active',app.unit===unit);button.setAttribute('aria-pressed',String(app.unit===unit))}
+ $('unitHint').textContent=app.unit==='cm'?'Medidas das peças em centímetros (cm). Ex.: 50 cm = 500 mm.':'Medidas das peças em milímetros (mm).';
+}
+function renderParts(){renderUnitSwitch();const unit=app.unit;const rows=app.parts.map((p,i)=>{const col=PALETTE[i%PALETTE.length][1];return `<div class="part-row" data-i="${i}"><div class="part-row-top"><span class="part-dot" style="background:${col}"></span><input class="name-input" aria-label="Nome da peça ${i+1}" data-key="name" value="${esc(p.name)}" maxlength="70"><button type="button" class="part-remove" data-remove="${i}" title="Excluir peça" aria-label="Excluir peça ${i+1}">×</button></div><div class="part-cols"><div><label>Larg. (${unit})</label><input type="number" min="${unit==='cm'?'0.1':'1'}" max="${unit==='cm'?'10000':'100000'}" step="any" data-key="w" value="${displayMeasure(p.w)}" aria-label="Largura da peça ${i+1} em ${unit}"></div><div><label>Alt. (${unit})</label><input type="number" min="${unit==='cm'?'0.1':'1'}" max="${unit==='cm'?'10000':'100000'}" step="any" data-key="h" value="${displayMeasure(p.h)}" aria-label="Altura da peça ${i+1} em ${unit}"></div><div><label>Qtd.</label><input type="number" min="1" max="500" step="1" data-key="q" value="${p.q}" aria-label="Quantidade da peça ${i+1}"></div></div><div class="part-footer"><label class="check-label"><input type="checkbox" data-key="rotate" ${p.rotate?'checked':''}> Permitir girar 90°</label><span class="mini-kicker">#${String(i+1).padStart(2,'0')}</span></div></div>`}).join('');$('partsList').innerHTML=rows||'<p class="micro-copy">Sua lista está vazia. Clique em <b>+ Adicionar</b> para cadastrar a primeira peça.</p>';const n=app.parts.reduce((a,p)=>a+(Number(p.q)||0),0);$('partsCount').textContent=`${n} unidade(s) em ${app.parts.length} tipo(s)`}
+
+function renderSettings(){$('projectName').value=app.name;const {w,h,kerf,margin}=app.settings;$('sheetW').value=w;$('sheetH').value=h;$('kerf').value=kerf;$('margin').value=margin;$('sheetInfo').textContent=format(w)+' × '+format(h)+' mm'}
+function renderMetrics(){const p=app.plan;if(!p){['metricSheets','metricUsage','metricPieces','metricFree'].forEach(id=>$(id).textContent='—');$('metricMissing').textContent='Aguardando plano';$('planTag').textContent='Sem plano';return}const totalPlaced=p.sheets.reduce((a,s)=>a+s.placed.length,0),area=p.sheets.reduce((a,s)=>a+s.placed.reduce((v,q)=>v+q.w*q.h,0),0),full=p.sheets.length*app.settings.w*app.settings.h,free=p.sheets.reduce((a,s)=>a+deriveFreeDisjoint(s.placed,app.settings).reduce((b,r)=>b+r.w*r.h,0),0);$('metricSheets').textContent=p.sheets.length;$('metricUsage').textContent=(full?format(area/full*100):'0')+'%';$('metricPieces').textContent=`${totalPlaced}/${p.total}`;$('metricFree').textContent=fmtArea(free);$('metricMissing').textContent=p.missing.length?`${p.missing.length} não alocada(s)`:'Todas as peças alocadas';$('planTag').textContent='Plano editável'}
+function renderTabs(){const p=app.plan;$('missingWarning').classList.toggle('hidden',!p||!p.missing.length);if(p&&p.missing.length)$('missingWarning').textContent=p.missing.length+' peça(s) não couberam nas dimensões atuais. Revise medidas ou permissão de giro.';$('sheetTabs').innerHTML=p?p.sheets.map((s,i)=>`<button class="sheet-tab ${app.active===i?'active':''}" type="button" data-sheet="${i}" aria-pressed="${app.active===i}">Chapa ${i+1}<small>${s.placed.length} peças</small></button>`).join('')+'<button class="tab-add" id="addSheet" type="button" aria-label="Adicionar chapa vazia" title="Adicionar chapa vazia">+</button>':'<span class="micro-copy">Nenhuma chapa gerada</span>';}
+function renderBoard(){const svg=$('boardSvg'),p=app.plan,has=p&&p.sheets.length>0;$('boardHolder').classList.toggle('hidden',!has);$('boardEmpty').classList.toggle('hidden',!!has);if(!has){$('boardStatus').textContent='Adicione peças e gere seu plano.';return}const s=app.settings,sh=p.sheets[app.active]||p.sheets[0];svg.setAttribute('viewBox',`0 0 ${s.w} ${s.h}`);svg.setAttribute('aria-label',`Plano de corte da chapa ${app.active+1}`);const inner=buildBoardSVG(sh.placed,s,false);svg.innerHTML=inner;$('boardStatus').textContent=`Chapa ${app.active+1} · ${sh.placed.length} peças · arraste para mover`;requestAnimationFrame(()=>{sizeBoard();centerBoardViewport()})}
+function buildBoardSVG(placed,s,forPrint=false){const rect=sheetRect(s);const grid=(!forPrint&&app.grid)?`<defs><pattern id="mm-grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="#906f49" stroke-width="1.6" opacity=".23"/></pattern></defs><rect width="${s.w}" height="${s.h}" fill="url(#mm-grid)" pointer-events="none"/>`:'';const margin=`<rect x="${rect.x}" y="${rect.y}" width="${rect.w}" height="${rect.h}" fill="none" stroke="#8e7049" stroke-width="5" stroke-dasharray="19 13" opacity=".7" pointer-events="none"/>`;const leftover=(!forPrint&&app.leftovers)?computeFreeRegions(placed,s).slice(0,6).map(r=>`<g pointer-events="none"><rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="#41c88c" fill-opacity=".23" stroke="#168a5a" stroke-width="6" stroke-dasharray="22 15"/><text x="${r.x+r.w/2}" y="${r.y+r.h/2-10}" text-anchor="middle" fill="#1d7752" font-size="${Math.min(43,Math.max(17,r.w/9))}" font-weight="800">SOBRA</text><text x="${r.x+r.w/2}" y="${r.y+r.h/2+35}" text-anchor="middle" fill="#1d7752" font-size="${Math.min(33,Math.max(15,r.w/11))}">${Math.round(r.w)} × ${Math.round(r.h)}</text></g>`).join(''):'';let parts=placed.map(p=>{const drag=app.drag&&app.drag.id===p.id?app.drag:null;const x=drag?drag.previewX:p.x,y=drag?drag.previewY:p.y,w=p.w,h=p.h;const palette=PALETTE[p.sourceIndex%PALETTE.length],selected=p.id===app.selected;const invalid=drag&&!drag.valid;const fill=invalid?'#f8bbbb':selected?'#a5ece0':palette[0],stroke=invalid?'#c83e39':selected?'#087f74':palette[1];const labelSize=Math.min(43,Math.max(15,Math.min(w/9,h/3.6))),subSize=Math.min(34,Math.max(13,Math.min(w/12,h/5)));const fitName=String(p.name).slice(0,Math.max(4,Math.floor(w/27)));const showName=w>125&&h>95,showDims=w>135&&h>145;return `<g class="part-group" data-part-id="${esc(p.id)}" tabindex="0" role="button" aria-label="${esc(p.name)}, ${format(w)} por ${format(h)} milímetros"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="${fill}" stroke="${stroke}" stroke-width="${selected?10:5}"/><rect x="${x+9}" y="${y+9}" width="${Math.max(1,w-18)}" height="${Math.max(1,h-18)}" fill="none" stroke="${stroke}" stroke-opacity=".25" stroke-width="2" ${app.cuts||forPrint?'stroke-dasharray="12 9"':''} pointer-events="none"/>${showName?`<text pointer-events="none" x="${x+w/2}" y="${y+h/2-(showDims?subSize*.2:0)}" text-anchor="middle" font-size="${labelSize}" font-weight="800" fill="#28404a">${esc(fitName)}</text>`:''}${showDims?`<text pointer-events="none" x="${x+w/2}" y="${y+h/2+subSize*1.2}" text-anchor="middle" font-size="${subSize}" fill="#50636e">${format(w)} × ${format(h)}</text>`:''}${selected?`<rect x="${x+5}" y="${y+5}" width="${Math.max(1,w-10)}" height="${Math.max(1,h-10)}" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="18 12" pointer-events="none"/>`:''}</g>`}).join('');let guides='';if(!forPrint&&app.cuts&&app.selected){const sel=placed.find(q=>q.id===app.selected);if(sel){const d=app.drag&&app.drag.id===sel.id?app.drag:null,x=d?d.previewX:sel.x,y=d?d.previewY:sel.y;guides=`<g stroke="#0c7f76" stroke-width="4" stroke-dasharray="18 14" opacity=".72" pointer-events="none"><path d="M ${x} 0 V ${s.h} M ${x+sel.w} 0 V ${s.h} M 0 ${y} H ${s.w} M 0 ${y+sel.h} H ${s.w}"/></g>`}}if(!forPrint&&app.drag){const d=app.drag;if(d.guideX!=null)guides+=`<path d="M ${d.guideX} 0 V ${s.h}" stroke="#0c9b7f" stroke-width="7" stroke-dasharray="25 17" pointer-events="none"/>`;if(d.guideY!=null)guides+=`<path d="M 0 ${d.guideY} H ${s.w}" stroke="#0c9b7f" stroke-width="7" stroke-dasharray="25 17" pointer-events="none"/>`}return `<rect width="${s.w}" height="${s.h}" fill="#e8d0ab" pointer-events="none"/>${grid}${margin}${leftover}${parts}${guides}`}
+function sizeBoard(){
+ if(!app.plan||!app.plan.sheets.length)return;
+ const wrap=$('boardScroll'),svg=$('boardSvg'),holder=$('boardHolder'),s=app.settings;
+ if(!wrap.clientWidth||!s.w||!s.h)return;
+ const pad=window.innerWidth<=700?14:22;
+ const availableW=Math.max(160,wrap.clientWidth-pad*2-2);
+ // Em 100%, a chapa inteira deve caber no editor sem distorção.
+ const fittedH=availableW*s.h/s.w;
+ const targetH=Math.max(340,Math.min(760,Math.ceil(fittedH+pad*2)));
+ wrap.style.height=targetH+'px';
+ const availableH=Math.max(150,targetH-pad*2);
+ const baseScale=Math.min(availableW/s.w,availableH/s.h);
+ const scale=baseScale*app.zoom/100;
+ const renderedW=Math.max(1,Math.round(s.w*scale));
+ const renderedH=Math.max(1,Math.round(s.h*scale));
+ svg.style.width=renderedW+'px';
+ svg.style.height=renderedH+'px';
+ // O suporte ocupa pelo menos toda a área visível. Assim o flex centraliza a
+ // chapa mesmo se ela for menor que o editor; com zoom alto, permite rolagem.
+ holder.style.width=Math.max(wrap.clientWidth,renderedW+pad*2)+'px';
+ holder.style.height=Math.max(targetH,renderedH+pad*2)+'px';
+ holder.style.minHeight='0';
+ holder.style.minWidth='0';
+ $('zoomLabel').textContent=app.zoom+'%';
+}
+function centerBoardViewport(){
+ const wrap=$('boardScroll');
+ wrap.scrollLeft=Math.max(0,(wrap.scrollWidth-wrap.clientWidth)/2);
+ wrap.scrollTop=Math.max(0,(wrap.scrollHeight-wrap.clientHeight)/2);
+}
+function renderInspector(){const loc=findPlaced(app.selected);$('selectedEmpty').classList.toggle('hidden',!!loc);$('selectedEditor').classList.toggle('hidden',!loc);if(loc){const {p,si}=loc;$('selName').textContent=p.name;$('selDims').textContent=`${format(p.w)} × ${format(p.h)} mm · Chapa ${si+1}`;$('positionX').value=Math.round(p.x*100)/100;$('positionY').value=Math.round(p.y*100)/100;$('targetSheet').innerHTML=app.plan.sheets.map((_,i)=>`<option value="${i}" ${si===i?'selected':''}>Chapa ${i+1}</option>`).join('')+`<option value="${app.plan.sheets.length}">+ Nova chapa</option>`;$('rotatePiece').disabled=!p.canRotate}const stats=sheetStats(app.active),sheetArea=app.settings.w*app.settings.h,percent=sheetArea?stats.used/sheetArea*100:0;$('sheetUsage').textContent=app.plan?format(percent)+'%':'—';$('usageProgress').style.width=clamp(percent,0,100)+'%';$('freeZoneCount').textContent=app.plan?stats.regions.length+' regiões':'—';$('leftoverList').innerHTML=app.plan?(stats.regions.length?stats.regions.slice(0,4).map((r,i)=>`<div class="leftover-row"><span class="leftover-icon">${i+1}</span><div><div class="leftover-size">${format(r.w)} × ${format(r.h)} mm</div><div class="leftover-area">${fmtArea(r.w*r.h)} · área livre estimada</div></div></div>`).join(''):'<p class="micro-copy">Nenhuma região grande identificada nesta chapa.</p>'):'<div class="selection-empty">Gere um plano para ver sobras.</div>';$('undoButton').disabled=!app.undo.length;$('redoButton').disabled=!app.redo.length}
+function renderToggles(){for(const [id,key] of [['toggleSnap','snap'],['toggleGrid','grid'],['toggleCuts','cuts'],['toggleLeftovers','leftovers']])$(id).setAttribute('aria-pressed',String(app[key]));}
+function renderAll(){renderMetrics();renderTabs();renderToggles();renderBoard();renderInspector();}
+function setSelected(id){if(!findPlaced(id))return;app.selected=id;const loc=findPlaced(id);app.active=loc.si;renderAll()}
+function nearestSnap(value, candidates,tolerance){let best=null;for(const c of candidates){const delta=Math.abs(value-c);if(delta<=tolerance&&(best===null||delta<best.delta)){best={value:c,delta}}}return best?best.value:null}
+function snapPosition(piece,si,x,y,shift=false){const s=app.settings;const threshold=Math.min(35,Math.max(4,12*s.w/(Math.max(250,$('boardSvg').getBoundingClientRect().width))));if(!app.snap||shift)return{x,y,guideX:null,guideY:null};const xs=[s.margin,s.w-s.margin-piece.w],ys=[s.margin,s.h-s.margin-piece.h];for(const q of app.plan.sheets[si].placed){if(q.id===piece.id)continue;xs.push(q.x,q.x+q.w-piece.w,q.x+q.w+s.kerf,q.x-piece.w-s.kerf);ys.push(q.y,q.y+q.h-piece.h,q.y+q.h+s.kerf,q.y-piece.h-s.kerf)}const snapX=nearestSnap(x,xs,threshold),snapY=nearestSnap(y,ys,threshold);const cx=snapX??x,cy=snapY??y;const attempts=[[cx,cy],[cx,y],[x,cy],[x,y]];for(const [nx,ny] of attempts){if(canPlace(app.plan,si,piece.id,nx,ny,piece.w,piece.h)){return{x:nx,y:ny,guideX:nx===cx&&snapX!==null?nx:null,guideY:ny===cy&&snapY!==null?ny:null}}}return{x,y,guideX:null,guideY:null}}
+function boardPoint(e){const box=$('boardSvg').getBoundingClientRect(),s=app.settings;return{x:(e.clientX-box.left)*s.w/box.width,y:(e.clientY-box.top)*s.h/box.height}}
+$('boardSvg').addEventListener('pointerdown',e=>{if(e.button!==0||!app.plan)return;const group=e.target.closest('[data-part-id]');if(!group)return;const id=group.getAttribute('data-part-id'),loc=findPlaced(id);if(!loc)return;app.selected=id;const pt=boardPoint(e);app.drag={id,si:loc.si,startX:pt.x,startY:pt.y,originX:loc.p.x,originY:loc.p.y,previewX:loc.p.x,previewY:loc.p.y,valid:true,guideX:null,guideY:null,moved:false};$('boardSvg').setPointerCapture(e.pointerId);renderInspector();renderBoard();e.preventDefault()});
+$('boardSvg').addEventListener('pointermove',e=>{if(!app.drag||!app.plan)return;const d=app.drag,loc=findPlaced(d.id);if(!loc)return;const pt=boardPoint(e);let x=Math.round(d.originX+pt.x-d.startX),y=Math.round(d.originY+pt.y-d.startY);if(Math.abs(e.clientX-(d.startX*$('boardSvg').getBoundingClientRect().width/app.settings.w+$('boardSvg').getBoundingClientRect().left))>3||Math.abs(e.clientY-(d.startY*$('boardSvg').getBoundingClientRect().height/app.settings.h+$('boardSvg').getBoundingClientRect().top))>3)d.moved=true;const target=snapPosition(loc.p,d.si,x,y,e.shiftKey);d.previewX=target.x;d.previewY=target.y;d.valid=canPlace(app.plan,d.si,d.id,target.x,target.y,loc.p.w,loc.p.h);d.guideX=target.guideX;d.guideY=target.guideY;$('boardSvg').innerHTML=buildBoardSVG(app.plan.sheets[app.active].placed,app.settings);$('boardStatus').textContent=d.valid?`X ${format(target.x)} mm · Y ${format(target.y)} mm`:'Posição inválida: sobreposição ou fora da chapa';e.preventDefault()});
+function endDrag(e){const d=app.drag;if(!d)return;app.drag=null;if(d.moved){const loc=findPlaced(d.id);if(d.valid&&loc&&commit(d.id,d.si,d.previewX,d.previewY,loc.p.rot)){toast('Peça posicionada.')}else{renderAll();toast('Movimento cancelado: respeite os limites e a largura da serra.')}}else{setSelected(d.id)}if($('boardSvg').hasPointerCapture(e.pointerId))$('boardSvg').releasePointerCapture(e.pointerId)}
+$('boardSvg').addEventListener('pointerup',endDrag);$('boardSvg').addEventListener('pointercancel',e=>{app.drag=null;renderAll()});
+$('boardSvg').addEventListener('keydown',e=>{const group=e.target.closest('[data-part-id]');if((e.key==='Enter'||e.key===' ')&&group){e.preventDefault();setSelected(group.getAttribute('data-part-id'))}});
+function scheduleSave(){const indicator=$('saveIndicator');indicator.textContent='Salvando…';clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{const state={version:3,name:app.name,settings:app.settings,parts:app.parts,plan:app.plan,active:app.active,optimizerQuality:app.optimizerQuality};localStorage.setItem(STORE,JSON.stringify(state));window.MDFDesktop?.save('project',JSON.stringify(state)).catch(err=>console.warn('Backup em disco falhou:',err));indicator.textContent='Salvo automaticamente'}catch(e){indicator.textContent='Salvamento indisponível'}},400)}
+function hydrate(data){const isOld=data.version===2;const rawS=isOld?data.sheet:data.settings;const s=isOld?{w:Number(rawS.sw),h:Number(rawS.sh),kerf:Number(rawS.kerf),margin:Number(rawS.margin)}:{w:Number(rawS.w),h:Number(rawS.h),kerf:Number(rawS.kerf),margin:Number(rawS.margin)};const parts=data.parts.map(p=>({name:String(p.name||'Peça').slice(0,70),w:Number(p.w),h:Number(p.h),q:Number(p.q),rotate:!!p.rotate}));if(!settingsValid(s)||!(parts.length===0||partsValid(parts)))throw new Error('A configuração ou as peças estão inválidas.');app.name=String(data.name||'Projeto importado').slice(0,80);app.settings=s;app.parts=parts;app.optimizerQuality='equilibrado';app.optimizerInfo=null;app.plan=null;app.active=0;app.selected=null;app.undo=[];app.redo=[];app.dirty=false;const rawPlan=isOld&&data.layout?{sheets:(data.layout.sheets||[]).map(sh=>Array.isArray(sh)?{placed:sh}:sh),missing:data.layout.missing,total:data.layout.total}:data.plan;if(rawPlan&&validateSavedPlan(rawPlan)){app.plan=restoreSavedPlan(rawPlan);app.active=clamp(Number(data.active)||0,0,app.plan.sheets.length-1)}renderSettings();renderParts();renderAll();scheduleSave();return !!app.plan}
+function restoreSavedPlan(rawPlan){const expected=new Map(expandedParts().map(p=>[p.id,p]));const assigned=new Set();const sheets=rawPlan.sheets.map(sh=>({placed:sh.placed.map(p=>{const original=expected.get(String(p.id));assigned.add(original.id);return{...original,x:Number(p.x),y:Number(p.y),rot:!!p.rot,w:Number(p.w),h:Number(p.h)}})}));const missing=[...expected.values()].filter(p=>!assigned.has(p.id));return{sheets,missing,total:expected.size}}
+function validateSavedPlan(rawPlan){try{if(!Array.isArray(rawPlan.sheets)||rawPlan.sheets.length>MAX_SHEETS)return false;const expected=new Map(expandedParts().map(p=>[p.id,p]));const assigned=new Set();for(let si=0;si<rawPlan.sheets.length;si++){const sh=rawPlan.sheets[si];if(!Array.isArray(sh.placed))return false;const validated=[];for(const p of sh.placed){if(!p||typeof p.id!=='string'||!expected.has(p.id)||assigned.has(p.id))return false;const ref=expected.get(p.id),rot=!!p.rot,w=Number(p.w),h=Number(p.h),x=Number(p.x),y=Number(p.y);if(rot&&!ref.canRotate)return false;if(Math.abs(w-(rot?ref.h:ref.w))>EPS||Math.abs(h-(rot?ref.w:ref.h))>EPS)return false;const candidate={id:p.id,x,y,w,h};if(!canPlace({sheets:[{placed:validated}]},0,p.id,x,y,w,h,app.settings))return false;validated.push(candidate);assigned.add(p.id)}}return true}catch(e){return false}}
+function download(blob,filename){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function projectFilename(ext){return ((app.name||'projeto').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,45)||'projeto')+'.'+ext}
+function saveJSON(){const data={version:3,application:'MDF Cut Studio',name:app.name,settings:app.settings,parts:app.parts,plan:app.plan,active:app.active,optimizerQuality:app.optimizerQuality};download(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),projectFilename('json'));toast('Projeto JSON exportado.')}
+function exportCSV(){if(!app.parts.length){toast('Cadastre peças antes de exportar.');return}const rows=[['Peça','Largura (mm)','Altura (mm)','Quantidade','Permitir girar 90°'],...app.parts.map(p=>[p.name,p.w,p.h,p.q,p.rotate?'Sim':'Não'])];const encode=v=>'"'+String(v).replace(/"/g,'""')+'"';download(new Blob(['\ufeff'+rows.map(row=>row.map(encode).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'}),projectFilename('csv'));toast('Lista de peças exportada em CSV.')}
+function buildPrint(scope='all'){if(!app.plan){toast('Gere um plano para imprimir.');return false}const s=app.settings;const indexed=app.plan.sheets.map((sh,i)=>({sh,i})).filter(({i})=>scope!=='current'||i===app.active);const sum=indexed.reduce((n,{sh})=>n+sh.placed.length,0);$('printReport').innerHTML=`<div class="print-cover"><h1>MDF Cut Studio — ${esc(app.name)}</h1><p>${esc(new Date().toLocaleDateString('pt-BR'))} · Chapa ${format(s.w)} × ${format(s.h)} mm · Serra ${format(s.kerf)} mm · Refile ${format(s.margin)} mm · ${indexed.length} chapa(s) · ${sum}/${app.plan.total} peças</p></div>`+indexed.map(({sh,i:si})=>`<section class="print-page"><h2>Chapa ${si+1}</h2><div class="print-meta">${sh.placed.length} peça(s) · Aproveitamento ${format(sh.placed.reduce((a,p)=>a+p.w*p.h,0)/(s.w*s.h)*100)}%</div><svg viewBox="0 0 ${s.w} ${s.h}" xmlns="http://www.w3.org/2000/svg">${buildBoardSVG(sh.placed,s,true)}</svg><div class="print-legend"><b>Peças:</b> ${esc(sh.placed.map(p=>p.name+' ('+format(p.w)+' × '+format(p.h)+')').join(' · '))}</div><div class="print-warning">Esquema ilustrativo de encaixe — não representa sequência de corte para seccionadora / CNC. Conferir medidas, serra, veio e viabilidade antes da produção.</div></section>`).join('');return true}
+
+/* Janela de exportação e alternância de tema. */
+const THEME_STORE='mdf-cut-studio-theme';
+let exportReturnFocus=null;
+function setTheme(mode,persist=true){
+ const current=mode==='dark'?'dark':'light';
+ document.documentElement.dataset.theme=current;
+ document.querySelector('meta[name="theme-color"]').content=current==='dark'?'#0f202b':'#f2f5f7';
+ if(persist)try{localStorage.setItem(THEME_STORE,current)}catch(e){}
+}
+function openExport(){
+ exportReturnFocus=document.activeElement;
+ $('exportProjectName').textContent=app.name||'Projeto sem nome';
+ const ready=!!app.plan&&app.plan.sheets.length>0;
+ $('exportReady').textContent=ready?`${app.plan.sheets.length} chapa(s) prontas`:'Plano não gerado';
+ $('exportReady').classList.toggle('unready',!ready);
+ $('exportScope').disabled=!ready;
+ $('exportPdf').disabled=!ready;
+ $('exportPrint').disabled=!ready;
+ $('exportBackdrop').classList.remove('hidden');
+ $('closeExport').focus();
+}
+function closeExport(){
+ if($('exportBackdrop').classList.contains('hidden'))return;
+ $('exportBackdrop').classList.add('hidden');
+ if(exportReturnFocus?.isConnected)exportReturnFocus.focus();
+ exportReturnFocus=null;
+}
+$('exportBackdrop').addEventListener('keydown',e=>{
+ if(e.key!=='Tab')return;
+ const visible=Array.from($('exportBackdrop').querySelectorAll('button:not(:disabled), select:not(:disabled), [tabindex="0"]'));
+ if(!visible.length)return;
+ const first=visible[0],last=visible[visible.length-1];
+ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+ else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+});
+/* Exportação PDF vetorial própria: arquivo real, sem bibliotecas externas e sem precisar imprimir. */
+function pdfSanitize(value){return String(value).replace(/[–—−]/g,'-').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[^\u0020-\u00ff]/g,'?')}
+function pdfTextEscape(value){return pdfSanitize(value).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+function hexToRgb01(hex){return [1,3,5].map(i=>(parseInt(hex.slice(i,i+2),16)/255).toFixed(3)).join(' ')}
+function pdfColor(hex,fill=true){return `${hexToRgb01(hex)} ${fill?'rg':'RG'}\n`}
+function pdfRectangle(x,y,w,h,fill,stroke='#ffffff',lineWidth=1){return `${pdfColor(fill)}${pdfColor(stroke,false)}${lineWidth.toFixed(2)} w\n${x.toFixed(2)} ${y.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re B\n`}
+function pdfText(text,x,y,size=10,color='#172b38',bold=false){return `${pdfColor(color)}BT /${bold?'F2':'F1'} ${size.toFixed(2)} Tf ${x.toFixed(2)} ${y.toFixed(2)} Td (${pdfTextEscape(text)}) Tj ET\n`}
+function pdfSheetContent(sh,idx,selectedCount){
+ const s=app.settings,W=841.89,H=595.28,usableW=765,usableH=359;
+ const scale=Math.min(usableW/s.w,usableH/s.h),w=s.w*scale,h=s.h*scale;
+ const left=(W-w)/2,bottom=122+(usableH-h)/2;
+ let o='1 J 1 j\n';
+ o+=pdfRectangle(0,0,W,H,'#ffffff','#ffffff',0);
+ o+=pdfRectangle(0,H-8,W,8,'#087d72','#087d72',0);
+ o+=pdfText('MDF CUT STUDIO',36,556,14,'#087d72',true);
+ o+=pdfText('PLANO DE CORTE  /  CHAPA '+(idx+1),36,534,10,'#172b38',true);
+ o+=pdfText('Projeto: '+pdfSanitize(app.name).slice(0,95),36,513,10,'#455b68',false);
+ o+=pdfText(`${format(s.w)} x ${format(s.h)} mm   |   Serra ${format(s.kerf)} mm   |   Refile ${format(s.margin)} mm`,36,494,9,'#526879');
+ o+=pdfText(`Pecas: ${sh.placed.length}    |    Aproveitamento: ${format(sh.placed.reduce((sum,p)=>sum+p.w*p.h,0)/(s.w*s.h)*100)}%    |    Chapas no PDF: ${selectedCount}`,W-366,535,9,'#526879');
+ o+=pdfRectangle(left,bottom,w,h,'#e8d0ab','#9d7d51',.8);
+ const m=s.margin*scale;
+ if(m>0){o+=`0.45 w [3 3] 0 d\n${pdfColor('#8e7049',false)}${(left+m).toFixed(2)} ${(bottom+m).toFixed(2)} ${(w-2*m).toFixed(2)} ${(h-2*m).toFixed(2)} re S\n[] 0 d\n`}
+ for(const p of sh.placed){
+  const x=left+p.x*scale,y=bottom+(s.h-p.y-p.h)*scale,pw=p.w*scale,ph=p.h*scale;
+  const colors=PALETTE[p.sourceIndex%PALETTE.length];
+  o+=pdfRectangle(x,y,pw,ph,colors[0],colors[1],.7);
+  if(pw>35&&ph>22){
+   const sz=Math.min(10,Math.max(6.5,Math.min(pw/9,ph/3.4)));
+   const maxChars=Math.max(4,Math.floor((pw-7)/(sz*.54)));
+   const name=pdfSanitize(p.name).slice(0,maxChars);
+   const cx=x+Math.max(3,(pw-name.length*sz*.47)/2);
+   o+=pdfText(name,cx,y+ph/2+(ph>38?2:-2),sz,'#19313d',true);
+   if(ph>38&&pw>51){
+    const dims=`${format(p.w)} x ${format(p.h)}`;
+    const ds=Math.min(8.5,Math.max(5,sz*.73));
+    if(dims.length*ds*.46<pw-4)o+=pdfText(dims,x+(pw-dims.length*ds*.46)/2,y+ph/2-10,ds,'#41515c',false);
+   }
+  }
+ }
+ o+=pdfText(`Chapa ${idx+1}  |  ${sh.placed.length} pecas  |  ${format(s.w)} x ${format(s.h)} mm`,36,92,9,'#172b38',true);
+ o+=pdfText('Plano geometrico ilustrativo. Nao representa sequencia de corte para seccionadora / CNC.',36,65,8.5,'#a04535');
+ o+=pdfText('Confira medidas, veio, folga da serra e viabilidade antes da producao.',36,50,8.5,'#a04535');
+ o+=pdfText(new Date().toLocaleDateString('pt-BR'),W-96,49,8,'#677782');
+ return o;
+}
+function pdfByteArray(string){const arr=new Uint8Array(string.length);for(let i=0;i<string.length;i++){const code=string.charCodeAt(i);arr[i]=code<=255?code:63}return arr}
+function createPdfBlob(pageItems){
+ const objects=[null],reserve=()=>objects.push(null)-1;
+ const catalogId=reserve(),pagesId=reserve(),regularId=reserve(),boldId=reserve();
+ objects[regularId]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+ objects[boldId]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+ const pageIds=[];
+ for(const {sh,i} of pageItems){
+  const stream=pdfSheetContent(sh,i,pageItems.length);
+  const contentsId=reserve(),pageId=reserve();
+  objects[contentsId]=`<< /Length ${pdfByteArray(stream).length} >>\nstream\n${stream}\nendstream`;
+  objects[pageId]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 841.89 595.28] /Resources << /Font << /F1 ${regularId} 0 R /F2 ${boldId} 0 R >> >> /Contents ${contentsId} 0 R >>`;
+  pageIds.push(pageId);
+ }
+ objects[pagesId]=`<< /Type /Pages /Count ${pageIds.length} /Kids [${pageIds.map(id=>id+' 0 R').join(' ')}] >>`;
+ objects[catalogId]=`<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
+ const chunks=[],offsets=[0];let total=0;
+ function add(str){const data=pdfByteArray(str);chunks.push(data);total+=data.length}
+ add('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+ for(let i=1;i<objects.length;i++){offsets.push(total);add(`${i} 0 obj\n${objects[i]}\nendobj\n`)}
+ const xref=total;
+ add(`xref\n0 ${objects.length}\n0000000000 65535 f \n`);
+ for(let i=1;i<objects.length;i++)add(`${String(offsets[i]).padStart(10,'0')} 00000 n \n`);
+ add(`trailer\n<< /Size ${objects.length} /Root ${catalogId} 0 R >>\nstartxref\n${xref}\n%%EOF`);
+ return new Blob(chunks,{type:'application/pdf'});
+}
+function chosenSheets(){return app.plan?.sheets.map((sh,i)=>({sh,i})).filter(({i})=>$('exportScope').value!=='current'||i===app.active)||[]}
+function exportPdfFile(){
+ const selected=chosenSheets();if(!selected.length){toast('Gere o plano de corte antes de exportar.');return}
+ try{const pdf=createPdfBlob(selected);const name=projectFilename('pdf').replace(/\.pdf$/, $('exportScope').value==='current'?`-chapa-${app.active+1}.pdf`:'-chapas.pdf');download(pdf,name);closeExport();toast('PDF gerado e baixado com sucesso.')}catch(err){console.error(err);toast('Não foi possível gerar o PDF.')}
+}
+function printFromExport(){
+ const selected=chosenSheets();if(!selected.length){toast('Gere o plano de corte antes de imprimir.');return}
+ const scope=$('exportScope').value;
+ if(!buildPrint(scope))return;
+ closeExport();window.print();
+}
+
+$('projectName').addEventListener('input',e=>{app.name=e.target.value.slice(0,80);scheduleSave()});
+for(const [id,key] of [['sheetW','w'],['sheetH','h'],['kerf','kerf'],['margin','margin']])$(id).addEventListener('change',e=>{const v=Number(e.target.value);if(!e.target.value.trim()||!Number.isFinite(v)||v<0){toast('Insira uma medida válida.');renderSettings();return}if(app.settings[key]!==v){app.settings[key]=v;showPlanNeeded();toast('Material alterado. Gere novamente o plano.')}});
+$('partsList').addEventListener('change',e=>{const row=e.target.closest('[data-i]');if(!row)return;const index=Number(row.dataset.i),key=e.target.dataset.key;if(!key)return;
+ const raw=e.target.value;let value=key==='rotate'?e.target.checked:key==='name'?raw.slice(0,70):Number(raw);
+ if(key==='w'||key==='h'){
+  if(!raw.trim()||!Number.isFinite(value)||value<=0){toast('Digite uma medida maior que zero.');renderParts();return}
+  value=Number((value*(app.unit==='cm'?10:1)).toFixed(3));
+  if(value>100000){toast('Medida acima do limite permitido.');renderParts();return}
+ }
+ if(key==='q'&&(!Number.isInteger(value)||value<1||value>MAX_PIECES)){toast('Quantidade inválida.');renderParts();return}
+ if(app.parts[index][key]!==value){app.parts[index][key]=value;showPlanNeeded();renderParts();toast('Lista alterada. Gere novamente o plano.')}
+});
+function switchPartUnit(unit){if(!['mm','cm'].includes(unit)||app.unit===unit)return;app.unit=unit;renderParts();scheduleSave();toast('Medidas exibidas em '+unit+'. Os tamanhos reais não foram alterados.')}
+$('unitMm').onclick=()=>switchPartUnit('mm');$('unitCm').onclick=()=>switchPartUnit('cm');
+$('partsList').addEventListener('click',e=>{const button=e.target.closest('[data-remove]');if(!button)return;app.parts.splice(Number(button.dataset.remove),1);renderParts();showPlanNeeded();});
+$('addPart').onclick=()=>{app.parts.push(newPart());renderParts();showPlanNeeded();$('partsList').lastElementChild?.querySelector('.name-input')?.focus()};
+$('clearParts').onclick=async()=>{if(!await confirmDialog('Limpar lista de peças?','Todas as peças e o plano atual serão removidos.','Limpar lista'))return;app.parts=[];renderParts();showPlanNeeded();toast('Lista limpa.')};
+$('loadDemo').onclick=async()=>{if(!await confirmDialog('Carregar projeto de exemplo?','Isso substituirá as peças e o plano atuais.','Carregar exemplo'))return;app.parts=demoParts();app.name='Armário planejado';renderSettings();renderParts();optimize()};
+$('optimizeSide').onclick=optimize;
+$('sheetTabs').addEventListener('click',e=>{const button=e.target.closest('[data-sheet]');if(button){app.active=Number(button.dataset.sheet);app.selected=null;renderAll();return}if(e.target.closest('#addSheet')){if(!app.plan||app.plan.sheets.length>=MAX_SHEETS)return;historySave();app.plan.sheets.push({placed:[]});app.active=app.plan.sheets.length-1;app.selected=null;renderAll();scheduleSave();toast('Chapa vazia adicionada. Você pode mover peças para ela.') }});
+$('toggleSnap').onclick=()=>{app.snap=!app.snap;renderToggles();toast(app.snap?'Encaixe magnético ativado.':'Encaixe magnético desativado.')};
+$('toggleGrid').onclick=()=>{app.grid=!app.grid;renderToggles();renderBoard()};
+$('toggleCuts').onclick=()=>{app.cuts=!app.cuts;renderToggles();renderBoard()};
+$('toggleLeftovers').onclick=()=>{app.leftovers=!app.leftovers;renderToggles();renderBoard()};
+$('zoomIn').onclick=()=>{app.zoom=clamp(app.zoom+25,50,250);sizeBoard();centerBoardViewport()};$('zoomOut').onclick=()=>{app.zoom=clamp(app.zoom-25,50,250);sizeBoard();centerBoardViewport()};$('zoomFit').onclick=()=>{app.zoom=100;sizeBoard();centerBoardViewport()};
+$('undoButton').onclick=undo;$('redoButton').onclick=redo;$('applyPosition').onclick=applyPosition;$('rotatePiece').onclick=rotateSelected;
+$('exportPdf').onclick=exportPdfFile;
+$('exportPrint').onclick=printFromExport;
+$('exportProjectFile').onclick=()=>{saveJSON();closeExport()};
+$('exportCsv').onclick=()=>{exportCSV();closeExport()};
+$('openProject').onclick=()=>$('fileInput').click();
+$('recoverProject').onclick=async()=>{try{const raw=localStorage.getItem(STORE)||localStorage.getItem(LEGACY_STORE);if(!raw){toast('Nenhum projeto anterior para recuperar.');return}const data=JSON.parse(raw);if(!data||data.version!==3||!Array.isArray(data.parts))throw new Error('Arquivo salvo incompatível');if(!await confirmDialog('Recuperar último projeto?','O plano atual será substituído pelo último projeto salvo neste navegador.','Recuperar'))return;hydrate(data);toast('Último projeto recuperado.')}catch(e){toast('Não foi possível recuperar: '+e.message)}};
+$('openExport').onclick=openExport;
+$('closeExport').onclick=closeExport;
+$('dismissExport').onclick=closeExport;
+$('exportBackdrop').addEventListener('click',e=>{if(e.target===$('exportBackdrop'))closeExport()});
+$('fileInput').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1500000)throw new Error('Arquivo muito grande.');const d=JSON.parse(await file.text());if(!d||!Array.isArray(d.parts)||(d.version!==2&&d.version!==3))throw new Error('Formato de projeto não reconhecido.');const ok=hydrate(d);toast(ok?'Projeto carregado com plano e posições.':'Projeto carregado. Gere o plano de corte.')}catch(err){toast('Erro ao abrir o arquivo: '+err.message)}finally{e.target.value=''}});
+$('newProject').onclick=async()=>{if(!await confirmDialog('Criar novo projeto?','O projeto atual será substituído. Se quiser guardá-lo, cancele e clique em “Salvar JSON” antes de criar outro.','Novo projeto'))return;app.name='Novo projeto';app.settings={w:2750,h:1850,kerf:3,margin:10};app.optimizerInfo=null;app.parts=[];app.plan=null;app.active=0;app.selected=null;app.undo=[];app.redo=[];renderSettings();renderParts();renderAll();scheduleSave();toast('Novo projeto criado.')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('exportBackdrop').classList.contains('hidden')){e.preventDefault();closeExport();return}if(e.key==='Escape'&&!$('modalBackdrop').classList.contains('hidden')){closeModal(false);return}if(e.target.closest('input,select,textarea,[contenteditable]'))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){e.preventDefault();redo()}if(!app.selected||!app.plan)return;const directions={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};if(directions[e.key]){e.preventDefault();const loc=findPlaced(app.selected);if(!loc)return;const [dx,dy]=directions[e.key],step=e.shiftKey?1:5;const ok=commit(loc.p.id,loc.si,loc.p.x+dx*step,loc.p.y+dy*step,loc.p.rot);if(!ok)toast('Não é possível mover a peça nessa direção.')}});
+window.addEventListener('resize',()=>requestAnimationFrame(()=>{sizeBoard();centerBoardViewport()}));
+function initialize(){setTheme(document.documentElement.dataset.theme||'light',false);app.parts=[];app.plan=null;app.name='Novo projeto';app.active=0;app.selected=null;renderSettings();renderParts();renderAll();$('saveIndicator').textContent='Novo projeto vazio • Recupere o anterior quando quiser'}
+window.MDFCutBridge={
+ getProject:()=>deep({version:3,application:'MDF Cut Studio',name:app.name,settings:app.settings,parts:app.parts,plan:app.plan,active:app.active,optimizerQuality:app.optimizerQuality}),
+ loadProject:data=>hydrate(data),
+ svgFor:(placed,settings)=>buildBoardSVG(placed,settings,true),
+ toggleTheme:()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark'),
+ toast:message=>toast(message)
+};
+initialize();
+})();
+</script>
+<script>
+/* MDF Cut Studio v0.6 — gestão de ordens; dados somente no armazenamento local */
+(() => {
+ 'use strict';
+ const $ = id => document.getElementById(id);
+ const bridge = window.MDFCutBridge;
+ const STORE = 'mdf-cut-studio-work-orders-v1';
+ const statuses = {orcamento:'Em orçamento',producao:'Em produção',concluida:'Concluída'};
+ const money = cents => (Number(cents||0)/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+ const esc = v => String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const norm = v => String(v??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+ const clone = v => JSON.parse(JSON.stringify(v));
+ const today = () => {const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ const fmtDate = v => v ? v.slice(8,10)+'/'+v.slice(5,7)+'/'+v.slice(0,4) : 'Sem data';
+ const id = () => 'id-'+(window.crypto?.randomUUID?.() || (Date.now()+'-'+Math.random().toString(36).slice(2)));
+ const integerMoney = v => Math.round(Number(v)*100);
+ const safeText = (v,max=250) => String(v||'').slice(0,max);
+ let store={version:1,sequence:0,clients:[],orders:[]};
+ let view='dashboard', activeId=null, draft=null, draftDirty=false, statusTab='abertas', filterClientId=null, sheetIndex=0, editingClientId=null;
+ function alertToast(message){bridge?.toast?.(message)}
+ function readableClient(order){return store.clients.find(c=>c.id===order.clientId)||order.clientSnapshot||{name:'Cliente não encontrado',phone:''}}
+ function fetchState(){try{const raw=localStorage.getItem(STORE);if(!raw)return;const data=JSON.parse(raw);if(!data||data.version!==1||!Array.isArray(data.clients)||!Array.isArray(data.orders))return;store={version:1,sequence:Number.isInteger(data.sequence)?Math.max(0,data.sequence):0,clients:data.clients.slice(0,2000),orders:data.orders.slice(0,5000)};normalizeOrderNumbers();}catch(e){console.warn('Não foi possível ler ordens locais',e)}}
+ function persist(){try{localStorage.setItem(STORE,JSON.stringify(store));window.MDFDesktop?.save('orders',JSON.stringify(store)).catch(err=>{console.error('Backup Windows falhou',err);alertToast('Erro ao criar cópia de segurança no disco.');});return true}catch(err){console.error('Falha ao salvar ordens',err);alertToast('Armazenamento cheio ou indisponível. Faça backup das ordens.');return false}}
+ function normalizeOrderNumbers(){
+   // Preserve the suffix of existing numbers whenever possible. Resolve old year-based duplicates deterministically.
+   const used=new Set();let next=Math.max(0,Number.isInteger(store.sequence)?store.sequence:0);
+   const sorted=[...store.orders].sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||''))||String(a.number||'').localeCompare(String(b.number||'')));
+   for(const order of sorted){
+     const match=/^OS-(?:\d{4}-)?(\d+)$/.exec(String(order.number||''));
+     const candidate=match?Number(match[1]):NaN;
+     let n=Number.isSafeInteger(candidate)&&candidate>0&&!used.has(candidate)?candidate:null;
+     if(n===null){do{next++}while(used.has(next));n=next}
+     used.add(n);next=Math.max(next,n);
+     order.number=`OS-${String(n).padStart(4,'0')}`;
+   }
+   store.sequence=Math.max(next,...used,0);
+ }
+ function nextNumber(){return `OS-${String(store.sequence+1).padStart(4,'0')}`}
+ function blankOrder(){return {id:null,number:null,createdAt:today(),updatedAt:null,completedAt:null,due:'',status:'orcamento',clientId:'',clientSnapshot:null,service:'',description:'',amount:0,deposit:0,imageData:null,plan:null}}
+ function setView(which,force=false){
+   if(which!==view && view==='editor' && draftDirty && !force && !window.confirm('A ordem tem alterações não salvas. Sair sem salvar?'))return false;
+   if(which==='editor' && !draft)openNewOrder(false);
+   view=which;
+   $('ordersDashboard').classList.toggle('active-screen',which==='dashboard');
+   $('ordersEditor').classList.toggle('active-screen',which==='editor');
+   $('cutApp').classList.toggle('active-screen',which==='cut');
+   $('navProjectActions').classList.toggle('is-hidden',which!=='cut');
+   document.querySelectorAll('.studio-nav-button').forEach(button=>{const selected=button.dataset.view===which;button.classList.toggle('is-active',selected);button.setAttribute('aria-current',selected?'page':'false')});
+   const linked=which==='cut'&&!!draft?.id;
+   $('studioAttach').classList.toggle('is-hidden',!linked);
+   $('studioAttach').textContent=linked?'↧ Vincular plano à '+draft.number:'↧ Vincular plano à OS';
+   if(which==='dashboard')renderDashboard();
+   if(which==='editor'){renderOrderEditor();}
+   window.scrollTo({top:0,behavior:'instant'});
+   return true;
+ }
+ function orderFilters(){return store.orders.filter(o=>(statusTab==='todas'||(statusTab==='abertas'&&o.status!=='concluida')||o.status===statusTab)&&(!filterClientId||o.clientId===filterClientId)&&(!($('orderSearch').value.trim())||norm([o.number,o.service,o.description,readableClient(o).name,readableClient(o).phone].join(' ')).includes(norm($('orderSearch').value)))).sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')||String(b.number).localeCompare(String(a.number)))}
+ function renderDashboard(){
+   const orders=store.orders;const count=st=>orders.filter(o=>o.status===st).length;
+   $('statQuotes').textContent=count('orcamento');$('statProduction').textContent=count('producao');$('statDone').textContent=count('concluida');
+   $('tabQuoteCount').textContent=count('orcamento');$('tabProdCount').textContent=count('producao');$('tabDoneCount').textContent=count('concluida');
+   const open=orders.filter(o=>o.status!=='concluida');$('statDue').textContent=money(open.reduce((a,o)=>a+Math.max(0,o.amount-o.deposit),0));
+   $('statEntries').textContent='Entradas registradas: '+money(orders.reduce((a,o)=>a+(o.deposit||0),0));
+   document.querySelectorAll('.os-tab').forEach(btn=>{btn.classList.toggle('is-active',btn.dataset.status===statusTab);btn.setAttribute('aria-selected',btn.dataset.status===statusTab?'true':'false')});
+   const filtered=orderFilters();$('orderCountBadge').textContent=`${filtered.length} de ${orders.length} ordens`;
+   $('ordersEmpty').classList.toggle('is-hidden',filtered.length>0);
+   $('ordersRows').innerHTML=filtered.map(o=>{const client=readableClient(o);const action=o.status==='producao'?'Dar baixa':o.status==='orcamento'?'Produzir':'Reabrir';return `<tr data-open="${esc(o.id)}" tabindex="0" aria-label="Abrir ordem ${esc(o.number)}"><td><span class="os-order-id">${esc(o.number)}</span><div class="os-order-name" title="${esc(o.service)}">${esc(o.service)}</div><div class="os-cell-secondary">Criada em ${fmtDate(o.createdAt)}</div></td><td><div class="os-client-name">${esc(client.name)}</div><div class="os-cell-secondary">${esc(client.phone||'Sem telefone')}</div></td><td><div class="os-money">${money(o.amount)}</div><div class="os-cell-secondary">Entrada: ${money(o.deposit)}</div></td><td><span class="os-status-chip ${o.status}">${statuses[o.status]}</span></td><td><div class="os-row-buttons"><button class="os-row-action" type="button" data-quick="${esc(o.id)}" title="${action}">${action}</button><button class="os-row-dotbtn" type="button" data-edit="${esc(o.id)}">Abrir ›</button></div></td></tr>`}).join('');
+   const filteredClient=store.clients.find(c=>c.id===filterClientId);$('clientFilterBadge').classList.toggle('is-hidden',!filteredClient);$('clientFilterBadge').innerHTML=filteredClient?`${esc(filteredClient.name)} <button type="button" id="clearBadgeFilter" aria-label="Limpar filtro">×</button>`:'';
+   const clients=store.clients.filter(c=>norm([c.name,c.phone,c.doc].join(' ')).includes(norm($('clientSearch').value))).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+   $('clientCount').textContent=`${store.clients.length} cliente(s) cadastrado(s)`;$('clientsEmpty').classList.toggle('is-hidden',clients.length>0);$('clearClientFilter').classList.toggle('is-hidden',!filterClientId);
+   $('clientsList').innerHTML=clients.map(c=>{const countOrders=orders.filter(o=>o.clientId===c.id);const pending=countOrders.filter(o=>o.status!=='concluida').length;const initial=c.name.trim().split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('');return `<div class="os-client-item ${filterClientId===c.id?'selected':''}"><div class="os-client-avatar">${esc(initial)}</div><div class="os-client-content"><strong title="${esc(c.name)}">${esc(c.name)}</strong><small>${countOrders.length} OS · ${pending} em aberto</small></div><div class="os-client-buttons"><button type="button" data-client-view="${esc(c.id)}" title="Ver ordens do cliente" aria-label="Ver ordens de ${esc(c.name)}">⌕</button><button type="button" data-client-edit="${esc(c.id)}" title="Editar cliente" aria-label="Editar ${esc(c.name)}">✎</button></div></div>`}).join('');
+ }
+ function editOrder(orderId){const found=store.orders.find(o=>o.id===orderId);if(!found)return;draft=clone(found);draftDirty=false;activeId=orderId;sheetIndex=0;setView('editor',true)}
+ function openNewOrder(navigate=true){draft=blankOrder();draftDirty=false;activeId=null;sheetIndex=0;if(navigate)setView('editor',true)}
+ // Cria uma nova OS com uma copia independente do plano atual.
+ // Dados de cliente e valores permanecem vazios ate o operador preencher e salvar.
+ function generateOrderFromCut(){
+   const current=bridge.getProject();
+   if(!current?.plan?.sheets?.length || !current.plan.sheets.some(sheet=>Array.isArray(sheet.placed)&&sheet.placed.length)){
+     alertToast('Gere um plano de corte com peças antes de criar uma O.S.');
+     return;
+   }
+   if(draftDirty && !window.confirm('Existe uma ordem de serviço com alterações não salvas. Criar uma nova O.S. e descartar essas alterações?'))return;
+   const next=blankOrder();
+   next.plan=clone(current);
+   next.service='';
+   draft=next;
+   draftDirty=true;
+   activeId=null;
+   sheetIndex=0;
+   setView('editor',true);
+   draftDirty=true; // O plano vinculado ainda precisa ser salvo na nova OS.
+   alertToast('Plano vinculado! Preencha os dados e salve para gerar o número da O.S.');
+ }
+
+ function fill(id,value){$(id).value=value??''}
+ function selectClients(){const sel=$('osClientSelect');sel.innerHTML='<option value="">＋ Cadastrar novo cliente nesta ordem</option>'+store.clients.slice().sort((a,b)=>a.name.localeCompare(b.name,'pt-BR')).map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');}
+ function renderOrderEditor(){if(!draft)return;selectClients();$('osPageTitle').innerHTML=(draft.id?'Editar ordem de serviço':'Nova ordem de serviço')+'<span>.</span>';
+   $('osPageSubtitle').textContent=draft.id?'Acompanhe o pedido, registre pagamentos e atualize a produção.':'Registre o cliente, orçamento, materiais e referências de produção.';
+   $('osNumber').textContent=draft.number||nextNumber();$('osCreated').textContent=draft.id?`Criada em ${fmtDate(draft.createdAt)} · ${draft.completedAt?'Concluída em '+fmtDate(draft.completedAt):'Atualizada '+fmtDate(draft.updatedAt||draft.createdAt)}`:'Nova ordem · número atribuído ao salvar';
+   fill('osStatus',draft.status);fill('osDue',draft.due);fill('osClientSelect',draft.clientId||'');
+   const client=store.clients.find(c=>c.id===draft.clientId)||draft.clientSnapshot||{};
+   fill('osClientName',client.name||'');fill('osClientPhone',client.phone||'');fill('osClientDoc',client.doc||'');fill('osClientEmail',client.email||'');fill('osClientAddress',client.address||'');
+   fill('osService',draft.service);fill('osDescription',draft.description);fill('osValue',(draft.amount/100).toFixed(2));fill('osDeposit',(draft.deposit/100).toFixed(2));
+   renderFinance();renderOsImage();renderPlanPreview();renderWorkflow();draftDirty=false;
+ }
+ function readForm(){
+   if(!draft)return false;
+   const value=integerMoney($('osValue').value),deposit=integerMoney($('osDeposit').value);
+   if(!$('osClientName').value.trim()){alertToast('Informe o nome do cliente.');$('osClientName').focus();return false}
+   if(!$('osService').value.trim()){alertToast('Informe o produto ou serviço.');$('osService').focus();return false}
+   if(!Number.isSafeInteger(value)||!Number.isSafeInteger(deposit)||value<0||deposit<0||deposit>value){alertToast('Valores inválidos: a entrada deve ficar entre zero e o valor total.');$('osDeposit').focus();return false}
+   if($('osClientEmail').value.trim()&&!$('osClientEmail').checkValidity()){alertToast('Confira o e-mail informado.');$('osClientEmail').focus();return false}
+   Object.assign(draft,{status:$('osStatus').value,due:$('osDue').value||'',service:safeText($('osService').value.trim(),140),description:safeText($('osDescription').value,4000),amount:value,deposit});
+   draft.clientSnapshot={name:safeText($('osClientName').value.trim(),100),phone:safeText($('osClientPhone').value.trim(),35),doc:safeText($('osClientDoc').value.trim(),25),email:safeText($('osClientEmail').value.trim(),120),address:safeText($('osClientAddress').value.trim(),220)};
+   return true;
+ }
+ function saveOrderRecord(announce=true){if(!readForm())return false;
+   const c=draft.clientSnapshot;
+   let client=store.clients.find(x=>x.id===draft.clientId);
+   if(!client){client=store.clients.find(x=>(c.doc&&x.doc&&norm(x.doc)===norm(c.doc))||(norm(x.name)===norm(c.name)&&(norm(x.phone)===norm(c.phone))));}
+   if(client){Object.assign(client,c);draft.clientId=client.id}else{client={id:id(),...c};store.clients.push(client);draft.clientId=client.id}
+   if(!draft.id){store.sequence++;draft.id=id();draft.number=`OS-${String(store.sequence).padStart(4,'0')}`;draft.createdAt=today()}
+   draft.updatedAt=today();if(draft.status==='concluida')draft.completedAt=draft.completedAt||today();else draft.completedAt=null;
+   const existing=store.orders.findIndex(o=>o.id===draft.id);if(existing>=0)store.orders[existing]=clone(draft);else store.orders.push(clone(draft));
+   activeId=draft.id;draftDirty=false;const persisted=persist();
+   $('osNumber').textContent=draft.number;$('osCreated').textContent=`Criada em ${fmtDate(draft.createdAt)} · Atualizada ${fmtDate(draft.updatedAt)}`;renderWorkflow();
+   if(announce)alertToast(persisted?`${draft.number} salva com sucesso.`:'Ordem atualizada, mas não foi possível salvar no navegador.');
+   return true;
+ }
+ function renderFinance(){const amount=integerMoney($('osValue').value||'0');const entry=integerMoney($('osDeposit').value||'0');$('osEntryLabel').textContent=money(Number.isFinite(entry)?entry:0);$('osBalance').textContent=money(Math.max(0,(Number.isFinite(amount)?amount:0)-(Number.isFinite(entry)?entry:0)));$('osPaidStatus').textContent=entry>0?entry>=amount&&amount>0?'Valor integral recebido':'Entrada recebida':'Sem entrada registrada';$('osPaidStatus').classList.toggle('has-entry',entry>0);}
+ function renderOsImage(){const valid=typeof draft?.imageData==='string'&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(draft.imageData);$('osImagePlaceholder').classList.toggle('is-hidden',valid);$('osImagePreview').classList.toggle('is-hidden',!valid);$('osImagePreview').src=valid?draft.imageData:'';$('osImageRemove').disabled=!valid;}
+ function cleanSnapshot(){if(!draft?.plan||!draft.plan.settings||!Array.isArray(draft.plan.plan?.sheets))return null;const s=draft.plan.settings;if(![s.w,s.h,s.margin,s.kerf].every(v=>Number.isFinite(v))||s.w<=0||s.h<=0||s.w>100000||s.h>100000||s.margin<0||s.kerf<0)return null;
+   const plan=draft.plan.plan;if(plan.sheets.length>100||plan.sheets.some(sh=>!Array.isArray(sh.placed)||sh.placed.length>500||sh.placed.some(p=>!p||!Number.isInteger(p.sourceIndex)||p.sourceIndex<0||p.sourceIndex>500||![p.x,p.y,p.w,p.h].every(Number.isFinite)||p.w<=0||p.h<=0||p.x<0||p.y<0||p.x+p.w>s.w+1e-6||p.y+p.h>s.h+1e-6)))return null;
+   return draft.plan;
+ }
+ function renderPlanPreview(){const snap=cleanSnapshot(),has=!!snap&&snap.plan.sheets.length>0;$('osPlanNoData').classList.toggle('is-hidden',has);$('osPlanWithData').classList.toggle('is-hidden',!has);$('removeOrderPlan').classList.toggle('is-hidden',!has);if(!has)return;
+   sheetIndex=Math.min(sheetIndex,snap.plan.sheets.length-1);$('osPlanTabs').innerHTML=snap.plan.sheets.map((sh,i)=>`<button type="button" class="${i===sheetIndex?'active':''}" data-plan-sheet="${i}">Chapa ${i+1} · ${sh.placed.length} peça(s)</button>`).join('');const sh=snap.plan.sheets[sheetIndex],s=snap.settings;
+   $('osPlanSvg').setAttribute('viewBox',`0 0 ${s.w} ${s.h}`);$('osPlanSvg').style.aspectRatio=`${s.w}/${s.h}`;$('osPlanSvg').innerHTML=bridge.svgFor(sh.placed,s);
+   const pieces=snap.plan.sheets.reduce((sum,sh)=>sum+sh.placed.length,0);$('osPlanSummary').textContent=`${snap.plan.sheets.length} chapa(s) · ${pieces} peça(s) distribuída(s) · ${s.w} × ${s.h} mm · Serra ${s.kerf} mm`;
+ }
+ function renderWorkflow(){const st=$('osStatus').value;$('moveToProduction').classList.toggle('is-hidden',st!=='orcamento');$('completeOrder').classList.toggle('is-hidden',st==='concluida');$('reopenOrder').classList.toggle('is-hidden',st!=='concluida');$('deleteOrder').disabled=!draft?.id;
+   $('osWorkflowMessage').textContent=st==='orcamento'?'Em orçamento: aguardando aprovação para iniciar a produção.':st==='producao'?'Em produção: conclua o serviço quando estiver pronto.':'Concluída: esta ordem aparece no arquivo de serviços finalizados.';
+ }
+ function attachPlan(){if(!draft)return;const snap=bridge.getProject();if(!snap?.plan?.sheets?.length){alertToast('Primeiro gere um plano no editor de corte.');return;}draft.plan=clone(snap);sheetIndex=0;draftDirty=true;renderPlanPreview();alertToast('Plano vinculado à ordem. Clique em Salvar ordem para guardar.');}
+ function openOrderCut(){if(!draft)return;if(!saveOrderRecord(false))return;try{if(draft.plan){bridge.loadProject(draft.plan)}else{bridge.loadProject({version:3,name:draft.service||draft.number||'Plano de OS',settings:{w:2750,h:1850,kerf:3,margin:10},parts:[],plan:null,active:0,optimizerQuality:'equilibrado'})}setView('cut',true);alertToast('Edite o corte e clique em “Vincular plano à OS”.')}catch(e){console.error(e);alertToast('Não foi possível abrir o plano desta OS.')}}
+ async function readImage(file){if(!file)return;if(!/^image\/(jpeg|png|webp)$/.test(file.type)){alertToast('Escolha uma imagem JPG, PNG ou WebP.');return}if(file.size>8*1024*1024){alertToast('A imagem deve ter no máximo 8 MB.');return}
+   try{const src=URL.createObjectURL(file);const image=new Image();await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error('Imagem inválida'));image.src=src});const max=1080,scale=Math.min(1,max/Math.max(image.naturalWidth,image.naturalHeight));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);URL.revokeObjectURL(src);draft.imageData=canvas.toDataURL('image/jpeg',.72);draftDirty=true;renderOsImage();alertToast('Imagem anexada à ordem.');}catch(err){console.error(err);alertToast('Não foi possível processar a imagem.')} }
+ function workflow(status){if(!draft)return;const old=$('osStatus').value;if(status==='concluida'&&!window.confirm('Dar baixa nesta ordem e movê-la para Concluídas?'))return;$('osStatus').value=status;renderWorkflow();draftDirty=true;if(!saveOrderRecord(true)){$('osStatus').value=old;renderWorkflow();return}setView('dashboard',true);statusTab=status;renderDashboard()}
+ function quickWorkflow(id){const o=store.orders.find(x=>x.id===id);if(!o)return;const next=o.status==='orcamento'?'producao':o.status==='producao'?'concluida':'producao';if(next==='concluida'&&!window.confirm(`Dar baixa na ${o.number} e movê-la para Concluídas?`))return;o.status=next;o.updatedAt=today();o.completedAt=next==='concluida'?today():null;persist();renderDashboard();alertToast(`${o.number} → ${statuses[next]}`)}
+ function openClientDialog(clientId=null){editingClientId=clientId;const c=store.clients.find(c=>c.id===clientId);$('clientDialogTitle').textContent=c?'Editar cliente':'Novo cliente';fill('clientModalName',c?.name);fill('clientModalPhone',c?.phone);fill('clientModalDoc',c?.doc);fill('clientModalEmail',c?.email);fill('clientModalAddress',c?.address);$('clientDialog').showModal();$('clientModalName').focus()}
+ function saveClientDialog(e){e.preventDefault();if(!$('clientModalName').value.trim()){alertToast('Informe o nome do cliente.');return}if(!$('clientModalEmail').checkValidity()){alertToast('Confira o e-mail.');return}const item={name:safeText($('clientModalName').value.trim(),100),phone:safeText($('clientModalPhone').value.trim(),35),doc:safeText($('clientModalDoc').value.trim(),25),email:safeText($('clientModalEmail').value.trim(),120),address:safeText($('clientModalAddress').value.trim(),220)};const old=store.clients.find(c=>c.id===editingClientId);if(old)Object.assign(old,item);else store.clients.push({id:id(),...item});persist();$('clientDialog').close();renderDashboard();alertToast(old?'Cliente atualizado.':'Cliente cadastrado.');}
+ function printOrder(){if(!saveOrderRecord(false))return;const o=draft,c=readableClient(o),s=o.plan?.settings;const safeImage=typeof o.imageData==='string'&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(o.imageData)?`<img class="print-os-img" src="${o.imageData}" alt="Imagem de referência">`:'Nenhuma imagem vinculada';
+   const sheets=cleanSnapshot()?o.plan.plan.sheets:[];
+   $('printReport').innerHTML=`<div class="print-os-cover"><div class="print-os-header"><div><div class="os-print-kicker">MDF CUT STUDIO · ORDEM DE SERVIÇO</div><h1>${esc(o.number)}</h1><div class="print-os-status">${statuses[o.status]} · Emissão: ${fmtDate(o.createdAt)} · Entrega prevista: ${fmtDate(o.due)}</div></div><div style="text-align:right;font-size:10pt">Documento de produção<br><b>${esc(o.service)}</b></div></div><div class="print-os-grid"><div class="print-os-box"><h3>Dados do cliente</h3><b>${esc(c.name)}</b><br>Telefone: ${esc(c.phone||'—')}<br>Documento: ${esc(c.doc||'—')}<br>E-mail: ${esc(c.email||'—')}<br>Endereço: ${esc(c.address||'—')}</div><div class="print-os-box"><h3>Valores do serviço</h3>Produto / serviço: <b>${money(o.amount)}</b><br>Entrada recebida: <b>${money(o.deposit)}</b><br>Saldo a receber: <b>${money(Math.max(0,o.amount-o.deposit))}</b><br>Situação: ${statuses[o.status]}</div></div><div class="print-os-box"><h3>Descrição do serviço</h3><b>${esc(o.service)}</b><p style="white-space:pre-wrap">${esc(o.description||'Sem observações adicionais.')}</p></div><div class="print-os-grid"><div class="print-os-box print-os-reference"><h3>Imagem de referência</h3>${safeImage}</div><div class="print-os-box"><h3>Resumo das chapas</h3>${s?`${s.w} × ${s.h} mm · Serra: ${s.kerf} mm · Refile: ${s.margin} mm<br>${sheets.length} chapa(s) incluída(s)<br>${sheets.reduce((a,sh)=>a+sh.placed.length,0)} peça(s) distribuída(s)`:'Plano de corte não vinculado.'}<br><br>Assinatura: _________________________</div></div></div>`+sheets.map((sh,i)=>`<div class="print-page print-os-sheet"><h2>${esc(o.number)} · Chapa ${i+1} de ${sheets.length}</h2><div class="print-meta">${sh.placed.length} peça(s) · ${s.w} × ${s.h} mm</div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${s.w} ${s.h}">${bridge.svgFor(sh.placed,s)}</svg><div class="print-os-warning">Desenho ilustrativo de encaixe: confira medidas, serra, veio e viabilidade dos cortes antes da produção.</div></div>`).join('');
+   window.print();}
+ function backup(){const out={application:'MDF Cut Studio - Ordens de Serviço',version:1,exportedAt:new Date().toISOString(),...store};const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`mdf-cut-ordens-backup-${today()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);alertToast('Backup completo de clientes e ordens exportado.');}
+ async function importBackup(file){if(!file)return;try{if(file.size>15e6)throw new Error('Arquivo muito grande (limite 15 MB).');const data=JSON.parse(await file.text());if(!data||data.version!==1||!Array.isArray(data.orders)||!Array.isArray(data.clients)||data.orders.length>5000||data.clients.length>2000)throw new Error('Formato inválido de backup de OS.');const cleanStatus=new Set(Object.keys(statuses));for(const o of data.orders){if(!o||typeof o.id!=='string'||typeof o.number!=='string'||!cleanStatus.has(o.status)||!Number.isSafeInteger(o.amount)||!Number.isSafeInteger(o.deposit)||o.amount<0||o.deposit<0||o.deposit>o.amount)throw new Error('Alguma ordem do backup está inválida.');if(o.imageData&&!/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(o.imageData))throw new Error('Imagem incompatível no backup.');}for(const c of data.clients){if(!c||typeof c.id!=='string'||typeof c.name!=='string')throw new Error('Cliente inválido no backup.');}
+   if(!window.confirm(`Importar ${data.orders.length} ordem(ns) e ${data.clients.length} cliente(s)? Isso substituirá o cadastro salvo neste navegador. Faça um backup antes.`))return;
+   store={version:1,sequence:Number.isInteger(data.sequence)&&data.sequence>=0?data.sequence:0,clients:data.clients,orders:data.orders};normalizeOrderNumbers();persist();draft=null;activeId=null;filterClientId=null;statusTab='abertas';$('orderSearch').value='';renderDashboard();setView('dashboard',true);alertToast('Backup de ordens importado.');
+ }catch(e){console.error(e);alertToast('Erro ao importar backup: '+e.message)}}
+ function listen(){
+   document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.view)));
+   $('studioTheme').onclick=()=>{bridge.toggleTheme();updateThemeButton()};
+   const resolutionSelect=$('studioResolution');
+   const RESOLUTION_KEY='mdf-cut-studio-layout-resolution';
+   let preference=null;
+   try{preference=localStorage.getItem(RESOLUTION_KEY)}catch(e){}
+   const initialResolution=['1920','1366'].includes(preference)?preference:(window.innerWidth<=1500?'1366':'1920');
+   function applyResolution(mode){
+     const preset=mode==='1366'?'1366':'1920';
+     document.documentElement.dataset.resolution=preset;
+     resolutionSelect.value=preset;
+     try{localStorage.setItem(RESOLUTION_KEY,preset)}catch(e){}
+     window.dispatchEvent(new Event('resize'));
+   }
+   resolutionSelect.addEventListener('change',event=>applyResolution(event.target.value));
+   applyResolution(initialResolution);
+   $('generateOS').onclick=generateOrderFromCut;
+   $('studioAttach').onclick=()=>{attachPlan();if(draft?.plan){if(saveOrderRecord(false))setView('editor',true)}};
+   $('newOrderDashboard').onclick=()=>openNewOrder();$('emptyAddOrder').onclick=()=>openNewOrder();$('backToDashboard').onclick=()=>setView('dashboard');
+   $('backupOrders').onclick=backup;$('restoreOrders').onclick=()=>$('osBackupInput').click();$('osBackupInput').onchange=async e=>{await importBackup(e.target.files?.[0]);e.target.value=''};
+   $('orderSearch').oninput=renderDashboard;$('clientSearch').oninput=renderDashboard;
+   document.querySelectorAll('.os-tab').forEach(btn=>btn.onclick=()=>{statusTab=btn.dataset.status;renderDashboard()});
+   $('ordersRows').addEventListener('click',e=>{const quick=e.target.closest('[data-quick]'),open=e.target.closest('[data-open]');if(quick){quickWorkflow(quick.dataset.quick);return}if(e.target.closest('[data-edit]')){editOrder(e.target.closest('[data-edit]').dataset.edit);return}if(open)editOrder(open.dataset.open)});
+   $('ordersRows').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('tr[data-open]')){e.preventDefault();editOrder(e.target.dataset.open)}});
+   $('clientsList').addEventListener('click',e=>{const filter=e.target.closest('[data-client-view]'),edit=e.target.closest('[data-client-edit]');if(edit)openClientDialog(edit.dataset.clientEdit);else {const clickedId=filter?.dataset.clientView||e.target.closest('.os-client-item')?.querySelector('[data-client-view]')?.dataset.clientView;if(clickedId){filterClientId=clickedId;statusTab='abertas';renderDashboard()}}});
+   $('clientFilterBadge').onclick=e=>{if(e.target.closest('button')){filterClientId=null;renderDashboard()}};$('clearClientFilter').onclick=()=>{filterClientId=null;renderDashboard()};
+   $('newClient').onclick=()=>openClientDialog();$('clientForm').addEventListener('submit',saveClientDialog);$('clientDialogClose').onclick=()=>$('clientDialog').close();$('clientDialogCancel').onclick=()=>$('clientDialog').close();
+   $('osClientSelect').onchange=e=>{const c=store.clients.find(c=>c.id===e.target.value);for(const [field,key] of [['osClientName','name'],['osClientPhone','phone'],['osClientDoc','doc'],['osClientEmail','email'],['osClientAddress','address']])fill(field,c?.[key]||'');draft.clientId=c?.id||'';draftDirty=true};
+   $('ordersEditor').addEventListener('input',e=>{if(e.target.closest('input,textarea,select')){draftDirty=true;if(e.target.id==='osValue'||e.target.id==='osDeposit')renderFinance()}});
+   $('osStatus').onchange=()=>{renderWorkflow();draftDirty=true};
+   $('saveOrder').onclick=()=>saveOrderRecord();$('printOrder').onclick=printOrder;
+   $('duplicateOrder').onclick=()=>{if(!readForm())return;const copy=clone(draft);copy.id=null;copy.number=null;copy.createdAt=today();copy.updatedAt=null;copy.completedAt=null;copy.status='orcamento';draft=copy;activeId=null;sheetIndex=0;renderOrderEditor();alertToast('Cópia criada. Salve para gerar um novo número de OS.');};
+   $('editOrderPlan').onclick=openOrderCut;$('attachOrderPlan').onclick=attachPlan;$('removeOrderPlan').onclick=()=>{if(draft){draft.plan=null;draftDirty=true;renderPlanPreview()}};
+   $('osPlanTabs').onclick=e=>{const btn=e.target.closest('[data-plan-sheet]');if(btn){sheetIndex=Number(btn.dataset.planSheet);renderPlanPreview()}};
+   $('moveToProduction').onclick=()=>workflow('producao');$('completeOrder').onclick=()=>workflow('concluida');$('reopenOrder').onclick=()=>workflow('producao');
+   $('deleteOrder').onclick=()=>{if(!draft?.id)return;if(!window.confirm(`Excluir definitivamente ${draft.number}? Esta ação não pode ser desfeita.`))return;store.orders=store.orders.filter(o=>o.id!==draft.id);persist();draft=null;activeId=null;setView('dashboard',true);alertToast('Ordem excluída.');};
+   $('osImageDrop').onclick=()=>$('osImageFile').click();$('osImageDrop').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('osImageFile').click()}};$('osImageChange').onclick=()=>$('osImageFile').click();$('osImageRemove').onclick=()=>{if(!draft)return;draft.imageData=null;draftDirty=true;renderOsImage()};$('osImageFile').onchange=async e=>{await readImage(e.target.files?.[0]);e.target.value=''};
+   $('osImageDrop').ondragover=e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'};$('osImageDrop').ondrop=async e=>{e.preventDefault();await readImage(e.dataTransfer.files?.[0])};
+ }
+ function updateThemeButton(){$('studioTheme').innerHTML=document.documentElement.dataset.theme==='dark'?'☀ <span>Claro</span>':'☾ <span>Escuro</span>'}
+ fetchState();listen();updateThemeButton();renderDashboard();
+ // API para testes de regressão e integração, sem publicar dados privados em rede.
+ window.MDFOS={getOrders:()=>clone(store.orders),getClients:()=>clone(store.clients),view:()=>view};
+})();
+
+</script>
+
+<style>
+#desktopBackupDialog{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:0;width:min(440px,calc(100vw - 24px));box-shadow:0 20px 70px #0005}
+#desktopBackupDialog::backdrop{background:#0009}
+.desktop-backup-content{padding:17px;display:grid;gap:12px}
+.desktop-backup-content h2{font-size:17px;margin:0}.desktop-backup-content p{font-size:12px;line-height:1.6;color:var(--muted);margin:0}
+.desktop-backup-content button{padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);text-align:left;font-weight:600}
+.desktop-backup-content button:hover{border-color:var(--teal)}
+#desktopBackupStatus{font-size:11px;overflow-wrap:anywhere;color:var(--muted)}
+</style>
+<dialog id="desktopBackupDialog"><div class="desktop-backup-content"><h2>Dados e backups do Windows</h2><p>As ordens e projetos permanecem neste computador mesmo ao trocar o executável. Uma cópia automática também é mantida em uma pasta separada.</p><div id="desktopBackupStatus">Verificando armazenamento…</div><button id="desktopBackupExport" type="button">↓ Salvar backup completo em arquivo</button><button id="desktopBackupRestore" type="button">↑ Restaurar backup de arquivo</button><button id="desktopBackupRecover" type="button">↶ Recuperar última cópia automática</button><button id="desktopBackupFolder" type="button">▣ Abrir pasta dos backups</button><button id="desktopBackupClose" type="button">Fechar</button></div></dialog>
+<script>
+(()=>{
+ const desktop=window.MDFDesktop;if(!desktop)return;
+ const el=id=>document.getElementById(id);
+ const keys={orders:'mdf-cut-studio-work-orders-v1',project:'mdf-cut-studio-v04'};
+ const action=async(fn)=>{try{await fn()}catch(e){alert('Não foi possível concluir: '+(e.message||e))}};
+ const btn=el('desktopBackupBtn');btn.style.display='inline-flex';
+ const dlg=el('desktopBackupDialog');
+ btn.onclick=()=>{dlg.showModal();desktop.status().then(s=>el('desktopBackupStatus').textContent=`Pasta: ${s.folder}\nOrdens: ${s.orders?'protegidas':'sem cópia'} · Projeto: ${s.project?'protegido':'sem cópia'}`).catch(e=>el('desktopBackupStatus').textContent='Falha na consulta: '+e.message)};
+ el('desktopBackupClose').onclick=()=>dlg.close();
+ el('desktopBackupFolder').onclick=()=>action(()=>desktop.openFolder());
+ el('desktopBackupExport').onclick=()=>action(async()=>{const result=await desktop.manualBackup();if(result.ok)alert('Backup salvo com sucesso.')});
+ async function applyRestoration(data){
+   if(!data||!Object.keys(data).length)throw Error('Nenhum dado válido no backup');
+   if(!confirm('Restaurar o backup? Os dados atuais serão substituídos. Faça um backup antes de continuar.'))return;
+   // Snapshot of current data before restoring; failure stops the operation.
+   for(const [kind,key] of Object.entries(keys)){const current=localStorage.getItem(key);if(current)await desktop.save(kind,current)}
+   for(const [key,raw] of Object.entries(data)){if(!Object.values(keys).includes(key))throw Error('Chave não autorizada');JSON.parse(raw);localStorage.setItem(key,raw)}
+   for(const [kind,key] of Object.entries(keys)){if(data[key])await desktop.save(kind,data[key])}
+   location.reload();
+ }
+ el('desktopBackupRestore').onclick=()=>action(async()=>{const result=await desktop.selectRestore();if(result?.data)await applyRestoration(result.data)});
+ el('desktopBackupRecover').onclick=()=>action(async()=>{const result=await desktop.readLocal();await applyRestoration(result.data)});
+ // First run after updating: copy already existing localStorage data to disk.
+ // Never overwrite an existing snapshot with empty/default values on startup.
+ desktop.status().then(async s=>{
+   for(const [kind,key] of Object.entries(keys)){
+     if(s[kind])continue;
+     const raw=localStorage.getItem(key);if(raw)await desktop.save(kind,raw);
+   }
+ }).catch(e=>console.warn('Falha na migração inicial dos backups:',e));
+})();
+</script>
+
+<style>
+#desktopUpdateDialog{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:0;width:min(460px,calc(100vw - 24px));box-shadow:0 20px 70px #0005}
+#desktopUpdateDialog::backdrop{background:#0009}
+#desktopUpdateStatus{color:var(--muted);font-size:12px;overflow-wrap:anywhere;white-space:pre-wrap}
+</style>
+<dialog id="desktopUpdateDialog"><div class="desktop-backup-content"><h2>Atualizações do MDF Cut</h2><p>O programa consulta versões públicas no GitHub. O novo executável será baixado e verificado, sem apagar os seus projetos ou ordens.</p><label style="font-size:12px;font-weight:700">Repositório GitHub (usuário/repositório)</label><input type="text" id="desktopUpdateRepo" placeholder="usuario/mdf-cut-studio" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"><button id="desktopUpdateSaveRepo" type="button">Salvar endereço do repositório</button><div id="desktopUpdateStatus">Configure o repositório para verificar atualizações.</div><button id="desktopUpdateCheck" type="button">↻ Verificar atualizações</button><button id="desktopUpdateDownload" type="button" hidden>↓ Baixar novo executável</button><button id="desktopUpdateClose" type="button">Fechar</button></div></dialog>
+<script>
+(()=>{
+ const d=window.MDFDesktop;if(!d?.checkUpdate)return;
+ const get=id=>document.getElementById(id),dlg=get('desktopUpdateDialog'),status=get('desktopUpdateStatus');
+ const show=t=>status.textContent=t;
+ get('desktopUpdateBtn').style.display='inline-flex';
+ get('desktopUpdateBtn').onclick=async()=>{dlg.showModal();get('desktopUpdateDownload').hidden=true;try{const c=await d.updateSource();get('desktopUpdateRepo').value=c.repo;show('Versão instalada: '+c.version+'\nClique em Verificar atualizações.')}catch(e){show(e.message)}};
+ get('desktopUpdateClose').onclick=()=>dlg.close();
+ get('desktopUpdateSaveRepo').onclick=async()=>{try{const a=await d.setUpdateSource(get('desktopUpdateRepo').value);show('Repositório configurado: '+a.repo)}catch(e){show('Erro: '+e.message)}};
+ get('desktopUpdateCheck').onclick=async()=>{get('desktopUpdateDownload').hidden=true;show('Consultando GitHub…');try{const s=await d.checkUpdate();show(`Instalada: v${s.installed}\nPublicada: v${s.available}\n${s.isNew?'Uma atualização está disponível.':'O programa está atualizado.'}`);get('desktopUpdateDownload').hidden=!s.isNew}catch(e){show('Não foi possível verificar: '+e.message)}};
+ get('desktopUpdateDownload').onclick=async()=>{show('Baixando e verificando o executável…');get('desktopUpdateDownload').disabled=true;try{const a=await d.downloadUpdate();show(a.message+'\n'+a.file)}catch(e){show('Falha no download: '+e.message)}finally{get('desktopUpdateDownload').disabled=false}};
+})();
+</script>
+</body>
+</html>

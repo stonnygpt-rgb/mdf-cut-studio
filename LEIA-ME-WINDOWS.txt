@@ -1,0 +1,17 @@
+MDF CUT STUDIO WINDOWS v2.9 — DADOS E BACKUPS
+
+1. No Windows, abra o projeto e execute GERAR-APP-WINDOWS.bat.
+   Para apenas o EXE portatil, use npm run dist:portable.
+2. A versão v2.9 usa a MESMA identidade e origem da versão v2.8.
+3. Seus dados locais permanecem associados ao perfil Windows do aplicativo.
+4. O aplicativo cria cópias de ordens e projetos em:
+   %APPDATA%\mdf-cut-studio-desktop\MDFCut-Backups (o nome exato depende do Electron)
+   Use o botão Backup para abrir a pasta exata.
+5. Use Backup > Salvar backup completo para copiar para pendrive ou outra pasta.
+6. Use Backup > Restaurar backup para importar um arquivo completo v2.9.
+7. Backups JSON antigos de ordens continuam importáveis pela aba Painel de OS.
+8. Antes de trocar executáveis, guarde uma cópia externa.
+9. O backup em disco é uma proteção adicional; NÃO é sincronização em nuvem.
+10. Atualização automática online ainda não foi implementada.
+
+IMPORTANTE: a build precisa ser compilada no Windows com Node.js apenas para gerar o EXE. O usuário final não precisa instalar Node/Electron.

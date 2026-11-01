@@ -1,0 +1,28 @@
+MDF CUT STUDIO v3.0 — ATUALIZAÇÕES PELO GITHUB
+
+PASSO INICIAL (APENAS UMA VEZ)
+1. Crie um repositório PÚBLICO no GitHub (ex.: seuusuario/mdf-cut-studio).
+2. Envie TODO o conteúdo desta pasta para o repositório, incluindo .github/workflows/publish-windows.yml.
+3. No GitHub, em Settings > Actions > General > Workflow permissions, autorize Read and write permissions para o GITHUB_TOKEN, se necessário.
+4. Crie e envie a tag v3.0.0 (ex.: pelo GitHub Desktop ou terminal):
+   git tag v3.0.0
+   git push origin v3.0.0
+5. Na aba Actions, acompanhe a compilação Windows. O release deve conter MDF-Cut-Studio-3.0.0-Portable.exe e SHA256SUMS.txt.
+6. Baixe o EXE da página Releases, feche a versão antiga e abra o novo.
+7. No app, clique Atualizar, informe seuusuario/mdf-cut-studio e clique Salvar endereço.
+
+PRÓXIMAS ATUALIZAÇÕES
+- Atualize os arquivos e a versão em package.json (por exemplo, 3.1.0).
+- Envie as alterações ao GitHub e crie a tag v3.1.0.
+- O GitHub Actions compilará e publicará o executável.
+- Dentro do MDF Cut, clique Atualizar > Verificar atualizações > Baixar novo executável.
+- Após o download, feche o aplicativo antigo e abra o novo EXE na pasta Downloads.
+
+IMPORTANTE
+- O projeto não instala automaticamente o novo EXE nem substitui um executável em execução.
+- Para verificar a integridade, os downloads são comparados com o SHA256SUMS.txt publicado no GitHub.
+- O app não envia clientes, ordens ou projetos ao GitHub; as consultas são apenas de versão e download do executável.
+- Faça backups antes de atualizar e use sempre o mesmo aplicativo/identidade ao atualizar.
+- Evite publicar senhas, chaves ou dados privados neste repositório público.
+- O GitHub pode restringir GitHub Actions e Releases de acordo com as regras da conta.
+- O novo fluxo não foi compilado nem testado em Windows neste ambiente.

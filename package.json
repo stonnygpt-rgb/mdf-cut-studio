@@ -1,0 +1,53 @@
+{
+  "name": "mdf-cut-studio-desktop",
+  "productName": "MDF Cut Studio",
+  "version": "3.0.0",
+  "description": "MDF Cut Studio para Windows: planos de corte e ordens de serviço",
+  "main": "main.js",
+  "private": true,
+  "author": "MDF Cut Studio",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis --x64",
+    "dist:portable": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.mdfcutstudio.desktop",
+    "productName": "MDF Cut Studio",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "MDF Cut Studio"
+    },
+    "portable": {
+      "artifactName": "MDF-Cut-Studio-${version}-Portable.exe"
+    }
+  }
+}
