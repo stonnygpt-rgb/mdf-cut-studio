@@ -16,11 +16,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+     
       - name: Conferir versão
         shell: pwsh
         run: |
           $package = Get-Content package.json | ConvertFrom-Json
-          if ('v' + $package.version -ne '${{ github.ref_name }}') { throw 'A tag deve ser igual a versão do package.json' }
+          if ('${{ github.ref_type }}' -eq 'tag' -and "v$($package.version)" -ne '${{ github.ref_name }}') {
+            throw 'A tag deve ser igual à versão do package.json'
+          }
       - name: Instalar dependências
         run: npm install --no-audit --no-fund
       - name: Compilar executável portátil
