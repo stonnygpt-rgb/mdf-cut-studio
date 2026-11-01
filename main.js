@@ -81,7 +81,8 @@ const REPLACE_PS = String.raw`param(
   [Parameter(Mandatory=$true)][int]$ParentPid,
   [Parameter(Mandatory=$true)][string]$ExpectedHash,
   [Parameter(Mandatory=$true)][string]$LogFile,
-  [Parameter(Mandatory=$true)][string]$ReadyFile
+  [Parameter(Mandatory=$true)][string]$ReadyFile,
+  [switch]$TestOnly
 )
 $ErrorActionPreference = 'Stop'
 $next = "$Target.mdfcut-next"
@@ -89,6 +90,7 @@ $previous = "$Target.mdfcut-previous"
 try {
   "Atualizador iniciado: $(Get-Date -Format o)" | Set-Content -LiteralPath $LogFile -Encoding UTF8
   "READY" | Set-Content -LiteralPath $ReadyFile -Encoding ASCII
+  if ($TestOnly) { "Teste de inicializacao concluido." | Add-Content -LiteralPath $LogFile; return }
   for ($i = 0; $i -lt 240; $i++) {
     if (-not (Get-Process -Id $ParentPid -ErrorAction SilentlyContinue)) { break }
     Start-Sleep -Milliseconds 500
@@ -180,63 +182,19 @@ async function downloadNewVersion(){
   fs.writeFileSync(logFile,'Atualização verificada. Tentando iniciar instalador externo.\n','utf8');
   fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
 
-  // Use a UTF-16LE encoded PowerShell command to avoid -File invocation
-  // ambiguity. Report parser errors to ultima-atualizacao.log before exiting.
-  const configB64=Buffer.from(JSON.stringify({
-    script:scriptPath,source:dest,target:path.resolve(portablePath),
-    pid:process.pid,hash:expected,log:logFile,ready:readyFile
-  }),'utf8').toString('base64');
-  const bootstrap=[
-    "$ErrorActionPreference = 'Stop'",
-    "try {",
-    "  $cfg = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('"+configB64+"')) | ConvertFrom-Json",
-    "  'PowerShell inicializado; carregando script externo.' | Add-Content -LiteralPath $cfg.log -Encoding UTF8",
-    "  & $cfg.script -Source $cfg.source -Target $cfg.target -ParentPid ([int]$cfg.pid) -ExpectedHash $cfg.hash -LogFile $cfg.log -ReadyFile $cfg.ready",
-    "  if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw ('Script externo terminou com codigo ' + $LASTEXITCODE) }",
-    "} catch {",
-    "  $msg = 'Falha no inicializador: ' + $_.Exception.Message",
-    "  try { ($msg + [Environment]::NewLine + $_.ScriptStackTrace) | Add-Content -LiteralPath $cfg.log -Encoding UTF8 } catch {}",
-    "  exit 1",
-    "}"
-  ].join('\n');
-  const commandB64=Buffer.from(bootstrap,'utf16le').toString('base64');
-  let child;
-  try {
-    child=spawn('powershell.exe',[
-      '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
-      '-EncodedCommand',commandB64
-    ],{detached:true,windowsHide:true,stdio:['ignore','pipe','pipe']});
-    // Capture even early PowerShell parser/invocation errors. Previously stderr
-    // was discarded and exit code 0 gave no actionable diagnosis.
-    const outputLog=path.join(dir,'powershell-saida.log');
-    fs.writeFileSync(outputLog,'Processo iniciado em '+new Date().toISOString()+'\n','utf8');
-    const record=(name,buf)=>{
-      try{fs.appendFileSync(outputLog,'['+name+'] '+buf.toString('utf8')+'\n','utf8')}catch{}
-    };
-    child.stdout?.on('data',data=>record('stdout',data));
-    child.stderr?.on('data',data=>record('stderr',data));
-  }catch(e) {
-    fs.appendFileSync(logFile,'Falha ao iniciar PowerShell: '+e.message+'\n');
-    throw Error('Não foi possível iniciar o atualizador. O MDF Cut continuará aberto.');
-  }
-  // Never close the app before the external helper confirms it has started.
-  const helperReady=await new Promise((resolve,reject)=>{
-    let finished=false;
-    const finish=(err)=>{
-      if(finished)return;finished=true;
-      clearInterval(interval);clearTimeout(timeout);
-      if(err)reject(err);else resolve(true);
-    };
-    child.once('error',e=>finish(Error('Falha ao iniciar instalador: '+e.message)));
-    child.once('close',(code,signal)=>{let detail='';try{detail=fs.readFileSync(path.join(dir,'powershell-saida.log'),'utf8').slice(-2000)}catch{}finish(Error('Instalador encerrou antes de iniciar (código '+code+', sinal '+signal+'). '+detail));});
-    const interval=setInterval(()=>{
-      if(fs.existsSync(readyFile))finish();
-    },150);
-    const timeout=setTimeout(()=>finish(Error('O instalador não confirmou a inicialização.')),10000);
+
+  const {child}=startPowerShellUpdater({
+    dir,scriptPath,source:dest,target:path.resolve(portablePath),
+    parentPid:process.pid,expected,logFile,readyFile,testOnly:false
+  });
+
+  // The MDF Cut stays open until the actual external installer signals READY.
+  const helperReady=await waitPowerShellReady({
+    child,readyFile,logFile,outLog:path.join(dir,'powershell-saida.log')
   }).catch(e=>{
     try{child.kill()}catch{}
-    fs.appendFileSync(logFile,'ERRO: '+e.message+'\n','utf8');
-    throw Error(e.message+' Consulte ultima-atualizacao.log. O programa permanecerá aberto.');
+    try{fs.appendFileSync(logFile,'ERRO: '+e.message+'\n','utf8')}catch{}
+    throw Error(e.message+' O programa permanecerá aberto.');
   });
   if(helperReady){
     child.unref();
@@ -245,11 +203,84 @@ async function downloadNewVersion(){
   return {ok:true,installing:true,message:'Atualizador iniciado e confirmado. O MDF Cut fechará, substituirá o EXE e reabrirá.'};
 }
 
+
+function startPowerShellUpdater({dir,scriptPath,source,target,parentPid,expected,logFile,readyFile,testOnly}){
+  // PowerShell receives all paths in environment variables to avoid quoting
+  // issues. Using -Command rather than -EncodedCommand enables direct logging.
+  const env={...process.env,
+    MDFCUT_SCRIPT:scriptPath,MDFCUT_SOURCE:source,MDFCUT_TARGET:target,
+    MDFCUT_PARENT:String(parentPid),MDFCUT_SHA256:expected,
+    MDFCUT_LOG:logFile,MDFCUT_READY:readyFile,MDFCUT_TEST:testOnly?'1':'0'
+  };
+  const command=[
+    "$ErrorActionPreference = 'Stop'",
+    "try {",
+    "  'PowerShell iniciou a execucao do instalador.' | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8",
+    "  $dryrun = $env:MDFCUT_TEST -eq '1'",
+    "  & $env:MDFCUT_SCRIPT -Source $env:MDFCUT_SOURCE -Target $env:MDFCUT_TARGET -ParentPid ([int]$env:MDFCUT_PARENT) -ExpectedHash $env:MDFCUT_SHA256 -LogFile $env:MDFCUT_LOG -ReadyFile $env:MDFCUT_READY -TestOnly:$dryrun",
+    "} catch {",
+    "  ('Falha ao executar atualizador: '+$_.Exception.Message) | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8",
+    "  exit 1",
+    "}"
+  ].join('\n');
+  const outLog=path.join(dir,testOnly?'teste-powershell-saida.log':'powershell-saida.log');
+  fs.writeFileSync(outLog,'Inicializando auxiliar em '+new Date().toISOString()+'\n','utf8');
+  const child=spawn('powershell.exe',[
+    '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
+    '-Command',command
+  ],{detached:false,windowsHide:true,stdio:['ignore','pipe','pipe'],env});
+  const save=(channel,data)=>{
+    try{fs.appendFileSync(outLog,'['+channel+'] '+data.toString('utf8')+'\n','utf8')}catch{}
+  };
+  child.stdout?.on('data',b=>save('stdout',b));
+  child.stderr?.on('data',b=>save('stderr',b));
+  return {child,outLog};
+}
+async function waitPowerShellReady({child,readyFile,logFile,outLog}){
+  return await new Promise((resolve,reject)=>{
+    let done=false;
+    let poll,timer;
+    const finish=(error)=>{
+      if(done)return;done=true;clearInterval(poll);clearTimeout(timer);
+      if(error)reject(error);else resolve(true);
+    };
+    child.once('error',e=>finish(Error('Não foi possível iniciar PowerShell: '+e.message)));
+    child.once('close',(code,signal)=>{
+      if(fs.existsSync(readyFile)){finish();return}
+      let detail='';
+      try{detail=fs.readFileSync(outLog,'utf8').slice(-2000)}catch{}
+      try{detail+='\n'+fs.readFileSync(logFile,'utf8').slice(-1000)}catch{}
+      finish(Error('Atualizador encerrou antes do sinal READY (código '+code+', sinal '+signal+'). '+detail));
+    });
+    poll=setInterval(()=>{if(fs.existsSync(readyFile))finish()},120);
+    timer=setTimeout(()=>finish(Error('O atualizador não confirmou a inicialização em 15 segundos.')),15000);
+  });
+}
+async function testPowerShellUpdater(){
+  const dir=path.join(app.getPath('userData'),'Atualizacoes');
+  fs.mkdirSync(dir,{recursive:true});
+  const scriptPath=path.join(dir,'aplicar-atualizacao.ps1');
+  const logFile=path.join(dir,'teste-inicializacao.log');
+  const readyFile=path.join(dir,'teste-inicializacao.ready');
+  fs.rmSync(readyFile,{force:true});
+  fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
+  fs.writeFileSync(logFile,'Teste seguro do inicializador do MDF Cut.\n','utf8');
+  const {child,outLog}=startPowerShellUpdater({
+    dir,scriptPath,source:scriptPath,target:scriptPath,
+    parentPid:process.pid,expected:'0'.repeat(64),logFile,readyFile,testOnly:true
+  });
+  try{
+    await waitPowerShellReady({child,readyFile,logFile,outLog});
+    return {ok:true,message:'Teste aprovado. PowerShell executou o auxiliar e confirmou READY. Nenhum executável foi alterado.'};
+  }catch(e){return {ok:false,message:e.message}}
+}
+
 function registerIPC(){
  ipcMain.handle('mdf:update-source',event=>{requireTrusted(event);return {repo:releasesRepo||loadUpdateSource()||'',version:app.getVersion()}});
  ipcMain.handle('mdf:set-update-source',(event,repo)=>{requireTrusted(event);return setUpdateSource(repo)});
  ipcMain.handle('mdf:check-update',async event=>{requireTrusted(event);return await fetchRelease()});
  ipcMain.handle('mdf:download-update',async event=>{requireTrusted(event);return await downloadNewVersion()});
+ ipcMain.handle('mdf:test-updater',async event=>{requireTrusted(event);return await testPowerShellUpdater()});
  ipcMain.handle('mdf:save', (event,kind,raw)=>{requireTrusted(event);return storeData(kind,raw)});
  ipcMain.handle('mdf:status',event=>{requireTrusted(event);return {folder:backupDir,orders:fs.existsSync(path.join(backupDir,safeFile('orders'))),project:fs.existsSync(path.join(backupDir,safeFile('project')))}});
  ipcMain.handle('mdf:manual-backup',async event=>{
