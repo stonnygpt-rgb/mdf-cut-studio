@@ -193,7 +193,7 @@ async function downloadNewVersion(){
     child,readyFile,logFile,outLog:path.join(dir,'powershell-saida.log')
   }).catch(e=>{
     try{child.kill()}catch{}
-    try{fs.appendFileSync(logFile,'ERRO: '+e.message+'\\n','utf8')}catch{}
+    try{fs.appendFileSync(logFile,'ERRO: '+e.message+'\n','utf8')}catch{}
     throw Error(e.message+' O programa permanecerá aberto.');
   });
   if(helperReady){
@@ -222,15 +222,15 @@ function startPowerShellUpdater({dir,scriptPath,source,target,parentPid,expected
     "  ('Falha ao executar atualizador: '+$_.Exception.Message) | Add-Content -LiteralPath $env:MDFCUT_LOG -Encoding UTF8",
     "  exit 1",
     "}"
-  ].join('\\n');
+  ].join('\n');
   const outLog=path.join(dir,testOnly?'teste-powershell-saida.log':'powershell-saida.log');
-  fs.writeFileSync(outLog,'Inicializando auxiliar em '+new Date().toISOString()+'\\n','utf8');
+  fs.writeFileSync(outLog,'Inicializando auxiliar em '+new Date().toISOString()+'\n','utf8');
   const child=spawn('powershell.exe',[
     '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
     '-Command',command
   ],{detached:false,windowsHide:true,stdio:['ignore','pipe','pipe'],env});
   const save=(channel,data)=>{
-    try{fs.appendFileSync(outLog,'['+channel+'] '+data.toString('utf8')+'\\n','utf8')}catch{}
+    try{fs.appendFileSync(outLog,'['+channel+'] '+data.toString('utf8')+'\n','utf8')}catch{}
   };
   child.stdout?.on('data',b=>save('stdout',b));
   child.stderr?.on('data',b=>save('stderr',b));
@@ -249,7 +249,7 @@ async function waitPowerShellReady({child,readyFile,logFile,outLog}){
       if(fs.existsSync(readyFile)){finish();return}
       let detail='';
       try{detail=fs.readFileSync(outLog,'utf8').slice(-2000)}catch{}
-      try{detail+='\\n'+fs.readFileSync(logFile,'utf8').slice(-1000)}catch{}
+      try{detail+='\n'+fs.readFileSync(logFile,'utf8').slice(-1000)}catch{}
       finish(Error('Atualizador encerrou antes do sinal READY (código '+code+', sinal '+signal+'). '+detail));
     });
     poll=setInterval(()=>{if(fs.existsSync(readyFile))finish()},120);
@@ -264,7 +264,7 @@ async function testPowerShellUpdater(){
   const readyFile=path.join(dir,'teste-inicializacao.ready');
   fs.rmSync(readyFile,{force:true});
   fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
-  fs.writeFileSync(logFile,'Teste seguro do inicializador do MDF Cut.\\n','utf8');
+  fs.writeFileSync(logFile,'Teste seguro do inicializador do MDF Cut.\n','utf8');
   const {child,outLog}=startPowerShellUpdater({
     dir,scriptPath,source:scriptPath,target:scriptPath,
     parentPid:process.pid,expected:'0'.repeat(64),logFile,readyFile,testOnly:true
