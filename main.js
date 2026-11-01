@@ -179,12 +179,32 @@ async function downloadNewVersion(){
   try{fs.rmSync(readyFile,{force:true})}catch{}
   fs.writeFileSync(logFile,'Atualização verificada. Tentando iniciar instalador externo.\n','utf8');
   fs.writeFileSync(scriptPath,REPLACE_PS,'utf8');
+
+  // Use a UTF-16LE encoded PowerShell command to avoid -File invocation
+  // ambiguity. Report parser errors to ultima-atualizacao.log before exiting.
+  const configB64=Buffer.from(JSON.stringify({
+    script:scriptPath,source:dest,target:path.resolve(portablePath),
+    pid:process.pid,hash:expected,log:logFile,ready:readyFile
+  }),'utf8').toString('base64');
+  const bootstrap=[
+    "$ErrorActionPreference = 'Stop'",
+    "try {",
+    "  $cfg = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('"+configB64+"')) | ConvertFrom-Json",
+    "  'PowerShell inicializado; carregando script externo.' | Add-Content -LiteralPath $cfg.log -Encoding UTF8",
+    "  & $cfg.script -Source $cfg.source -Target $cfg.target -ParentPid ([int]$cfg.pid) -ExpectedHash $cfg.hash -LogFile $cfg.log -ReadyFile $cfg.ready",
+    "  if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw ('Script externo terminou com codigo ' + $LASTEXITCODE) }",
+    "} catch {",
+    "  $msg = 'Falha no inicializador: ' + $_.Exception.Message",
+    "  try { ($msg + [Environment]::NewLine + $_.ScriptStackTrace) | Add-Content -LiteralPath $cfg.log -Encoding UTF8 } catch {}",
+    "  exit 1",
+    "}"
+  ].join('\n');
+  const commandB64=Buffer.from(bootstrap,'utf16le').toString('base64');
   let child;
   try {
     child=spawn('powershell.exe',[
       '-NoLogo','-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
-      '-File',scriptPath,'-Source',dest,'-Target',path.resolve(portablePath),
-      '-ParentPid',String(process.pid),'-ExpectedHash',expected,'-LogFile',logFile,'-ReadyFile',readyFile
+      '-EncodedCommand',commandB64
     ],{detached:true,windowsHide:true,stdio:'ignore'});
   }catch(e) {
     fs.appendFileSync(logFile,'Falha ao iniciar PowerShell: '+e.message+'\n');
@@ -199,7 +219,7 @@ async function downloadNewVersion(){
       if(err)reject(err);else resolve(true);
     };
     child.once('error',e=>finish(Error('Falha ao iniciar instalador: '+e.message)));
-    child.once('exit',code=>finish(Error('Instalador encerrou antes de iniciar (código '+code+').')));
+    child.once('exit',code=>{let detail='';try{detail=fs.readFileSync(logFile,'utf8').slice(-1500)}catch{}finish(Error('Instalador encerrou antes de iniciar (código '+code+'). '+detail));});
     const interval=setInterval(()=>{
       if(fs.existsSync(readyFile))finish();
     },150);
